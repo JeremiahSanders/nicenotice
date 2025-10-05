@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Jds.NiceNotice;
 
 /// <summary>
@@ -65,5 +67,68 @@ public static class StreamSelectors
     EventStreamId? defaultStream = null) where TEnterpriseEventBaseType : notnull
   {
     return new TypeMapStreamSelector<TEnterpriseEventBaseType>(map, defaultStream);
+  }
+
+
+  /// <summary>
+  ///   Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to
+  ///   the specified stream ID.
+  /// </summary>
+  /// <param name="builder">The builder instance.</param>
+  /// <param name="stream">
+  ///   An instance of <see cref="EventStreamId" /> that identifies the constant stream to be used.
+  /// </param>
+  /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
+  /// <returns>
+  ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
+  ///   specified constant stream selector.
+  /// </returns>
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> WithConstantStream<TEnterpriseEventBaseType>(
+    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
+    EventStreamId stream
+  ) where TEnterpriseEventBaseType : notnull
+  {
+    return builder.UseStreamSelector(
+      _ => Constant<TEnterpriseEventBaseType>(stream),
+      ServiceLifetime.Singleton
+    );
+  }
+
+  /// <summary>
+  ///   Configures the enterprise event builder to use a stream selector which routes each enterprise event to a stream
+  ///   having the same name as the event's type.
+  ///   (E.g., a type named "MyEvent" will be routed to a stream named <c>MyEvent</c>.)
+  /// </summary>
+  /// <param name="builder">The builder instance.</param>
+  /// <param name="useFullTypeName">
+  ///   A value indicating whether the full name
+  ///   (i.e., including namespace, e.g., <c>MyCompany.MyApplication.MyEvent</c>)
+  ///   or the simple name
+  ///   (i.e., without namespace, e.g., <c>MyEvent</c>)
+  ///   should be used to determine the stream name.
+  ///   Defaults to <c>false</c>.
+  /// </param>
+  /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
+  /// <returns>Returns the builder after modification.</returns>
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> WithTypeNameStreams<TEnterpriseEventBaseType>(
+    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
+    bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
+  {
+    return builder.UseStreamSelector(useFullTypeName ? FullNameFactory : TypeNameFactory, ServiceLifetime.Singleton);
+
+    static NoticeStreamSelector<TEnterpriseEventBaseType> FullNameFactory(IServiceProvider _)
+    {
+      return Delegate<TEnterpriseEventBaseType>(static eventData => (EventStreamId)(eventData.GetType()
+          .FullName ?? eventData.GetType()
+          .Name)
+      );
+    }
+
+    static NoticeStreamSelector<TEnterpriseEventBaseType> TypeNameFactory(IServiceProvider _)
+    {
+      return Delegate<TEnterpriseEventBaseType>(static eventData => (EventStreamId)eventData.GetType()
+        .Name
+      );
+    }
   }
 }

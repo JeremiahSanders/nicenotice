@@ -1,3 +1,5 @@
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+
 namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 ///   In this example, it performs the units of work related to user login and logout (abstractly;
 ///   this implementation doesn't do any real work).
 /// </summary>
-public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleBaseEnterpriseEvent> dispatcher)
+public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> dispatcher)
 {
   public async Task<LogoutResult> TryLogoutAsync(string authorizationToken)
   {
@@ -13,7 +15,7 @@ public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleBaseEnterpr
     {
       string username = await LogoutAsync(authorizationToken);
       await dispatcher.DispatchAsync(
-        new ExampleLogoutEvent
+        new ExampleCustomLogoutEvent
         {
           Username = username
         }
@@ -58,7 +60,7 @@ public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleBaseEnterpr
       //   - A dashboard metric monitor watches login events and filters by distinct username, to get active user counts.
       //   - A "report generator" application watches login events and stores the usernames and timestamps, to create login auditing reports.
       await dispatcher.DispatchAsync(
-        new ExampleLoginEvent
+        new ExampleCustomLoginEvent
         {
           Username = credentials.Username
         }

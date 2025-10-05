@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
+namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
 /// <summary>
 ///   An example, base, typed notice (a.k.a., an enterprise event).
+///   This type is not derived from <see cref="EnterpriseEventBase" /> so as to show how an organization
+///   might define their own base enterprise event type.
 /// </summary>
 /// <remarks>
 ///   <para>
@@ -23,13 +26,14 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 ///     Implementers should consider strongly the required/shared properties on a typed notice.
 ///   </para>
 /// </remarks>
-public record ExampleBaseEnterpriseEvent
+public record ExampleCustomBaseEnterpriseEvent
 {
   /// <summary>
   ///   Gets the timestamp associated with this enterprise event
   ///   (in general, understood to mean &quot;when&quot; this event occurred).
   /// </summary>
-  public DateTime Timestamp { get; init; } = DateTime.UtcNow;
+  [JsonPropertyName(name: "ts")]
+  public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
 
   /// <summary>
   ///   Gets the name of this schema/type of enterprise event.
@@ -37,6 +41,7 @@ public record ExampleBaseEnterpriseEvent
   /// </summary>
   /// <remarks>Use <see cref="CreateEventName" />to create a name in the preferred format.</remarks>
   [Required(AllowEmptyStrings = false)]
+  [JsonPropertyName(name: "name")]
   public string Name { get; init; } = string.Empty;
 
   protected static string CreateEventName(string eventTitle, int eventSchemaRevision)
