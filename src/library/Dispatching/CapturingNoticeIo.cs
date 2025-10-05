@@ -3,19 +3,33 @@ using System.Collections.Concurrent;
 namespace Jds.NiceNotice;
 
 /// <summary>
-///   An implementation of <see cref="INoticeIo" /> which is intended for test purposes.
-///   This dispatcher should not be used in a runtime environment; its use can lead to memory leaks.
+///   <para>
+///     An implementation of <see cref="INoticeIo" /> which is intended for test purposes.
+///     Each dispatched notice is captured and can be retrieved via <see cref="CapturedNotices" />.
+///   </para>
+///   <para>
+///     This dispatcher should not be used in a runtime environment; its use can lead to memory leaks.
+///   </para>
 /// </summary>
-public class CapturingDispatcher : INoticeIo
+public class CapturingNoticeIo : INoticeIo
 {
   private readonly int _maximumNoticesToRetain;
 
-  public CapturingDispatcher()
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="CapturingNoticeIo" /> class.
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     All notices are retained until purged (using <see cref="PurgeNotices" />).
+  ///     Use the <see cref="Create" /> method to create an instance which constrains the number of notices retained.
+  ///   </para>
+  /// </remarks>
+  public CapturingNoticeIo()
     : this(maximumNoticesToRetain: -1)
   {
   }
 
-  private CapturingDispatcher(int maximumNoticesToRetain)
+  private CapturingNoticeIo(int maximumNoticesToRetain)
   {
     _maximumNoticesToRetain = maximumNoticesToRetain;
   }
@@ -47,17 +61,17 @@ public class CapturingDispatcher : INoticeIo
   ///   Creates a capturing dispatcher which limits the notices it retains.
   /// </summary>
   /// <param name="maximumNoticesToRetain">The maximum count of notices to retain.</param>
-  /// <returns>Returns a new <see cref="CapturingDispatcher" />.</returns>
-  public static CapturingDispatcher Create(int maximumNoticesToRetain = -1)
+  /// <returns>Returns a new <see cref="CapturingNoticeIo" />.</returns>
+  public static CapturingNoticeIo Create(int maximumNoticesToRetain = -1)
   {
-    return new CapturingDispatcher(maximumNoticesToRetain);
+    return new CapturingNoticeIo(maximumNoticesToRetain);
   }
 
   /// <summary>
   ///   Purges the notices captured by this instance.
   /// </summary>
   /// <returns>Returns this instance.</returns>
-  public CapturingDispatcher PurgeNotices()
+  public CapturingNoticeIo PurgeNotices()
   {
     Notices.Clear();
 

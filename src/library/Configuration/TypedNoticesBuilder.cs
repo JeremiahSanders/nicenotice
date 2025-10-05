@@ -8,30 +8,84 @@ namespace Jds.NiceNotice;
 public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection services)
   where TEnterpriseEventBaseType : notnull
 {
-  internal TypedNoticesBuilder<TEnterpriseEventBaseType> ApplyDefaults(ServiceLifetime serviceLifetime)
+  /// <summary>
+  ///   Gets the service collection (obtained from the constructor and to which services are added).
+  /// </summary>
+  public IServiceCollection Services => services;
+
+  /// <summary>
+  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
+  ///   and configurations necessary for operation.
+  /// </summary>
+  /// <remarks>
+  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
+  ///   and a <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" /> which always throws.
+  /// </remarks>
+  /// <param name="validatorServiceLifetime"></param>
+  /// <param name="jsonSerializerServiceLifetime"></param>
+  /// <returns>
+  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
+  ///   default settings.
+  /// </returns>
+  internal TypedNoticesBuilder<TEnterpriseEventBaseType> ApplyDefaults(
+    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton
+  )
   {
-    ServiceDescriptor jsonSerializer = CreateJsonSerializerDescriptor(optionsAccessor: null, serviceLifetime);
+    ApplyDefaults(Services, jsonSerializerServiceLifetime, validatorServiceLifetime);
+
+    return this;
+  }
+
+  /// <summary>
+  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
+  ///   and configurations necessary for operation.
+  /// </summary>
+  /// <remarks>
+  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
+  ///   and a <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" /> which always throws.
+  /// </remarks>
+  /// <param name="validatorServiceLifetime"></param>
+  /// <param name="services"></param>
+  /// <param name="jsonSerializerServiceLifetime"></param>
+  /// <param name="routingServiceLifetime"></param>
+  /// <returns>
+  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
+  ///   default settings.
+  /// </returns>
+  internal static IServiceCollection ApplyDefaults(
+    IServiceCollection services,
+    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime routingServiceLifetime = ServiceLifetime.Singleton
+  )
+  {
+    // Configure serializer
+    ServiceDescriptor jsonSerializer =
+      CreateJsonSerializerDescriptor(optionsAccessor: null, jsonSerializerServiceLifetime);
     services.TryAdd(jsonSerializer);
-    ServiceDescriptor nonGeneric = CreateNonGenericJsonSerializerDescriptor(optionsAccessor: null, serviceLifetime);
+    ServiceDescriptor nonGeneric =
+      CreateNonGenericJsonSerializerDescriptor(optionsAccessor: null, jsonSerializerServiceLifetime);
     services.TryAdd(nonGeneric);
 
+    // Configure validation
     ServiceDescriptor validator = new(
       typeof(NoticeValidator<TEnterpriseEventBaseType>),
-      _ => new NoOpNoticeValidator<TEnterpriseEventBaseType>(),
-      serviceLifetime
+      static _ => new NoOpNoticeValidator<TEnterpriseEventBaseType>(),
+      validatorServiceLifetime
     );
     services.TryAdd(validator);
 
-
+    // Configure routing
     ServiceDescriptor notifyOfOmittedConfigurationStreamSelector =
       new(
         typeof(NoticeStreamSelector<TEnterpriseEventBaseType>),
-        _ => new InvalidOperationStreamSelector<TEnterpriseEventBaseType>(),
-        serviceLifetime
+        static _ => new InvalidOperationStreamSelector<TEnterpriseEventBaseType>(),
+        routingServiceLifetime
       );
     services.TryAdd(notifyOfOmittedConfigurationStreamSelector);
 
-    return this;
+    return services;
   }
 
 
@@ -41,7 +95,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     NoticeStreamSelector<TEnterpriseEventBaseType> streamSelector
   )
   {
-    services.Add(
+    Services.Add(
       new ServiceDescriptor(typeof(NoticeStreamSelector<TEnterpriseEventBaseType>), streamSelector)
     );
 
@@ -53,32 +107,8 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     ServiceLifetime lifetime
   )
   {
-    services.Add(
+    Services.Add(
       new ServiceDescriptor(typeof(NoticeStreamSelector<TEnterpriseEventBaseType>), factory, lifetime)
-    );
-
-    return this;
-  }
-
-  /// <summary>
-  ///   Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to
-  ///   the specified stream ID.
-  /// </summary>
-  /// <param name="stream">
-  ///   An instance of <see cref="EventStreamId" /> that identifies the constant stream to be used.
-  /// </param>
-  /// <returns>
-  ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
-  ///   specified constant stream selector.
-  /// </returns>
-  public TypedNoticesBuilder<TEnterpriseEventBaseType> WithConstantStream(EventStreamId stream)
-  {
-    services.Add(
-      new ServiceDescriptor(
-        typeof(NoticeStreamSelector<TEnterpriseEventBaseType>),
-        _ => new ConstantStreamSelector<TEnterpriseEventBaseType>(stream),
-        ServiceLifetime.Singleton
-      )
     );
 
     return this;
@@ -92,7 +122,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     Func<IServiceProvider, NoticeSerializer<TEnterpriseEventBaseType>> factory,
     ServiceLifetime lifetime)
   {
-    services.Add(
+    Services.Add(
       new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), factory, lifetime)
     );
 
@@ -102,7 +132,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   public TypedNoticesBuilder<TEnterpriseEventBaseType> UseSerializer(
     NoticeSerializer<TEnterpriseEventBaseType> serializer)
   {
-    services.Add(new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), serializer));
+    Services.Add(new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), serializer));
 
     return this;
   }
@@ -123,12 +153,13 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   /// </returns>
   public TypedNoticesBuilder<TEnterpriseEventBaseType> WithJsonSerializer(
     Func<IServiceProvider, JsonSerializerOptions>? optionsAccessor = null,
-    ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+    ServiceLifetime serviceLifetime = ServiceLifetime.Singleton
+  )
   {
     ServiceDescriptor descriptor = CreateJsonSerializerDescriptor(optionsAccessor, serviceLifetime);
-    services.Add(descriptor);
+    Services.Add(descriptor);
     ServiceDescriptor nonGeneric = CreateNonGenericJsonSerializerDescriptor(optionsAccessor, serviceLifetime);
-    services.Add(nonGeneric);
+    Services.Add(nonGeneric);
 
     return this;
   }
@@ -139,15 +170,25 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   {
     return new ServiceDescriptor(
       typeof(NoticeSerializer<TEnterpriseEventBaseType>),
-      object (runtimeServiceProvider) =>
-      {
-        JsonSerializerOptions? possibleOptions = optionsAccessor?.Invoke(runtimeServiceProvider);
-        JsonNoticeSerializer<TEnterpriseEventBaseType> func = new(possibleOptions);
-
-        return func;
-      },
+      optionsAccessor != null ? WithOptionsAccessor : WithConfiguredOptions,
       serviceLifetime
     );
+
+    static NoticeSerializer<TEnterpriseEventBaseType> WithConfiguredOptions(IServiceProvider runtimeServiceProvider)
+    {
+      JsonSerializerOptions? possibleOptions = runtimeServiceProvider.GetService<JsonSerializerOptions>();
+      JsonNoticeSerializer<TEnterpriseEventBaseType> func = new(possibleOptions);
+
+      return func;
+    }
+
+    NoticeSerializer<TEnterpriseEventBaseType> WithOptionsAccessor(IServiceProvider runtimeServiceProvider)
+    {
+      JsonSerializerOptions? possibleOptions = optionsAccessor.Invoke(runtimeServiceProvider);
+      JsonNoticeSerializer<TEnterpriseEventBaseType> func = new(possibleOptions);
+
+      return func;
+    }
   }
 
   private static ServiceDescriptor CreateNonGenericJsonSerializerDescriptor(
@@ -158,7 +199,8 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
       typeof(NoticeSerializer),
       object (runtimeServiceProvider) =>
       {
-        JsonSerializerOptions? possibleOptions = optionsAccessor?.Invoke(runtimeServiceProvider);
+        JsonSerializerOptions? possibleOptions = optionsAccessor?.Invoke(runtimeServiceProvider) ??
+                                                 runtimeServiceProvider.GetService<JsonSerializerOptions>();
         JsonNoticeSerializer func = new(possibleOptions);
 
         return func;
@@ -175,7 +217,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     Func<IServiceProvider, NoticeValidator<TEnterpriseEventBaseType>> factory,
     ServiceLifetime lifetime)
   {
-    services.Add(
+    Services.Add(
       new ServiceDescriptor(typeof(NoticeValidator<TEnterpriseEventBaseType>), factory, lifetime)
     );
 
@@ -195,7 +237,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   public TypedNoticesBuilder<TEnterpriseEventBaseType> UseValidator(
     NoticeValidator<TEnterpriseEventBaseType> validator)
   {
-    services.Add(
+    Services.Add(
       new ServiceDescriptor(typeof(NoticeValidator<TEnterpriseEventBaseType>), validator)
     );
 
