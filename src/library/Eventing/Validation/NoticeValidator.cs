@@ -6,3 +6,9 @@ public abstract class NoticeValidator<TEnterpriseEventBaseType>
   public abstract IReadOnlyList<string>? Validate<TEventType>(TEventType notice, string serializedNotice)
     where TEventType : TEnterpriseEventBaseType;
 }
+
+public abstract class NoticeValidator
+{
+  public abstract IReadOnlyList<string>? Validate<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : notnull;
+}

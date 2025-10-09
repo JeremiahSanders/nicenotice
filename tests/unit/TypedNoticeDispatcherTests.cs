@@ -1,6 +1,5 @@
 using System.Text.Json;
 
-using Jds.NiceNotice.Tests.Unit.ExampleApplication;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 using Jds.TestingUtils.Randomization;
 
@@ -55,6 +54,67 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       JsonDefaults.DefaultJsonSerializerOptions
     );
     baseNoticeFromSerialized.ShouldBeEquivalentTo(baseNotice);
+  }
+
+  [Fact]
+  public async Task UsingDefaultInitializer_NonGenericDispatchAsync_DispatchesExpectedContent()
+  {
+    CapturingNoticeIo dispatcher = new();
+    ServiceProvider services = new ServiceCollection()
+      .AddNiceNotice(builder => builder.UseDispatcher(services => dispatcher, ServiceLifetime.Singleton))
+      .BuildServiceProvider();
+    ITypedNoticeDispatcher nonGenericTypedDispatcher = services.GetRequiredService<ITypedNoticeDispatcher>();
+
+    EnterpriseEventMessage message = new()
+    {
+      Message = Randomizer.Shared.RandomStringLatin(length: 24)
+    };
+
+    TypedNoticeDispatchResult<EnterpriseEventMessage> response = await nonGenericTypedDispatcher.DispatchAsync(message);
+
+    // Should return the same notice that was sent.
+    response.Notice.ShouldBeEquivalentTo(message);
+    // Should serialize to JSON by default
+    response.Serialized.ShouldNotBeNullOrWhiteSpace();
+    EnterpriseEventMessage parsedFromJson = response.DeserializeIoResponseAsJson();
+    parsedFromJson.ShouldBeEquivalentTo(message);
+    // Should send to a stream having the type's name
+    response.Stream.ShouldBe(EventStreamId.From(nameof(EnterpriseEventMessage)));
+    // Should send it to the configured dispatcher.
+    dispatcher.CapturedNotices.ShouldContain(item =>
+      item.Item1 == response.Stream && item.Item2 == response.IoResponse
+    );
+  }
+
+  [Fact]
+  public async Task UsingDefaultInitializer_NonGenericDispatchAsync_WithFullName_DispatchesExpectedContent()
+  {
+    CapturingNoticeIo dispatcher = new();
+    ServiceProvider services = new ServiceCollection()
+      .AddNiceNotice(builder => builder.UseDispatcher(services => dispatcher, ServiceLifetime.Singleton))
+      .BuildServiceProvider();
+    ITypedNoticeDispatcher nonGenericTypedDispatcher = services.GetRequiredService<ITypedNoticeDispatcher>();
+
+    EnterpriseEventMessage message = new()
+    {
+      Message = Randomizer.Shared.RandomStringLatin(length: 24)
+    };
+
+    TypedNoticeDispatchResult<EnterpriseEventMessage> response =
+      await nonGenericTypedDispatcher.DispatchAsync(message, dispatchToFullNameStream: true);
+
+    // Should return the same notice that was sent.
+    response.Notice.ShouldBeEquivalentTo(message);
+    // Should serialize to JSON by default
+    response.Serialized.ShouldNotBeNullOrWhiteSpace();
+    EnterpriseEventMessage parsedFromJson = response.DeserializeIoResponseAsJson();
+    parsedFromJson.ShouldBeEquivalentTo(message);
+    // Should send to a stream having the type's name
+    response.Stream.ShouldBe(EventStreamId.From(typeof(EnterpriseEventMessage).FullName!));
+    // Should send it to the configured dispatcher.
+    dispatcher.CapturedNotices.ShouldContain(item =>
+      item.Item1 == response.Stream && item.Item2 == response.IoResponse
+    );
   }
 
   [Fact]

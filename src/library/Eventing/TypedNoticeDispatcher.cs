@@ -1,6 +1,7 @@
 namespace Jds.NiceNotice;
 
-public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher) : ITypedNoticeDispatcher
+public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
+  : ITypedNoticeDispatcher
 {
   /// <summary>
   ///   Gets the notification dispatcher responsible for sending enterprise events to specific event streams.
@@ -14,7 +15,7 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher) : ITypedNoti
     CancellationToken cancellationToken = default) where TEventType : notnull
   {
     string serialized = Serialize(notice);
-    string response = await Dispatch(streamId, serialized);
+    string response = await Dispatch(streamId, Validate(notice, serialized));
 
     return new TypedNoticeDispatchResult<TEventType>
     {
@@ -57,11 +58,63 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher) : ITypedNoti
   /// <returns></returns>
   protected abstract string SerializeNotice<TEventType>(TEventType notice) where TEventType : notnull;
 
+  /// <summary>
+  ///   Validates the specified enterprise event notice.
+  /// </summary>
+  /// <param name="notice">The notice being dispatched.</param>
+  /// <param name="serializedNotice">
+  ///   The serialized <paramref name="notice" />.
+  ///   Useful for performing I/O-related validation.
+  ///   For example, rejecting notices whose serialized version exceeds API limits for the final enterprise event bus.
+  ///   (E.g., AWS SNS has a maximum allowed notification message length.)
+  /// </param>
+  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
+  /// <returns></returns>
+  protected virtual IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : notnull
+  {
+    return null;
+  }
+
   public static TypedNoticeDispatcher Create(
     INoticeIo ioDispatcher,
-    NoticeSerializer? noticeSerializer = null)
+    NoticeSerializer? noticeSerializer = null,
+    NoticeValidator? noticeValidator = null)
   {
-    return new DefaultTypedNoticeDispatcher(ioDispatcher, noticeSerializer ?? new JsonNoticeSerializer());
+    return new DefaultTypedNoticeDispatcher(
+      ioDispatcher,
+      noticeSerializer ?? new JsonNoticeSerializer(),
+      noticeValidator ?? new NoOpNoticeValidator()
+    );
+  }
+
+  private string Validate<TEvent>(TEvent notice, string noticeJson)
+    where TEvent : notnull
+  {
+    IReadOnlyList<string>? validationResults;
+    try
+    {
+      validationResults = ValidateNotice(notice, noticeJson);
+    }
+    catch (NoticeValidationException)
+    {
+      throw;
+    }
+    catch (Exception e)
+    {
+      throw new NoticeValidationException(message: "Failed to validate typed notice.", e);
+    }
+
+    if (validationResults is {Count: > 0})
+    {
+      throw new NoticeValidationException(
+        $"{typeof(TEvent).Name} validation failed.",
+        validationResults,
+        innerException: null
+      );
+    }
+
+    return noticeJson;
   }
 }
 
@@ -97,7 +150,8 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
   /// <exception cref="IOException">Thrown if an I/O error occurs during dispatch.</exception>
   public virtual async Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventType>(
     TEventType notice,
-    CancellationToken cancellationToken = default)
+    CancellationToken cancellationToken = default
+  )
     where TEventType : TEnterpriseEventBaseType
   {
     EventStreamId streamId = GetStream();
@@ -177,6 +231,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
     }
   }
 
+
   /// <summary>
   ///   Gets the event stream ID for the specified enterprise event.
   /// </summary>
@@ -227,14 +282,14 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
   /// <returns>A new instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />.</returns>
   public static TypedNoticeDispatcher<TEnterpriseEventBaseType> Create(
     INoticeIo ioDispatcher,
-    NoticeStreamSelector<TEnterpriseEventBaseType> streamSelector,
+    NoticeStreamSelector<TEnterpriseEventBaseType>? streamSelector = null,
     NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null,
     NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null
   )
   {
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
       ioDispatcher,
-      streamSelector,
+      streamSelector ?? StreamSelectors.TypeNameStreams<TEnterpriseEventBaseType>(),
       noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
       validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()
     );

@@ -7,7 +7,7 @@ public record ExampleLoginEnterpriseEvent : EnterpriseEvent
 {
   protected override string SchemaTitle => "Login";
 
-  [Required]
+  [Required(AllowEmptyStrings = false)]
   [JsonPropertyName(name: "username")]
   public required string Username { get; init; } = string.Empty;
 }

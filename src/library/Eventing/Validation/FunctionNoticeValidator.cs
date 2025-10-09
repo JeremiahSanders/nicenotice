@@ -16,3 +16,18 @@ public class FunctionNoticeValidator<TEnterpriseEventBaseType>(
     return validator(notice, serializedNotice);
   }
 }
+
+/// <summary>
+///   An implementation of <see cref="NoticeValidator" /> that uses
+///   a delegate to validate the enterprise event notice.
+/// </summary>
+public class FunctionNoticeValidator(
+  Func<object, string, IReadOnlyList<string>?> validator
+) : NoticeValidator
+{
+  /// <inheritdoc />
+  public override IReadOnlyList<string>? Validate<TEventType>(TEventType notice, string serializedNotice)
+  {
+    return validator(notice, serializedNotice);
+  }
+}
