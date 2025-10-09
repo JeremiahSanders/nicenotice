@@ -2,12 +2,18 @@ namespace Jds.NiceNotice;
 
 internal class DefaultTypedNoticeDispatcher(
   INoticeIo ioDispatcher,
-  NoticeSerializer noticeSerializer
+  NoticeSerializer noticeSerializer,
+  NoticeValidator? noticeValidator
 ) : TypedNoticeDispatcher(ioDispatcher)
 {
   protected override string SerializeNotice<TEventType>(TEventType notice)
   {
     return noticeSerializer.Serialize(notice);
+  }
+
+  protected override IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
+  {
+    return noticeValidator?.Validate(notice, serializedNotice);
   }
 }
 

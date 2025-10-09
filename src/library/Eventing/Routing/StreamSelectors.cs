@@ -114,21 +114,49 @@ public static class StreamSelectors
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
     bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
   {
-    return builder.UseStreamSelector(useFullTypeName ? FullNameFactory : TypeNameFactory, ServiceLifetime.Singleton);
+    return builder.UseStreamSelector(useFullTypeName ? FullName : TypeName, ServiceLifetime.Singleton);
 
-    static NoticeStreamSelector<TEnterpriseEventBaseType> FullNameFactory(IServiceProvider _)
+    static NoticeStreamSelector<TEnterpriseEventBaseType> FullName(IServiceProvider _)
     {
-      return Delegate<TEnterpriseEventBaseType>(static eventData => (EventStreamId)(eventData.GetType()
-          .FullName ?? eventData.GetType()
-          .Name)
-      );
+      return FullNameFactory<TEnterpriseEventBaseType>();
     }
 
-    static NoticeStreamSelector<TEnterpriseEventBaseType> TypeNameFactory(IServiceProvider _)
+    static NoticeStreamSelector<TEnterpriseEventBaseType> TypeName(IServiceProvider _)
     {
-      return Delegate<TEnterpriseEventBaseType>(static eventData => (EventStreamId)eventData.GetType()
-        .Name
-      );
+      return FullNameFactory<TEnterpriseEventBaseType>();
     }
+  }
+
+  public static NoticeStreamSelector<TEnterpriseEventBaseType> TypeNameStreams<TEnterpriseEventBaseType>(
+    bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
+  {
+    return useFullTypeName ? FullNameFactory<TEnterpriseEventBaseType>() : TypeNameFactory<TEnterpriseEventBaseType>();
+  }
+
+  private static NoticeStreamSelector<TEnterpriseEventBaseType> FullNameFactory<TEnterpriseEventBaseType>()
+    where TEnterpriseEventBaseType : notnull
+  {
+    return Delegate<TEnterpriseEventBaseType>(FullNameStreamProvider);
+  }
+
+  private static NoticeStreamSelector<TEnterpriseEventBaseType> TypeNameFactory<TEnterpriseEventBaseType>()
+    where TEnterpriseEventBaseType : notnull
+  {
+    return Delegate<TEnterpriseEventBaseType>(TypeNameStreamProvider);
+  }
+
+  internal static EventStreamId FullNameStreamProvider<TEnterpriseEventBaseType>(TEnterpriseEventBaseType eventData)
+    where TEnterpriseEventBaseType : notnull
+  {
+    return (EventStreamId)(eventData.GetType()
+      .FullName ?? eventData.GetType()
+      .Name);
+  }
+
+  internal static EventStreamId TypeNameStreamProvider<TEnterpriseEventBaseType>(TEnterpriseEventBaseType eventData)
+    where TEnterpriseEventBaseType : notnull
+  {
+    return (EventStreamId)eventData.GetType()
+      .Name;
   }
 }

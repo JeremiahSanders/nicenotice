@@ -8,3 +8,11 @@ public class NoOpNoticeValidator<TEnterpriseEventBaseType> : NoticeValidator<TEn
     return null;
   }
 }
+
+public class NoOpNoticeValidator : NoticeValidator
+{
+  public override IReadOnlyList<string>? Validate<TEventType>(TEventType notice, string serializedNotice)
+  {
+    return null;
+  }
+}

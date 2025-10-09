@@ -29,10 +29,11 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   /// </returns>
   internal TypedNoticesBuilder<TEnterpriseEventBaseType> ApplyDefaults(
     ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
-    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton
+    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime routerServiceLifetime = ServiceLifetime.Singleton
   )
   {
-    ApplyDefaults(Services, jsonSerializerServiceLifetime, validatorServiceLifetime);
+    ApplyDefaults(Services, jsonSerializerServiceLifetime, validatorServiceLifetime, routerServiceLifetime);
 
     return this;
   }
@@ -71,19 +72,26 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     // Configure validation
     ServiceDescriptor validator = new(
       typeof(NoticeValidator<TEnterpriseEventBaseType>),
-      static _ => new NoOpNoticeValidator<TEnterpriseEventBaseType>(),
+      static _ => Validators.DataAnnotationsValidator<TEnterpriseEventBaseType>(),
       validatorServiceLifetime
     );
     services.TryAdd(validator);
+    services.TryAdd(
+      new ServiceDescriptor(
+        typeof(NoticeValidator),
+        static _ => new DataAnnotationsValidator(),
+        validatorServiceLifetime
+      )
+    );
 
     // Configure routing
-    ServiceDescriptor notifyOfOmittedConfigurationStreamSelector =
+    ServiceDescriptor typeNameRouter =
       new(
         typeof(NoticeStreamSelector<TEnterpriseEventBaseType>),
-        static _ => new InvalidOperationStreamSelector<TEnterpriseEventBaseType>(),
+        static _ => StreamSelectors.TypeNameStreams<TEnterpriseEventBaseType>(),
         routingServiceLifetime
       );
-    services.TryAdd(notifyOfOmittedConfigurationStreamSelector);
+    services.TryAdd(typeNameRouter);
 
     return services;
   }
