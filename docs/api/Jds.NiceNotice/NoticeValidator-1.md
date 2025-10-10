@@ -1,5 +1,7 @@
 # NoticeValidator&lt;TEnterpriseEventBaseType&gt; class
 
+An abstraction representing the algorithm used for validating a notice.
+
 ```csharp
 public abstract class NoticeValidator<TEnterpriseEventBaseType>
 ```
@@ -8,7 +10,7 @@ public abstract class NoticeValidator<TEnterpriseEventBaseType>
 
 | name | description |
 | --- | --- |
-| abstract [Validate&lt;TEventType&gt;](NoticeValidator-1/Validate.md)(…) |  |
+| abstract [Validate&lt;TEventType&gt;](NoticeValidator-1/Validate.md)(…) | Performs validation on the given notice, which is a subtype of *TEnterpriseEventBaseType*. Returns null if the notice is valid, otherwise a list of validation errors. |
 
 ## Protected Members
 

@@ -1,5 +1,7 @@
 # NoticeSerializer class
 
+An abstraction representing the algorithm used for serializing a notice to a string.
+
 ```csharp
 public abstract class NoticeSerializer
 ```
@@ -8,7 +10,7 @@ public abstract class NoticeSerializer
 
 | name | description |
 | --- | --- |
-| abstract [Serialize&lt;TEventType&gt;](NoticeSerializer/Serialize.md)(…) |  |
+| abstract [Serialize&lt;TEventType&gt;](NoticeSerializer/Serialize.md)(…) | Serialize the given notice to a string. |
 
 ## Protected Members
 

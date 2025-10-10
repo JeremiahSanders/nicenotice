@@ -1,14 +1,20 @@
 # NoticeStreamSelector&lt;TEnterpriseEventBaseType&gt; class
 
+An abstraction representing the algorithm used for selecting a logical event stream (identified by [`EventStreamId`](./EventStreamId.md)) for a notice, a process sometimes referred to as routing.
+
 ```csharp
 public abstract class NoticeStreamSelector<TEnterpriseEventBaseType>
 ```
+
+| parameter | description |
+| --- | --- |
+| TEnterpriseEventBaseType |  |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| abstract [GetStreamId&lt;TEventType&gt;](NoticeStreamSelector-1/GetStreamId.md)(…) |  |
+| abstract [GetStreamId&lt;TEventType&gt;](NoticeStreamSelector-1/GetStreamId.md)(…) | Determines the logical event stream for the given notice. (This process is sometimes referred to as routing.) |
 
 ## Protected Members
 

@@ -1,5 +1,7 @@
 # NoOpNoticeValidator&lt;TEnterpriseEventBaseType&gt; class
 
+A notice validator that does not perform any validation (all notices are considered valid).
+
 ```csharp
 public class NoOpNoticeValidator<TEnterpriseEventBaseType> : 
     NoticeValidator<TEnterpriseEventBaseType>

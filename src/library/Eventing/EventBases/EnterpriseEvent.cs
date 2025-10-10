@@ -11,6 +11,9 @@ public abstract record EnterpriseEvent : EnterpriseEventBase
   private readonly string _schemaTitle;
   private string? _name;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="EnterpriseEvent"/> class.
+  /// </summary>
   protected EnterpriseEvent()
   {
     _schemaTitle = GetType()

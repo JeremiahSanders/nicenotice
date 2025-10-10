@@ -1,8 +1,19 @@
 # NoticeSerializer.Serialize&lt;TEventType&gt; method
 
+Serialize the given notice to a string.
+
 ```csharp
 public abstract string Serialize<TEventType>(TEventType notice)
 ```
+
+| parameter | description |
+| --- | --- |
+| TEventType | A notice object type. |
+| notice | A notice to serialize. |
+
+## Return Value
+
+Returns the serialized notice.
 
 ## See Also
 

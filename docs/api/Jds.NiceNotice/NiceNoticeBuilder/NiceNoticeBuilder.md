@@ -1,8 +1,14 @@
 # NiceNoticeBuilder constructor
 
+A fluent builder for configuring NiceNotice services.
+
 ```csharp
 public NiceNoticeBuilder(IServiceCollection services)
 ```
+
+| parameter | description |
+| --- | --- |
+| services | A service collection to which NiceNotice is being added. |
 
 ## See Also
 

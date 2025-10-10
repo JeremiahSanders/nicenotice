@@ -13,6 +13,9 @@ public static class StreamSelectors
 | static [Constant&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/Constant.md)(…) | Creates a notice stream selector which sends all events to the same *stream*. |
 | static [Delegate&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/Delegate.md)(…) | Creates a notice stream selector which uses the provided *selector* to determine each enterprise event's stream. |
 | static [TypeMap&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/TypeMap.md)(…) | Creates a notice stream selector which uses the provided type *map* and optional *defaultStream* to specify where events should be routed. |
+| static [TypeNameStreams&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/TypeNameStreams.md)(…) | Creates a notice stream selector which sends events to streams using their type name. |
+| static [WithConstantStream&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/WithConstantStream.md)(…) | Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to the specified stream ID. |
+| static [WithTypeNameStreams&lt;TEnterpriseEventBaseType&gt;](StreamSelectors/WithTypeNameStreams.md)(…) | Configures the enterprise event builder to use a stream selector which routes each enterprise event to a stream having the same name as the event's type. (E.g., a type named "MyEvent" will be routed to a stream named `MyEvent`.) |
 
 ## See Also
 

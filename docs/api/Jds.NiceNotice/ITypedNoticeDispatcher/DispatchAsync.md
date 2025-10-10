@@ -1,9 +1,22 @@
 # ITypedNoticeDispatcher.DispatchAsync&lt;TEventType&gt; method
 
+Dispatches an enterprise event notice to a specific event stream.
+
 ```csharp
 public Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventType>(TEventType notice, 
     EventStreamId streamId, CancellationToken cancellationToken = default)
 ```
+
+| parameter | description |
+| --- | --- |
+| TEventType |  |
+| notice |  |
+| streamId |  |
+| cancellationToken |  |
+
+## Remarks
+
+The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](../INoticeIo.md).
 
 ## See Also
 

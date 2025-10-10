@@ -1,9 +1,24 @@
 # NoticeStreamSelector&lt;TEnterpriseEventBaseType&gt;.GetStreamId&lt;TEventType&gt; method
 
+Determines the logical event stream for the given notice. (This process is sometimes referred to as routing.)
+
 ```csharp
 public abstract EventStreamId GetStreamId<TEventType>(TEventType notice)
     where TEventType : TEnterpriseEventBaseType
 ```
+
+| parameter | description |
+| --- | --- |
+| TEventType | The notice object type, a subtype of *TEnterpriseEventBaseType*. |
+| notice | The notice to be routed. |
+
+## Return Value
+
+Returns the logical stream identifier.
+
+## Remarks
+
+Note that [`EventStreamId`](../EventStreamId.md) is a logical token; it is not a direct reference to a physical stream. Notice dispatch I/O implementations determine how the logical stream is mapped to a physical stream (e.g., an SNS topic).
 
 ## See Also
 

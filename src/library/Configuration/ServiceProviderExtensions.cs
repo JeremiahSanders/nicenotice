@@ -2,6 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Jds.NiceNotice;
 
+/// <summary>
+///   Methods extending <see cref="IServiceProvider" /> to support cross-app notifications services.
+/// </summary>
 public static class ServiceProviderExtensions
 {
   /// <summary>

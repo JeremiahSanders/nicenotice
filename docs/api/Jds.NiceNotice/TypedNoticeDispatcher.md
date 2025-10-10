@@ -1,23 +1,30 @@
 # TypedNoticeDispatcher class
 
+A base class implementation of [`ITypedNoticeDispatcher`](./ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior.
+
 ```csharp
 public abstract class TypedNoticeDispatcher : ITypedNoticeDispatcher
 ```
+
+| parameter | description |
+| --- | --- |
+| ioDispatcher | A notice I/O implementation. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| static [Create](TypedNoticeDispatcher/Create.md)(…) |  |
+| static [Create](TypedNoticeDispatcher/Create.md)(…) | Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator. |
 | virtual [DispatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher/DispatchAsync.md)(…) |  |
 
 ## Protected Members
 
 | name | description |
 | --- | --- |
-| [TypedNoticeDispatcher](TypedNoticeDispatcher/TypedNoticeDispatcher.md)(…) |  |
+| [TypedNoticeDispatcher](TypedNoticeDispatcher/TypedNoticeDispatcher.md)(…) | A base class implementation of [`ITypedNoticeDispatcher`](./ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
 | [IoDispatcher](TypedNoticeDispatcher/IoDispatcher.md) { get; } | Gets the notification dispatcher responsible for sending enterprise events to specific event streams. |
 | abstract [SerializeNotice&lt;TEventType&gt;](TypedNoticeDispatcher/SerializeNotice.md)(…) | Serializes the specified enterprise event notice to a string representation. |
+| virtual [ValidateNotice&lt;TEventType&gt;](TypedNoticeDispatcher/ValidateNotice.md)(…) | Validates the specified enterprise event notice. |
 
 ## See Also
 

@@ -1,9 +1,20 @@
 # NoticeSerializer&lt;TEnterpriseEventBaseType&gt;.Serialize&lt;TEventType&gt; method
 
+Serializes the given notice to a string. Values are restricted to subtypes of *TEnterpriseEventBaseType*.
+
 ```csharp
 public abstract string Serialize<TEventType>(TEventType notice)
     where TEventType : TEnterpriseEventBaseType
 ```
+
+| parameter | description |
+| --- | --- |
+| TEventType | A notice type, which must be a subtype of *TEnterpriseEventBaseType*. |
+| notice | A notice to serialize. |
+
+## Return Value
+
+Returns the serialized notice.
 
 ## See Also
 

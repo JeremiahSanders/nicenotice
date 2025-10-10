@@ -127,6 +127,21 @@ public static class StreamSelectors
     }
   }
 
+  /// <summary>
+  ///   Creates a notice stream selector which sends events to streams using their type name.
+  /// </summary>
+  /// <remarks>
+  ///   This is a very common routing strategy.
+  ///   Custom implementations of <see cref="INoticeIo" /> could use the <c>nameof</c> keyword
+  ///   within a <c>switch</c> statement to connect logical event streams to their I/O destination (e.g., SNS topic).
+  /// </remarks>
+  /// <param name="useFullTypeName">
+  ///   A value indicating whether the type name (e.g., <c>UserLogin</c>)
+  ///   or the full type name (e.g., <c>MyOrganization.MyApp.UserLogin</c>)
+  ///   should be used when determining the <see cref="EventStreamId" />.
+  /// </param>
+  /// <typeparam name="TEnterpriseEventBaseType">A base enterprise event notice type.</typeparam>
+  /// <returns>Returns the constructed stream selector.</returns>
   public static NoticeStreamSelector<TEnterpriseEventBaseType> TypeNameStreams<TEnterpriseEventBaseType>(
     bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
   {

@@ -1,5 +1,7 @@
 # NiceNoticeBuilder.Services property
 
+Gets the service collection (obtained from the constructor and to which services are added).
+
 ```csharp
 public IServiceCollection Services { get; }
 ```

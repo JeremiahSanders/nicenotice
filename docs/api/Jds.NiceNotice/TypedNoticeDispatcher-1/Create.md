@@ -4,7 +4,7 @@ Creates an instance of [`TypedNoticeDispatcher`](../TypedNoticeDispatcher-1.md) 
 
 ```csharp
 public static TypedNoticeDispatcher Create(INoticeIo ioDispatcher, 
-    NoticeStreamSelector<TEnterpriseEventBaseType> streamSelector, 
+    NoticeStreamSelector<TEnterpriseEventBaseType>? streamSelector = null, 
     NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null, 
     NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null)
 ```

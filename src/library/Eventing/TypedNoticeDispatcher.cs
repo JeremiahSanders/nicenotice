@@ -1,5 +1,10 @@
 namespace Jds.NiceNotice;
 
+/// <summary>
+///   A base class implementation of <see cref="ITypedNoticeDispatcher" />.
+///   Provides <c>abstract</c> and <c>virtual</c> methods for customizing its behavior.
+/// </summary>
+/// <param name="ioDispatcher">A notice I/O implementation.</param>
 public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
   : ITypedNoticeDispatcher
 {
@@ -76,6 +81,18 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
     return null;
   }
 
+  /// <summary>
+  ///   Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator.
+  /// </summary>
+  /// <param name="ioDispatcher">A notice I/O implementation.</param>
+  /// <param name="noticeSerializer">Optional. A notice serializer. Defaults to <c>json</c> serialization.</param>
+  /// <param name="noticeValidator">
+  ///   Optional. A notice serializer.
+  ///   Defaults to <see cref="NoOpNoticeValidator" /> (i.e., no validation is performed).
+  ///   Create an instance with <see cref="Jds.NiceNotice.Validators.DataAnnotationsValidator" />
+  ///   to use standard data annotation validation.
+  /// </param>
+  /// <returns></returns>
   public static TypedNoticeDispatcher Create(
     INoticeIo ioDispatcher,
     NoticeSerializer? noticeSerializer = null,

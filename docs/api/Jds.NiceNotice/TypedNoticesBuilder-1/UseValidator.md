@@ -1,6 +1,6 @@
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseValidator method (1 of 2)
 
-Configures the enterprise event builder to use a validator for validating events.
+Configures the enterprise event validation logic used, registering the provided instance as a singleton.
 
 ```csharp
 public TypedNoticesBuilder UseValidator(NoticeValidator<TEnterpriseEventBaseType> validator)
@@ -12,7 +12,17 @@ public TypedNoticesBuilder UseValidator(NoticeValidator<TEnterpriseEventBaseType
 
 ## Return Value
 
-Returns the modified [`TypedNoticesBuilder`](../TypedNoticesBuilder-1.md) instance configured to use the provided validator.
+Returns this builder instance for further configuration.
+
+## Remarks
+
+See [`Validators`](../Validators.md) for helper methods to create validators.
+
+[`DataAnnotationsValidator`](../Validators/DataAnnotationsValidator.md) uses standard data annotation validation.
+
+To skip validation, [`NoOpValidator`](../Validators/NoOpValidator.md).
+
+For more complex or custom needs, derive an implementation of [`NoticeValidator`](../NoticeValidator-1.md).
 
 ## See Also
 
@@ -24,11 +34,32 @@ Returns the modified [`TypedNoticesBuilder`](../TypedNoticesBuilder-1.md) instan
 
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseValidator method (2 of 2)
 
+Configures the enterprise event validation logic used, registering the provided instance as a singleton.
+
 ```csharp
 public TypedNoticesBuilder UseValidator(
     Func<IServiceProvider, NoticeValidator<TEnterpriseEventBaseType>> factory, 
     ServiceLifetime lifetime)
 ```
+
+| parameter | description |
+| --- | --- |
+| factory | A factory function which receives an IServiceProvider and returns an implementation of [`NoticeValidator`](../NoticeValidator-1.md). |
+| lifetime | A service lifetime for the validator created by the *factory*. |
+
+## Return Value
+
+Returns this builder instance for further configuration.
+
+## Remarks
+
+See [`Validators`](../Validators.md) for helper methods to create validators.
+
+[`DataAnnotationsValidator`](../Validators/DataAnnotationsValidator.md) uses standard data annotation validation.
+
+To skip validation, [`NoOpValidator`](../Validators/NoOpValidator.md).
+
+For more complex or custom needs, try [`FunctionNoticeValidator`](../FunctionNoticeValidator.md), or derive an implementation of [`NoticeValidator`](../NoticeValidator-1.md).
 
 ## See Also
 

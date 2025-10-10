@@ -1,5 +1,7 @@
 # ServiceCollectionExtensions class
 
+Methods extending IServiceCollection to add cross-app notifications services.
+
 ```csharp
 public static class ServiceCollectionExtensions
 ```
