@@ -1,8 +1,22 @@
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseSerializer method (1 of 2)
 
+Configures the algorithm used to serialize enterprise events.
+
 ```csharp
 public TypedNoticesBuilder UseSerializer(NoticeSerializer<TEnterpriseEventBaseType> serializer)
 ```
+
+| parameter | description |
+| --- | --- |
+| serializer | The [`NoticeSerializer`](../NoticeSerializer-1.md) implementation to be used for serializing notices. |
+
+## Return Value
+
+Returns this instance for further customization.
+
+## Remarks
+
+The recommended implementation is JsonNoticeSerializer. However, you can use any implementation of [`NoticeSerializer`](../NoticeSerializer-1.md).
 
 ## See Also
 
@@ -14,11 +28,26 @@ public TypedNoticesBuilder UseSerializer(NoticeSerializer<TEnterpriseEventBaseTy
 
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseSerializer method (2 of 2)
 
+Configures the algorithm used to serialize enterprise events.
+
 ```csharp
 public TypedNoticesBuilder UseSerializer(
     Func<IServiceProvider, NoticeSerializer<TEnterpriseEventBaseType>> factory, 
     ServiceLifetime lifetime)
 ```
+
+| parameter | description |
+| --- | --- |
+| factory | A factory method which receives an IServiceProvider and returns an implementation of [`NoticeSerializer`](../NoticeSerializer-1.md). |
+| lifetime | The service lifetime of the instance returned by *factory*. |
+
+## Return Value
+
+Returns this instance for further customization
+
+## Remarks
+
+The recommended implementation is JsonNoticeSerializer. However, you can use any implementation of [`NoticeSerializer`](../NoticeSerializer-1.md).
 
 ## See Also
 

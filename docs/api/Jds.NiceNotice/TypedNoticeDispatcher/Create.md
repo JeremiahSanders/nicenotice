@@ -1,14 +1,23 @@
 # TypedNoticeDispatcher.Create method
 
+Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator.
+
 ```csharp
 public static TypedNoticeDispatcher Create(INoticeIo ioDispatcher, 
-    NoticeSerializer? noticeSerializer = null)
+    NoticeSerializer? noticeSerializer = null, NoticeValidator? noticeValidator = null)
 ```
+
+| parameter | description |
+| --- | --- |
+| ioDispatcher | A notice I/O implementation. |
+| noticeSerializer | Optional. A notice serializer. Defaults to `json` serialization. |
+| noticeValidator | Optional. A notice serializer. Defaults to [`NoOpNoticeValidator`](../NoOpNoticeValidator.md) (i.e., no validation is performed). Create an instance with [`DataAnnotationsValidator`](../Validators/DataAnnotationsValidator.md) to use standard data annotation validation. |
 
 ## See Also
 
 * interface [INoticeIo](../INoticeIo.md)
 * class [NoticeSerializer](../NoticeSerializer.md)
+* class [NoticeValidator](../NoticeValidator.md)
 * class [TypedNoticeDispatcher](../TypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

@@ -1,38 +1,82 @@
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jds.NiceNotice;
 
+/// <summary>
+///   Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices.
+/// </summary>
 public static class TypedNoticeConfigurationExtensions
 {
+  /// <summary>
+  ///   Notice event stream routing algorithms which are supported for configuration-based setup.
+  /// </summary>
   public enum RoutingTypes
   {
+    /// <summary>
+    ///   A routing implementation using the full type name (including namespace).
+    /// </summary>
     TypeFullName,
+
+    /// <summary>
+    ///   A routing implementation using the type name only.
+    /// </summary>
     TypeName
   }
 
+  /// <summary>
+  ///   Notice serialization algorithms which are supported for configuration-based setup.
+  /// </summary>
   public enum SerializationTypes
   {
+    /// <summary>
+    ///   A serialization implementation using JSON.
+    /// </summary>
     Json
   }
 
+  /// <summary>
+  ///   Notice validation algorithms which are supported for configuration-based setup.
+  /// </summary>
   public enum ValidationTypes
   {
+    /// <summary>
+    ///   No validation.
+    /// </summary>
     None,
+
+    /// <summary>
+    ///   Validation using data annotations data attributes, e.g., <see cref="RequiredAttribute" />.
+    /// </summary>
     DataAttributes
   }
 
 
   /// <summary>
-  ///   This overload
+  ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
+  ///   using the default <see cref="EnterpriseEventBase" /> as the assumed base type.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configuration"></param>
-  /// <param name="lifetime"></param>
+  /// <remarks>
+  ///   Use the
+  ///   <see
+  ///     cref="NiceNoticeBuilder.UseTypedNotices{TNoticeBaseType}(System.Action{Jds.NiceNotice.TypedNoticesBuilder{TNoticeBaseType}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)" />
+  ///   overload to specify a different base type.
+  /// </remarks>
+  /// <param name="builder">This nice notice builder instance.</param>
+  /// <param name="configuration">
+  ///   A configuration object, used to configure typed notice dispatching using predefined algorithms.
+  /// </param>
+  /// <param name="lifetime">
+  ///   A service lifetime for the typed notice dispatching services.
+  ///   The typed notice dispatcher depends upon the configured <see cref="INoticeIo" />,
+  ///   so be considerate of the thread-safety and best practices of your I/O implementation.
+  /// </param>
   /// <returns></returns>
   public static NiceNoticeBuilder UseTypedNotices(
     this NiceNoticeBuilder builder,
     TypedNoticeConfiguration configuration,
-    ServiceLifetime lifetime = ServiceLifetime.Singleton)
+    ServiceLifetime lifetime = ServiceLifetime.Scoped)
   {
     return builder.UseTypedNotices(
       typedNoticesBuilder =>
@@ -90,8 +134,19 @@ public static class TypedNoticeConfigurationExtensions
   /// </summary>
   public class TypedNoticeConfiguration
   {
+    /// <summary>
+    ///   Gets or sets the routing type.
+    /// </summary>
     public RoutingTypes RoutingType { get; set; } = RoutingTypes.TypeName;
+
+    /// <summary>
+    ///   Gets or sets the serialization type.
+    /// </summary>
     public SerializationTypes SerializationType { get; set; } = SerializationTypes.Json;
+
+    /// <summary>
+    ///   Gets or sets the validation type.
+    /// </summary>
     public ValidationTypes ValidationType { get; set; } = ValidationTypes.DataAttributes;
   }
 }

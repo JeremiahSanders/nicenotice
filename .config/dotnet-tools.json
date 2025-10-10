@@ -7,14 +7,14 @@
       "commands": [
         "cicee"
       ],
-      "rollForward": false
+      "rollForward": true
     },
     "xmldocmd": {
       "version": "2.9.0",
       "commands": [
         "xmldocmd"
       ],
-      "rollForward": false
+      "rollForward": true
     }
   }
 }

@@ -1,5 +1,7 @@
 # ITypedNoticeDispatcher interface
 
+Defines an interface for dispatching enterprise events to logical event streams. The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](./INoticeIo.md).
+
 ```csharp
 public interface ITypedNoticeDispatcher
 ```
@@ -8,7 +10,7 @@ public interface ITypedNoticeDispatcher
 
 | name | description |
 | --- | --- |
-| [DispatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher/DispatchAsync.md)(…) |  |
+| [DispatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher/DispatchAsync.md)(…) | Dispatches an enterprise event notice to a specific event stream. |
 
 ## See Also
 

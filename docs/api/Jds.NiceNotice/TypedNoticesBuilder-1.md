@@ -1,18 +1,25 @@
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt; class
 
+A builder for configuring typed notices (enterprise events) which derive from a base type.
+
 ```csharp
 public class TypedNoticesBuilder<TEnterpriseEventBaseType>
 ```
+
+| parameter | description |
+| --- | --- |
+| TEnterpriseEventBaseType | The base type for enterprise events. |
+| services | The service collection to which services are added. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| [TypedNoticesBuilder](TypedNoticesBuilder-1/TypedNoticesBuilder.md)(…) |  |
-| [UseSerializer](TypedNoticesBuilder-1/UseSerializer.md)(…) |  (2 methods) |
-| [UseStreamSelector](TypedNoticesBuilder-1/UseStreamSelector.md)(…) |  (2 methods) |
-| [UseValidator](TypedNoticesBuilder-1/UseValidator.md)(…) |  (2 methods) |
-| [WithConstantStream](TypedNoticesBuilder-1/WithConstantStream.md)(…) | Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to the specified stream ID. |
+| [TypedNoticesBuilder](TypedNoticesBuilder-1/TypedNoticesBuilder.md)(…) | A builder for configuring typed notices (enterprise events) which derive from a base type. |
+| [Services](TypedNoticesBuilder-1/Services.md) { get; } | Gets the service collection (obtained from the constructor and to which services are added). |
+| [UseSerializer](TypedNoticesBuilder-1/UseSerializer.md)(…) | Configures the algorithm used to serialize enterprise events. (2 methods) |
+| [UseStreamSelector](TypedNoticesBuilder-1/UseStreamSelector.md)(…) | Configures the algorithm used to identify the [`EventStreamId`](./EventStreamId.md) to which a notice should be dispatched. Registers the provided instance in the service collection as a singleton. (2 methods) |
+| [UseValidator](TypedNoticesBuilder-1/UseValidator.md)(…) | Configures the enterprise event validation logic used, registering the provided instance as a singleton. (2 methods) |
 | [WithJsonSerializer](TypedNoticesBuilder-1/WithJsonSerializer.md)(…) | Configures the enterprise event builder to use a JSON serializer for serializing events. |
 
 ## See Also

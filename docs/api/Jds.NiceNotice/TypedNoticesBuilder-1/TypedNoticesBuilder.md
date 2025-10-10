@@ -1,8 +1,15 @@
 # TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt; constructor
 
+A builder for configuring typed notices (enterprise events) which derive from a base type.
+
 ```csharp
 public TypedNoticesBuilder(IServiceCollection services)
 ```
+
+| parameter | description |
+| --- | --- |
+| TEnterpriseEventBaseType | The base type for enterprise events. |
+| services | The service collection to which services are added. |
 
 ## See Also
 

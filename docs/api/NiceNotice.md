@@ -4,33 +4,43 @@
 
 | public type | description |
 | --- | --- |
-| class [CapturingDispatcher](./Jds.NiceNotice/CapturingDispatcher.md) | An implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) which is intended for test purposes. This dispatcher should not be used in a runtime environment; its use can lead to memory leaks. |
-| static class [DefaultEnterpriseEventRouters](./Jds.NiceNotice/DefaultEnterpriseEventRouters.md) |  |
-| static class [DefaultEnterpriseEventValidators](./Jds.NiceNotice/DefaultEnterpriseEventValidators.md) |  |
+| class [CapturingNoticeIo](./Jds.NiceNotice/CapturingNoticeIo.md) | An implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) which is intended for test purposes. Each dispatched notice is captured and can be retrieved via [`CapturedNotices`](./Jds.NiceNotice/CapturingNoticeIo/CapturedNotices.md). |
+| class [DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/DataAnnotationsValidator-1.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator-1.md) that uses Validator to validate the enterprise event notice. |
+| class [DataAnnotationsValidator](./Jds.NiceNotice/DataAnnotationsValidator.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator.md) that uses Validator to validate the enterprise event notice. |
+| abstract record [EnterpriseEvent](./Jds.NiceNotice/EnterpriseEvent.md) | A base enterprise event (data transfer object), suitable for extending with application-specific properties. |
+| record [EnterpriseEventBase](./Jds.NiceNotice/EnterpriseEventBase.md) | A base typed notice supporting unique instance identification ([`Id`](./Jds.NiceNotice/EnterpriseEventBase/Id.md), enabling deduplication) and a timestamp ([`Timestamp`](./Jds.NiceNotice/EnterpriseEventBase/Timestamp.md)). |
+| record [EnterpriseEventMessage](./Jds.NiceNotice/EnterpriseEventMessage.md) | An enterprise event that contains a message. |
 | struct [EventStreamId](./Jds.NiceNotice/EventStreamId.md) | Represents a unique identifier for an event stream. This type is used to uniquely identify and manage event streams, ensuring type safety when working with specific streams in the application's event notification system. |
-| static class [FaultToleranceExtensions](./Jds.NiceNotice/FaultToleranceExtensions.md) |  |
+| static class [FaultToleranceExtensions](./Jds.NiceNotice/FaultToleranceExtensions.md) | Extension methods supporting fault tolerance. |
+| class [FunctionNoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/FunctionNoticeValidator-1.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator-1.md) that uses a delegate to validate the enterprise event notice. |
+| class [FunctionNoticeValidator](./Jds.NiceNotice/FunctionNoticeValidator.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator.md) that uses a delegate to validate the enterprise event notice. |
 | interface [INoticeIo](./Jds.NiceNotice/INoticeIo.md) | Represents a dispatcher responsible for sending enterprise event notices to specific event streams. |
-| interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) | Defines an interface for dispatching enterprise events of specified base types to corresponding event streams. |
-| interface [ITypedNoticeDispatcher](./Jds.NiceNotice/ITypedNoticeDispatcher.md) |  |
+| interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) | Defines an interface for dispatching enterprise events of specified base types to logical event streams. The default implementation applies (in order): (1) logical routing, (2) serialization, (3) validation, and (4) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
+| interface [ITypedNoticeDispatcher](./Jds.NiceNotice/ITypedNoticeDispatcher.md) | Defines an interface for dispatching enterprise events to logical event streams. The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | static class [JsonDefaults](./Jds.NiceNotice/JsonDefaults.md) | Provides default JSON serialization settings for the library. |
 | class [MissingDependencyException](./Jds.NiceNotice/MissingDependencyException.md) | Represents an exception thrown when a required dependency is missing. |
-| class [NiceNoticeBuilder](./Jds.NiceNotice/NiceNoticeBuilder.md) |  |
-| class [NoOpNoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoOpNoticeValidator-1.md) |  |
+| class [NiceNoticeBuilder](./Jds.NiceNotice/NiceNoticeBuilder.md) | A fluent builder for configuring NiceNotice services. |
+| class [NoOpNoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoOpNoticeValidator-1.md) | A notice validator that does not perform any validation (all notices are considered valid). |
+| class [NoOpNoticeValidator](./Jds.NiceNotice/NoOpNoticeValidator.md) | A notice validator that does not perform any validation (all notices are considered valid). |
 | static class [NoticeIoJsonExtensions](./Jds.NiceNotice/NoticeIoJsonExtensions.md) | Provides extension methods for the [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) interface to dispatch notifications serialized as JSON. |
-| abstract class [NoticeSerializer&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeSerializer-1.md) |  |
-| abstract class [NoticeSerializer](./Jds.NiceNotice/NoticeSerializer.md) |  |
-| abstract class [NoticeStreamSelector&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeStreamSelector-1.md) |  |
+| abstract class [NoticeSerializer&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeSerializer-1.md) | An abstraction representing the algorithm used for serializing a notice to a string. |
+| abstract class [NoticeSerializer](./Jds.NiceNotice/NoticeSerializer.md) | An abstraction representing the algorithm used for serializing a notice to a string. |
+| abstract class [NoticeStreamSelector&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeStreamSelector-1.md) | An abstraction representing the algorithm used for selecting a logical event stream (identified by [`EventStreamId`](./Jds.NiceNotice/EventStreamId.md)) for a notice, a process sometimes referred to as routing. |
 | class [NoticeValidationException](./Jds.NiceNotice/NoticeValidationException.md) | Represents an exception thrown when a validation operation fails during the dispatch of an enterprise event. |
-| abstract class [NoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeValidator-1.md) |  |
+| abstract class [NoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/NoticeValidator-1.md) | An abstraction representing the algorithm used for validating a notice. |
+| abstract class [NoticeValidator](./Jds.NiceNotice/NoticeValidator.md) | An abstraction representing the algorithm used for validating a notice. |
 | class [NullNoticeIo](./Jds.NiceNotice/NullNoticeIo.md) | Provides a no-operation implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md), primarily used as a default or placeholder where event dispatching is not required. |
 | class [SerializationException](./Jds.NiceNotice/SerializationException.md) | Represents an exception which is thrown when a failure occurs during the serialization of an enterprise event. |
-| static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) |  |
-| static class [ServiceProviderExtensions](./Jds.NiceNotice/ServiceProviderExtensions.md) |  |
+| static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
+| static class [ServiceProviderExtensions](./Jds.NiceNotice/ServiceProviderExtensions.md) | Methods extending IServiceProvider to support cross-app notifications services. |
 | class [StreamDeterminationException](./Jds.NiceNotice/StreamDeterminationException.md) | Represents an exception which is thrown when unable to determine the event stream to which an enterprise event should be dispatched. |
 | static class [StreamSelectors](./Jds.NiceNotice/StreamSelectors.md) | Constructors for enterprise event stream selectors. |
+| static class [TypedNoticeConfigurationExtensions](./Jds.NiceNotice/TypedNoticeConfigurationExtensions.md) | Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices. |
 | abstract class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/TypedNoticeDispatcher-1.md) | Represents an abstract base class for dispatching notifications of a specified type. |
-| abstract class [TypedNoticeDispatcher](./Jds.NiceNotice/TypedNoticeDispatcher.md) |  |
+| abstract class [TypedNoticeDispatcher](./Jds.NiceNotice/TypedNoticeDispatcher.md) | A base class implementation of [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
+| static class [TypedNoticeDispatcherExtensions](./Jds.NiceNotice/TypedNoticeDispatcherExtensions.md) | Methods extending [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md) to support additional typed notice dispatch patterns. |
 | record [TypedNoticeDispatchResult&lt;TEventType&gt;](./Jds.NiceNotice/TypedNoticeDispatchResult-1.md) | The result of dispatching a typed notice. |
-| class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/TypedNoticesBuilder-1.md) |  |
+| class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/TypedNoticesBuilder-1.md) | A builder for configuring typed notices (enterprise events) which derive from a base type. |
+| static class [Validators](./Jds.NiceNotice/Validators.md) | Methods for creating notification validators. |
 
 <!-- DO NOT EDIT: generated by xmldocmd for NiceNotice.dll -->

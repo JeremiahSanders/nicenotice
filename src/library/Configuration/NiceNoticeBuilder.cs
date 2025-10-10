@@ -102,6 +102,9 @@ public class NiceNoticeBuilder(IServiceCollection services)
   /// <param name="dispatcherServiceLifetime">
   ///   A service lifetime to assign the
   ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}" /> service.
+  ///   The typed notice dispatcher depends upon the configured <see cref="INoticeIo" />
+  ///   (such as the adapters provided by <c>NiceNotice.Aws.Sns</c> NuGet package).
+  ///   Be considerate of the thread-safety and best practices of your I/O implementation.
   /// </param>
   /// <returns>Returns this instance.</returns>
   public NiceNoticeBuilder UseTypedNotices(

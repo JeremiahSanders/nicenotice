@@ -1,5 +1,7 @@
 # FaultToleranceExtensions class
 
+Extension methods supporting fault tolerance.
+
 ```csharp
 public static class FaultToleranceExtensions
 ```
@@ -8,8 +10,8 @@ public static class FaultToleranceExtensions
 
 | name | description |
 | --- | --- |
-| static [TryDispatchAsync](FaultToleranceExtensions/TryDispatchAsync.md)(…) |  |
-| static [TryDispatchAsync&lt;TBaseNotice,TNotice&gt;](FaultToleranceExtensions/TryDispatchAsync.md)(…) |  |
+| static [TryDispatchAsync](FaultToleranceExtensions/TryDispatchAsync.md)(…) | Asynchronously sends a notification using this I/O dispatcher, catching exceptions. |
+| static [TryDispatchAsync&lt;TBaseNotice,TNotice&gt;](FaultToleranceExtensions/TryDispatchAsync.md)(…) | Asynchronously sends a notification to the configured I/O dispatcher, catching exceptions. |
 
 ## See Also
 

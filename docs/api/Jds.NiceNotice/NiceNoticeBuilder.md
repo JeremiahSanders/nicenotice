@@ -1,16 +1,23 @@
 # NiceNoticeBuilder class
 
+A fluent builder for configuring NiceNotice services.
+
 ```csharp
 public class NiceNoticeBuilder
 ```
+
+| parameter | description |
+| --- | --- |
+| services | A service collection to which NiceNotice is being added. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| [NiceNoticeBuilder](NiceNoticeBuilder/NiceNoticeBuilder.md)(…) |  |
-| [Services](NiceNoticeBuilder/Services.md) { get; } |  |
-| [UseDispatcher&lt;TDispatcher&gt;](NiceNoticeBuilder/UseDispatcher.md)(…) |  (2 methods) |
+| [NiceNoticeBuilder](NiceNoticeBuilder/NiceNoticeBuilder.md)(…) | A fluent builder for configuring NiceNotice services. |
+| [Services](NiceNoticeBuilder/Services.md) { get; } | Gets the service collection (obtained from the constructor and to which services are added). |
+| [UseDispatcher&lt;TDispatcher&gt;](NiceNoticeBuilder/UseDispatcher.md)(…) | Registers a notice dispatcher (i.e. I/O). (2 methods) |
+| [UseTypedNotices](NiceNoticeBuilder/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEventBase`](./EnterpriseEventBase.md) as the assumed base type. |
 | [UseTypedNotices&lt;TNoticeBaseType&gt;](NiceNoticeBuilder/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly). (2 methods) |
 
 ## See Also

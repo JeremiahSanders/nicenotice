@@ -1,9 +1,20 @@
 # NiceNoticeBuilder.UseDispatcher&lt;TDispatcher&gt; method (1 of 2)
 
+Registers a notice dispatcher (i.e. I/O).
+
 ```csharp
 public NiceNoticeBuilder UseDispatcher<TDispatcher>(ServiceLifetime serviceLifetime)
     where TDispatcher : INoticeIo
 ```
+
+| parameter | description |
+| --- | --- |
+| TDispatcher | A notice dispatch I/O type. |
+| serviceLifetime | A service lifetime for the resolved instances. |
+
+## Return Value
+
+Returns this builder instance.
 
 ## See Also
 
@@ -15,11 +26,27 @@ public NiceNoticeBuilder UseDispatcher<TDispatcher>(ServiceLifetime serviceLifet
 
 # NiceNoticeBuilder.UseDispatcher&lt;TDispatcher&gt; method (2 of 2)
 
+Registers a notice dispatcher (i.e. I/O).
+
 ```csharp
 public NiceNoticeBuilder UseDispatcher<TDispatcher>(Func<IServiceProvider, TDispatcher> resolver, 
     ServiceLifetime serviceLifetime)
     where TDispatcher : INoticeIo
 ```
+
+| parameter | description |
+| --- | --- |
+| TDispatcher | A notice dispatch I/O type. |
+| resolver | A method which will provide the [`INoticeIo`](../INoticeIo.md) service when given an IServiceProvider. |
+| serviceLifetime | A service lifetime for the resolved instances. |
+
+## Return Value
+
+Returns this builder instance.
+
+## Remarks
+
+This overload is useful when your I/O implementation uses a static constructor or requires constructor parameters which cannot be directly resolved from the application's service provider.
 
 ## See Also
 

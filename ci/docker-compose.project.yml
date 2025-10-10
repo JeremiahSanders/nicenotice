@@ -18,9 +18,9 @@ services:
     volumes:
       # Hide host build results
       - type: volume
-        target: /code/src/bin
+        target: /code/src/library/bin
       - type: volume
-        target: /code/src/obj
+        target: /code/src/library/obj
       - type: volume
         target: /code/tests/unit/bin
       - type: volume

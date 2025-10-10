@@ -1,9 +1,20 @@
 # ServiceProviderExtensions.GetEnterpriseEventDispatcher&lt;TEnterpriseEventBaseType&gt; method
 
+Retrieves an instance of [`ITypedNoticeDispatcher`](../ITypedNoticeDispatcher-1.md) from the specified IServiceProvider.
+
 ```csharp
 public static ITypedNoticeDispatcher<TEnterpriseEventBaseType> 
     GetEnterpriseEventDispatcher<TEnterpriseEventBaseType>(this IServiceProvider provider)
 ```
+
+| parameter | description |
+| --- | --- |
+| TEnterpriseEventBaseType | The base type of the enterprise event for which the dispatcher operates. Must be a non-nullable type. |
+| provider | The IServiceProvider instance from which to resolve the dispatcher. |
+
+## Return Value
+
+An instance of [`ITypedNoticeDispatcher`](../ITypedNoticeDispatcher-1.md) if registered; otherwise, throws a [`MissingDependencyException`](../MissingDependencyException.md).
 
 ## See Also
 

@@ -1,8 +1,14 @@
 # TypedNoticeDispatcher constructor
 
+A base class implementation of [`ITypedNoticeDispatcher`](../ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior.
+
 ```csharp
 protected TypedNoticeDispatcher(INoticeIo ioDispatcher)
 ```
+
+| parameter | description |
+| --- | --- |
+| ioDispatcher | A notice I/O implementation. |
 
 ## See Also
 

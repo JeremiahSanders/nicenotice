@@ -6,6 +6,10 @@ public override IReadOnlyList<string>? Validate<TEventType>(TEventType notice,
     where TEventType : TEnterpriseEventBaseType
 ```
 
+## Remarks
+
+This implementation does not perform any validation.
+
 ## See Also
 
 * class [NoOpNoticeValidator&lt;TEnterpriseEventBaseType&gt;](../NoOpNoticeValidator-1.md)

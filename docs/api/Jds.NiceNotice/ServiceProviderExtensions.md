@@ -1,5 +1,7 @@
 # ServiceProviderExtensions class
 
+Methods extending IServiceProvider to support cross-app notifications services.
+
 ```csharp
 public static class ServiceProviderExtensions
 ```
@@ -8,7 +10,7 @@ public static class ServiceProviderExtensions
 
 | name | description |
 | --- | --- |
-| static [GetEnterpriseEventDispatcher&lt;TEnterpriseEventBaseType&gt;](ServiceProviderExtensions/GetEnterpriseEventDispatcher.md)(…) |  |
+| static [GetEnterpriseEventDispatcher&lt;TEnterpriseEventBaseType&gt;](ServiceProviderExtensions/GetEnterpriseEventDispatcher.md)(…) | Retrieves an instance of [`ITypedNoticeDispatcher`](./ITypedNoticeDispatcher-1.md) from the specified IServiceProvider. |
 
 ## See Also
 
