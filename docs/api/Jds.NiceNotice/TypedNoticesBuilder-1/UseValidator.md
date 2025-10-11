@@ -59,7 +59,7 @@ See [`Validators`](../Validators.md) for helper methods to create validators.
 
 To skip validation, [`NoOpValidator`](../Validators/NoOpValidator.md).
 
-For more complex or custom needs, try [`FunctionNoticeValidator`](../FunctionNoticeValidator.md), or derive an implementation of [`NoticeValidator`](../NoticeValidator-1.md).
+For more complex or custom needs, try [`DelegateNoticeValidator`](../DelegateNoticeValidator.md), or derive an implementation of [`NoticeValidator`](../NoticeValidator-1.md).
 
 ## See Also
 
