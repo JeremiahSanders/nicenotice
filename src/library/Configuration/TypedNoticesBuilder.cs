@@ -316,7 +316,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   ///   <para><see cref="Jds.NiceNotice.Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
   ///   <para>To skip validation, <see cref="Validators.NoOpValidator" />.</para>
   ///   <para>
-  ///     For more complex or custom needs, try <see cref="FunctionNoticeValidator" />, or derive an implementation of
+  ///     For more complex or custom needs, try <see cref="DelegateNoticeValidator" />, or derive an implementation of
   ///     <see cref="NoticeValidator{TEnterpriseEventBaseType}" />.
   ///   </para>
   /// </remarks>

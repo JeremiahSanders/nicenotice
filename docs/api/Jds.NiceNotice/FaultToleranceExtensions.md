@@ -11,6 +11,7 @@ public static class FaultToleranceExtensions
 | name | description |
 | --- | --- |
 | static [TryDispatchAsync](FaultToleranceExtensions/TryDispatchAsync.md)(…) | Asynchronously sends a notification using this I/O dispatcher, catching exceptions. |
+| static [TryDispatchAsync&lt;TNotice&gt;](FaultToleranceExtensions/TryDispatchAsync.md)(…) | Asynchronously sends a notification to the configured I/O dispatcher, catching exceptions. (2 methods) |
 | static [TryDispatchAsync&lt;TBaseNotice,TNotice&gt;](FaultToleranceExtensions/TryDispatchAsync.md)(…) | Asynchronously sends a notification to the configured I/O dispatcher, catching exceptions. |
 
 ## See Also

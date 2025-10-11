@@ -3,7 +3,7 @@ namespace Jds.NiceNotice;
 /// <summary>
 ///   Methods extending <see cref="ITypedNoticeDispatcher" /> to support additional typed notice dispatch patterns.
 /// </summary>
-public static class TypedNoticeDispatcherExtensions
+public static class TypedNoticeDispatcherRoutingExtensions
 {
   /// <summary>
   ///   Asynchronously dispatches a notice to a specified event stream.

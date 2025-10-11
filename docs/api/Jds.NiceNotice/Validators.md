@@ -11,8 +11,11 @@ public static class Validators
 | name | description |
 | --- | --- |
 | static [DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt;](Validators/DataAnnotationsValidator.md)() | Creates a validator that uses data annotations to validate enterprise events. |
+| static [DelegateValidator](Validators/DelegateValidator.md)(…) | Creates a validator that uses a function (*validatorFunction*) to validate enterprise events. |
+| static [DelegateValidator&lt;TEnterpriseEventBaseType&gt;](Validators/DelegateValidator.md)(…) | Creates a validator that uses a function (*validatorFunction*) to validate enterprise events. |
 | static [NoOpValidator&lt;TEnterpriseEventBaseType&gt;](Validators/NoOpValidator.md)() | Creates a validator that performs no validation; all enterprise events are considered valid. |
 | static [WithDataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt;](Validators/WithDataAnnotationsValidator.md)(…) | Configures this typed notice builder to use a validator that uses data annotations to validate enterprise events. (See [`DataAnnotationsValidator`](./Validators/DataAnnotationsValidator.md)) |
+| static [WithDelegateValidator&lt;TEnterpriseEventBaseType&gt;](Validators/WithDelegateValidator.md)(…) | Configures this typed notice builder to use a validator that executes a custom validation function, *genericValidatorFunction*. |
 | static [WithNoValidation&lt;TEnterpriseEventBaseType&gt;](Validators/WithNoValidation.md)(…) | Configures this typed notice builder to use a validator that performs no validation; all enterprise events are considered valid. |
 
 ## See Also
