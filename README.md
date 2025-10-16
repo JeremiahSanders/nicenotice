@@ -77,10 +77,10 @@ On your `Host`'s `IServiceCollection`, use the `.AddNiceNotice()` extension meth
 services
   .AddNiceNotice(builder => builder
     .UseTypedNotices<MyApplicationEvent>(
-      eeBuilder => eeBuilder
-        .WithJsonSerializer() // Optional; JSON is the default
-        .WithTypeNameStreams() // Optional; by default, type names are used as the stream names
-        .WithDataAnnotationsValidator(),
+      tnBuilder => tnBuilder
+        .SerializeToJson() // Optional; JSON is the default
+        .RouteToTypeNameStreams() // Optional; by default, type names are used as the stream names
+        .ValidateWithDataAnnotations(),
       ServiceLifetime.Scoped
     )
     .WithSnsDispatch( // Dispatch enterprise events to AWS SNS. Requires `NiceNotice.Aws.Sns` NuGet package.
