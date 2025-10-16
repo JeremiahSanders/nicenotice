@@ -2,28 +2,43 @@
 
 A base enterprise event (data transfer object), suitable for extending with application-specific properties.
 
+This type supports:
+
+* unique instance identification ([`Id`](./EnterpriseEvent/Id.md), enabling deduplication),
+* a timestamp ([`Timestamp`](./EnterpriseEvent/Timestamp.md)),
+* and schema identification ([`Schema`](./EnterpriseEvent/Schema.md), supporting external filtering/logic).
+
 ```csharp
-public abstract record EnterpriseEvent : IEquatable<EnterpriseEventBase>
+public record EnterpriseEvent
 ```
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| [Schema](EnterpriseEvent/Schema.md) { get; set; } | Gets the schema title of this enterprise event. |
-| static [DefaultSchema](EnterpriseEvent/DefaultSchema.md)(…) | Generates an event schema title. |
+| [EnterpriseEvent](EnterpriseEvent/EnterpriseEvent.md)() | Initializes a new instance of the [`EnterpriseEvent`](./EnterpriseEvent.md) class. |
+| [Id](EnterpriseEvent/Id.md) { get; set; } | Gets a unique identifier for this enterprise event. |
+| [Schema](EnterpriseEvent/Schema.md) { get; set; } | Gets the schema title (name) of this enterprise event. Default: The type name. |
+| [Timestamp](EnterpriseEvent/Timestamp.md) { get; set; } | Gets the timestamp associated with this enterprise event (in general, understood to mean "when" this event occurred). |
+| static [DefaultSchema](EnterpriseEvent/DefaultSchema.md)(…) | Generates an event schema from the provided event schema title and an optional schema revision index. Pattern: If the schema is provided, `Title@Revision`. Otherwise, *eventTitle* is returned unchanged. |
 
 ## Protected Members
 
 | name | description |
 | --- | --- |
-| [EnterpriseEvent](EnterpriseEvent/EnterpriseEvent.md)() | Initializes a new instance of the [`EnterpriseEvent`](./EnterpriseEvent.md) class. |
 | virtual [SchemaRevision](EnterpriseEvent/SchemaRevision.md) { get; set; } | Gets the revision index of this enterprise event data transfer object schema. |
 | virtual [SchemaTitle](EnterpriseEvent/SchemaTitle.md) { get; set; } | Gets the name of this enterprise event data transfer object schema, defaulting to the type name. |
 
+## Remarks
+
+Conceptually, a base enterprise event provides a required/core collection of notice properties.
+
+This class is not intended to be dispatched directly; it is intended to be extended by a typed notice. However, this type is not abstract because the contents of this type are enough to support communicating that a specific event occurred in certain circumstances.
+
+For example, if the event is dispatched to an "application started" I/O channel then the combination of [`Timestamp`](./EnterpriseEvent/Timestamp.md) and [`Id`](./EnterpriseEvent/Id.md) might be sufficient, conveying when the application started and a unique identifier for the occurrence (to support deduplication).
+
 ## See Also
 
-* record [EnterpriseEventBase](./EnterpriseEventBase.md)
 * namespace [Jds.NiceNotice](../NiceNotice.md)
 * [EnterpriseEvent.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/EnterpriseEvent.cs)
 

@@ -3,7 +3,7 @@
 Initializes a new instance of the [`EnterpriseEvent`](../EnterpriseEvent.md) class.
 
 ```csharp
-protected EnterpriseEvent()
+public EnterpriseEvent()
 ```
 
 ## See Also

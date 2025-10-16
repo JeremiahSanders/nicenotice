@@ -3,7 +3,7 @@
 Defines an interface for dispatching enterprise events of specified base types to logical event streams. The default implementation applies (in order): (1) logical routing, (2) serialization, (3) validation, and (4) dispatch to I/O using an [`INoticeIo`](./INoticeIo.md).
 
 ```csharp
-public interface ITypedNoticeDispatcher<TEnterpriseEventBaseType>
+public interface ITypedNoticeDispatcher<in TEnterpriseEventBaseType>
 ```
 
 | parameter | description |
@@ -19,6 +19,8 @@ public interface ITypedNoticeDispatcher<TEnterpriseEventBaseType>
 ## Remarks
 
 This is the primary type dependency used in runtime applications when using NiceNotice. I.e., the type that is injected into the application's business logic via constructor.
+
+When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](./TypedNoticeDispatcher-1.md) for easy implementation.
 
 ## See Also
 

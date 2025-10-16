@@ -17,7 +17,7 @@ public class NiceNoticeBuilder
 | [NiceNoticeBuilder](NiceNoticeBuilder/NiceNoticeBuilder.md)(…) | A fluent builder for configuring NiceNotice services. |
 | [Services](NiceNoticeBuilder/Services.md) { get; } | Gets the service collection (obtained from the constructor and to which services are added). |
 | [UseDispatcher&lt;TDispatcher&gt;](NiceNoticeBuilder/UseDispatcher.md)(…) | Registers a notice dispatcher (i.e. I/O). (2 methods) |
-| [UseTypedNotices](NiceNoticeBuilder/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEventBase`](./EnterpriseEventBase.md) as the assumed base type. |
+| [UseTypedNotices](NiceNoticeBuilder/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](./EnterpriseEvent.md) as the assumed base type. |
 | [UseTypedNotices&lt;TNoticeBaseType&gt;](NiceNoticeBuilder/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly). (2 methods) |
 
 ## See Also

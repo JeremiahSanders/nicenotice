@@ -1,6 +1,6 @@
 # TypedNoticeConfigurationExtensions.UseTypedNotices method
 
-Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEventBase`](../EnterpriseEventBase.md) as the assumed base type.
+Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../EnterpriseEvent.md) as the assumed base type.
 
 ```csharp
 public static NiceNoticeBuilder UseTypedNotices(this NiceNoticeBuilder builder, 

@@ -10,7 +10,7 @@ public static NoticeStreamSelector<TEnterpriseEventBaseType> Delegate<TEnterpris
 | parameter | description |
 | --- | --- |
 | TEnterpriseEventBaseType | The base enterprise event type. |
-| selector | The function which will determine the stream for each event. |
+| selector | The function which will determine the stream for each event. This function is expected to be thread-safe. |
 
 ## Return Value
 

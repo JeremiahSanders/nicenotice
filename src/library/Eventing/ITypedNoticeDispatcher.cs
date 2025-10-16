@@ -12,12 +12,16 @@ namespace Jds.NiceNotice;
 ///     This is the primary type dependency used in runtime applications when using NiceNotice.
 ///     I.e., the type that is injected into the application's business logic via constructor.
 ///   </para>
+///   <para>
+///     When creating a custom implementation of this interface,
+///     use <see cref="Jds.NiceNotice.TypedNoticeDispatcher{TEnterpriseEventBaseType}" /> for easy implementation.
+///   </para>
 /// </remarks>
 /// <typeparam name="TEnterpriseEventBaseType">
 ///   The base type of enterprise event that can be dispatched by the implementation.
 ///   The type must be a non-nullable type.
 /// </typeparam>
-public interface ITypedNoticeDispatcher<TEnterpriseEventBaseType>
+public interface ITypedNoticeDispatcher<in TEnterpriseEventBaseType>
   where TEnterpriseEventBaseType : notnull
 {
   /// <summary>
@@ -48,6 +52,12 @@ public interface ITypedNoticeDispatcher<TEnterpriseEventBaseType>
 ///   The default implementation applies (in order):
 ///   (1) serialization, (2) validation, and (3) dispatch to I/O using an <see cref="INoticeIo" />.
 /// </summary>
+/// <remarks>
+///   <para>
+///     When creating a custom implementation of this interface,
+///     use <see cref="Jds.NiceNotice.TypedNoticeDispatcher" /> for easy implementation.
+///   </para>
+/// </remarks>
 public interface ITypedNoticeDispatcher
 {
   /// <summary>

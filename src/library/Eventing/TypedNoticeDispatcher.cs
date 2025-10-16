@@ -248,7 +248,6 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
     }
   }
 
-
   /// <summary>
   ///   Gets the event stream ID for the specified enterprise event.
   /// </summary>

@@ -1,3 +1,6 @@
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
+using Jds.TestingUtils.Randomization;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Shouldly;
@@ -20,7 +23,7 @@ public class DelegateNoticeValidatorTests
       .AddNiceNotice(builder => builder.UseTypedNotices(
           typedNoticesBuilder =>
           {
-            typedNoticesBuilder.WithDelegateValidator(GenericValidatorReference, UntypedValidatorReference);
+            typedNoticesBuilder.ValidateWithDelegate(GenericValidatorReference, UntypedValidatorReference);
           },
           ServiceLifetime.Singleton
         )
@@ -29,12 +32,10 @@ public class DelegateNoticeValidatorTests
       .GetRequiredService<ITypedNoticeDispatcher>();
 
     // Act
-    TypedNoticeDispatchResult<EnterpriseEventMessage> result = await dispatcher.DispatchAsync(
-      new EnterpriseEventMessage
+    TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent> result = await dispatcher.DispatchAsync(
+      new ExampleLogoutEnterpriseEvent
       {
-        Message = Guid
-          .NewGuid()
-          .ToString()
+        Username = Randomizer.Shared.DemographicsForenameUsa()
       }
     );
 
@@ -52,7 +53,7 @@ public class DelegateNoticeValidatorTests
       return null;
     }
 
-    IReadOnlyList<string>? GenericValidatorReference(EnterpriseEventBase notice, string serialized)
+    IReadOnlyList<string>? GenericValidatorReference(EnterpriseEvent notice, string serialized)
     {
       genericInvocations++;
 
@@ -66,25 +67,23 @@ public class DelegateNoticeValidatorTests
     int genericInvocations = 0;
     int untypedInvocations = 0;
 
-    ITypedNoticeDispatcher<EnterpriseEventBase> dispatcher = new ServiceCollection()
+    ITypedNoticeDispatcher<EnterpriseEvent> dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
           typedNoticesBuilder =>
           {
-            typedNoticesBuilder.WithDelegateValidator(GenericValidatorReference, UntypedValidatorReference);
+            typedNoticesBuilder.ValidateWithDelegate(GenericValidatorReference, UntypedValidatorReference);
           },
           ServiceLifetime.Singleton
         )
       )
       .BuildServiceProvider()
-      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
     // Act
-    TypedNoticeDispatchResult<EnterpriseEventMessage> result = await dispatcher.DispatchAsync(
-      new EnterpriseEventMessage
+    TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent> result = await dispatcher.DispatchAsync(
+      new ExampleLogoutEnterpriseEvent
       {
-        Message = Guid
-          .NewGuid()
-          .ToString()
+        Username = Randomizer.Shared.DemographicsForenameUsa()
       }
     );
 
@@ -101,7 +100,7 @@ public class DelegateNoticeValidatorTests
       return null;
     }
 
-    IReadOnlyList<string>? GenericValidatorReference(EnterpriseEventBase notice, string serialized)
+    IReadOnlyList<string>? GenericValidatorReference(EnterpriseEvent notice, string serialized)
     {
       genericInvocations++;
 

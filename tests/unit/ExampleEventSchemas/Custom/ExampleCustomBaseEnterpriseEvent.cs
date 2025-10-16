@@ -5,7 +5,7 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
 /// <summary>
 ///   An example, base, typed notice (a.k.a., an enterprise event).
-///   This type is not derived from <see cref="EnterpriseEventBase" /> so as to show how an organization
+///   This type is not derived from <see cref="EnterpriseEvent" /> so as to show how an organization
 ///   might define their own base enterprise event type.
 /// </summary>
 /// <remarks>
@@ -39,13 +39,7 @@ public record ExampleCustomBaseEnterpriseEvent
   ///   Gets the name of this schema/type of enterprise event.
   ///   This is not a message; interpret as an enumeration value shared by all notices of the same &quot;type&quot;.
   /// </summary>
-  /// <remarks>Use <see cref="CreateEventName" />to create a name in the preferred format.</remarks>
   [Required(AllowEmptyStrings = false)]
   [JsonPropertyName(name: "name")]
   public string Name { get; init; } = string.Empty;
-
-  protected static string CreateEventName(string eventTitle, int eventSchemaRevision)
-  {
-    return $"{eventTitle}@{eventSchemaRevision}";
-  }
 }

@@ -65,7 +65,6 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
     };
   }
 
-
   /// <summary>
   ///   An example enterprise event.
   /// </summary>
@@ -99,7 +98,6 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
     /// </summary>
     public string TeamName { get; init; } = string.Empty;
   }
-
 
   /// <summary>
   ///   An example base event for a used to support a team sport.

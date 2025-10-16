@@ -17,7 +17,7 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
 
     ITypedNoticeDispatcher dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
-          typedNoticesBuilder => { typedNoticesBuilder.WithDataAnnotationsValidator(); },
+          typedNoticesBuilder => { typedNoticesBuilder.ValidateWithDataAnnotations(); },
           ServiceLifetime.Singleton
         )
       )
@@ -53,14 +53,14 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
   {
     Exception? exception = null;
 
-    ITypedNoticeDispatcher<EnterpriseEventBase> dispatcher = new ServiceCollection()
+    ITypedNoticeDispatcher<EnterpriseEvent> dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
-          typedNoticesBuilder => { typedNoticesBuilder.WithDataAnnotationsValidator(); },
+          typedNoticesBuilder => { typedNoticesBuilder.ValidateWithDataAnnotations(); },
           ServiceLifetime.Singleton
         )
       )
       .BuildServiceProvider()
-      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
     // Act
     TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent>? result = await dispatcher.TryDispatchAsync(

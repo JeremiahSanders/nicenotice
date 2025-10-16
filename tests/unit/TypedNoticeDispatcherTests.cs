@@ -1,6 +1,7 @@
 using System.Text.Json;
 
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 using Jds.TestingUtils.Randomization;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -20,20 +21,20 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
     ServiceProvider sp = new ServiceCollection()
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          typedNoticeBuilder => typedNoticeBuilder.WithConstantStream((EventStreamId)defaultStream),
+          typedNoticeBuilder => typedNoticeBuilder.RouteToConstantStream((EventStreamId)defaultStream),
           ServiceLifetime.Transient
         )
         .UseDispatcher<CapturingNoticeIo>(ServiceLifetime.Singleton)
       )
       .BuildServiceProvider();
     CapturingNoticeIo dispatchStore = sp.GetRequiredService<CapturingNoticeIo>();
-    ITypedNoticeDispatcher<EnterpriseEventBase> typedDispatcher =
-      sp.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+    ITypedNoticeDispatcher<EnterpriseEvent> typedDispatcher =
+      sp.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
-    EnterpriseEventBase baseNotice = new();
+    EnterpriseEvent baseNotice = new();
 
     // Act
-    TypedNoticeDispatchResult<EnterpriseEventBase> typedResponseBaseNotice =
+    TypedNoticeDispatchResult<EnterpriseEvent> typedResponseBaseNotice =
       await typedDispatcher.DispatchAsync(baseNotice);
 
     OutputNotices(dispatchStore.CapturedNotices);
@@ -49,7 +50,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       .Single(item =>
         item.Item1 == (EventStreamId)defaultStream && item.Item2.Contains(baseNotice.Id.ToString())
       );
-    EnterpriseEventBase? baseNoticeFromSerialized = JsonSerializer.Deserialize<EnterpriseEventBase>(
+    EnterpriseEvent? baseNoticeFromSerialized = JsonSerializer.Deserialize<EnterpriseEvent>(
       serializedBaseNotice,
       JsonDefaults.DefaultJsonSerializerOptions
     );
@@ -65,21 +66,22 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       .BuildServiceProvider();
     ITypedNoticeDispatcher nonGenericTypedDispatcher = services.GetRequiredService<ITypedNoticeDispatcher>();
 
-    EnterpriseEventMessage message = new()
+    ExampleLogoutEnterpriseEvent message = new()
     {
-      Message = Randomizer.Shared.RandomStringLatin(length: 24)
+      Username = Randomizer.Shared.RandomStringLatin(length: 24)
     };
 
-    TypedNoticeDispatchResult<EnterpriseEventMessage> response = await nonGenericTypedDispatcher.DispatchAsync(message);
+    TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent> response =
+      await nonGenericTypedDispatcher.DispatchAsync(message);
 
     // Should return the same notice that was sent.
     response.Notice.ShouldBeEquivalentTo(message);
     // Should serialize to JSON by default
     response.Serialized.ShouldNotBeNullOrWhiteSpace();
-    EnterpriseEventMessage parsedFromJson = response.DeserializeIoResponseAsJson();
+    ExampleLogoutEnterpriseEvent parsedFromJson = response.DeserializeIoResponseAsJson();
     parsedFromJson.ShouldBeEquivalentTo(message);
     // Should send to a stream having the type's name
-    response.Stream.ShouldBe(EventStreamId.From(nameof(EnterpriseEventMessage)));
+    response.Stream.ShouldBe(EventStreamId.From(nameof(ExampleLogoutEnterpriseEvent)));
     // Should send it to the configured dispatcher.
     dispatcher.CapturedNotices.ShouldContain(item =>
       item.Item1 == response.Stream && item.Item2 == response.IoResponse
@@ -95,22 +97,22 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       .BuildServiceProvider();
     ITypedNoticeDispatcher nonGenericTypedDispatcher = services.GetRequiredService<ITypedNoticeDispatcher>();
 
-    EnterpriseEventMessage message = new()
+    ExampleLogoutEnterpriseEvent message = new()
     {
-      Message = Randomizer.Shared.RandomStringLatin(length: 24)
+      Username = Randomizer.Shared.RandomStringLatin(length: 24)
     };
 
-    TypedNoticeDispatchResult<EnterpriseEventMessage> response =
+    TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent> response =
       await nonGenericTypedDispatcher.DispatchAsync(message, dispatchToFullNameStream: true);
 
     // Should return the same notice that was sent.
     response.Notice.ShouldBeEquivalentTo(message);
     // Should serialize to JSON by default
     response.Serialized.ShouldNotBeNullOrWhiteSpace();
-    EnterpriseEventMessage parsedFromJson = response.DeserializeIoResponseAsJson();
+    ExampleLogoutEnterpriseEvent parsedFromJson = response.DeserializeIoResponseAsJson();
     parsedFromJson.ShouldBeEquivalentTo(message);
     // Should send to a stream having the type's name
-    response.Stream.ShouldBe(EventStreamId.From(typeof(EnterpriseEventMessage).FullName!));
+    response.Stream.ShouldBe(EventStreamId.From(typeof(ExampleLogoutEnterpriseEvent).FullName!));
     // Should send it to the configured dispatcher.
     dispatcher.CapturedNotices.ShouldContain(item =>
       item.Item1 == response.Stream && item.Item2 == response.IoResponse
@@ -124,23 +126,23 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
     ServiceProvider sp = new ServiceCollection()
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          typedNoticeBuilder => typedNoticeBuilder.WithConstantStream((EventStreamId)defaultStream),
+          typedNoticeBuilder => typedNoticeBuilder.RouteToConstantStream((EventStreamId)defaultStream),
           ServiceLifetime.Transient
         )
         .UseDispatcher<CapturingNoticeIo>(ServiceLifetime.Singleton)
       )
       .BuildServiceProvider();
     CapturingNoticeIo dispatchStore = sp.GetRequiredService<CapturingNoticeIo>();
-    ITypedNoticeDispatcher<EnterpriseEventBase> typedDispatcher =
-      sp.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+    ITypedNoticeDispatcher<EnterpriseEvent> typedDispatcher =
+      sp.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
-    EnterpriseEventMessage messageNotice = new()
+    ExampleLogoutEnterpriseEvent messageNotice = new()
     {
-      Message = Randomizer.Shared.RandomStringLatin(length: 12)
+      Username = Randomizer.Shared.RandomStringLatin(length: 12)
     };
 
     // Act
-    TypedNoticeDispatchResult<EnterpriseEventMessage> typedResponseMessageNotice =
+    TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent> typedResponseMessageNotice =
       await typedDispatcher.DispatchAsync(messageNotice);
 
     OutputNotices(dispatchStore.CapturedNotices);
@@ -156,7 +158,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       .Single(item =>
         item.Item1 == (EventStreamId)defaultStream && item.Item2.Contains(messageNotice.Id.ToString())
       );
-    EnterpriseEventMessage? baseNoticeFromSerialized = JsonSerializer.Deserialize<EnterpriseEventMessage>(
+    ExampleLogoutEnterpriseEvent? baseNoticeFromSerialized = JsonSerializer.Deserialize<ExampleLogoutEnterpriseEvent>(
       serializedBaseNotice,
       JsonDefaults.DefaultJsonSerializerOptions
     );
@@ -166,14 +168,9 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
   [Fact]
   public async Task NonGenericDispatcher_DispatchAsync_DispatchesExpectedContent()
   {
-    string defaultStream = Guid
-      .NewGuid()
-      .ToString();
+    string defaultStream = Guid.NewGuid().ToString();
     CapturingNoticeIo noticeIo = new();
-    TypedNoticeDispatcher ee =
-      TypedNoticeDispatcher.Create(
-        noticeIo
-      );
+    TypedNoticeDispatcher ee = TypedNoticeDispatcher.Create(noticeIo);
 
     ExampleCustomLoginEvent toDispatch = new()
     {

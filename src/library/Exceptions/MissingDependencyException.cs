@@ -3,7 +3,7 @@ namespace Jds.NiceNotice;
 /// <summary>
 ///   Represents an exception thrown when a required dependency is missing.
 /// </summary>
-public class MissingDependencyException : Exception
+public class MissingDependencyException : InvalidOperationException
 {
   /// <summary>
   ///   Constructs a new instance of <see cref="MissingDependencyException" />.
