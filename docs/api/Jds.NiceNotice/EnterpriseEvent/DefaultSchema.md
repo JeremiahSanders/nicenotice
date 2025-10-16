@@ -1,6 +1,6 @@
 # EnterpriseEvent.DefaultSchema method
 
-Generates an event schema title.
+Generates an event schema from the provided event schema title and an optional schema revision index. Pattern: If the schema is provided, `Title@Revision`. Otherwise, *eventTitle* is returned unchanged.
 
 ```csharp
 public static string DefaultSchema(string eventTitle, int? eventSchemaRevision)
@@ -8,8 +8,8 @@ public static string DefaultSchema(string eventTitle, int? eventSchemaRevision)
 
 | parameter | description |
 | --- | --- |
-| eventTitle |  |
-| eventSchemaRevision |  |
+| eventTitle | An event schema title. |
+| eventSchemaRevision | Optional. A schema revision index. (Initial schema: 0, first revision: 1, etc.) |
 
 ## See Also
 

@@ -7,7 +7,7 @@ public record ExampleCustomLoginEvent : ExampleCustomBaseEnterpriseEvent
 {
   public ExampleCustomLoginEvent()
   {
-    Name = CreateEventName(eventTitle: "Login", eventSchemaRevision: 0);
+    Name = "Login";
   }
 
   [JsonPropertyName(name: "username")]

@@ -7,6 +7,7 @@ namespace Jds.NiceNotice;
 internal class InvalidOperationStreamSelector<TEnterpriseEventBaseType> : NoticeStreamSelector<TEnterpriseEventBaseType>
   where TEnterpriseEventBaseType : notnull
 {
+  /// <inheritdoc />
   public override EventStreamId GetStreamId<TEventType>(TEventType notice)
   {
     throw new InvalidOperationException(

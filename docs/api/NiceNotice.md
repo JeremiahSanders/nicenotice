@@ -4,14 +4,12 @@
 
 | public type | description |
 | --- | --- |
-| class [CapturingNoticeIo](./Jds.NiceNotice/CapturingNoticeIo.md) | An implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) which is intended for test purposes. Each dispatched notice is captured and can be retrieved via [`CapturedNotices`](./Jds.NiceNotice/CapturingNoticeIo/CapturedNotices.md). |
+| class [CapturingNoticeIo](./Jds.NiceNotice/CapturingNoticeIo.md) | A thread-safe implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) which is intended for test purposes. Each dispatched notice is captured and can be retrieved via [`CapturedNotices`](./Jds.NiceNotice/CapturingNoticeIo/CapturedNotices.md). |
 | class [DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/DataAnnotationsValidator-1.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator-1.md) that uses Validator to validate the enterprise event notice. |
 | class [DataAnnotationsValidator](./Jds.NiceNotice/DataAnnotationsValidator.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator.md) that uses Validator to validate the enterprise event notice. |
 | class [DelegateNoticeValidator&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/DelegateNoticeValidator-1.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator-1.md) that uses a delegate to validate the enterprise event notice. |
 | class [DelegateNoticeValidator](./Jds.NiceNotice/DelegateNoticeValidator.md) | An implementation of [`NoticeValidator`](./Jds.NiceNotice/NoticeValidator.md) that uses a delegate to validate the enterprise event notice. |
-| abstract record [EnterpriseEvent](./Jds.NiceNotice/EnterpriseEvent.md) | A base enterprise event (data transfer object), suitable for extending with application-specific properties. |
-| record [EnterpriseEventBase](./Jds.NiceNotice/EnterpriseEventBase.md) | A base typed notice supporting unique instance identification ([`Id`](./Jds.NiceNotice/EnterpriseEventBase/Id.md), enabling deduplication) and a timestamp ([`Timestamp`](./Jds.NiceNotice/EnterpriseEventBase/Timestamp.md)). |
-| record [EnterpriseEventMessage](./Jds.NiceNotice/EnterpriseEventMessage.md) | An enterprise event that contains a message. |
+| record [EnterpriseEvent](./Jds.NiceNotice/EnterpriseEvent.md) | A base enterprise event (data transfer object), suitable for extending with application-specific properties. |
 | struct [EventStreamId](./Jds.NiceNotice/EventStreamId.md) | Represents a unique identifier for an event stream. This type is used to uniquely identify and manage event streams, ensuring type safety when working with specific streams in the application's event notification system. |
 | static class [FaultToleranceExtensions](./Jds.NiceNotice/FaultToleranceExtensions.md) | Extension methods supporting fault tolerance. |
 | interface [INoticeIo](./Jds.NiceNotice/INoticeIo.md) | Represents a dispatcher responsible for sending enterprise event notices to specific event streams. |
@@ -31,6 +29,7 @@
 | abstract class [NoticeValidator](./Jds.NiceNotice/NoticeValidator.md) | An abstraction representing the algorithm used for validating a notice. |
 | class [NullNoticeIo](./Jds.NiceNotice/NullNoticeIo.md) | Provides a no-operation implementation of [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md), primarily used as a default or placeholder where event dispatching is not required. |
 | class [SerializationException](./Jds.NiceNotice/SerializationException.md) | Represents an exception which is thrown when a failure occurs during the serialization of an enterprise event. |
+| static class [Serializers](./Jds.NiceNotice/Serializers.md) |  |
 | static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
 | static class [ServiceProviderExtensions](./Jds.NiceNotice/ServiceProviderExtensions.md) | Methods extending IServiceProvider to support cross-app notifications services. |
 | class [StreamDeterminationException](./Jds.NiceNotice/StreamDeterminationException.md) | Represents an exception which is thrown when unable to determine the event stream to which an enterprise event should be dispatched. |

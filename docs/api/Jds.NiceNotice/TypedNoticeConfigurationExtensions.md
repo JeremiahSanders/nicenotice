@@ -10,7 +10,7 @@ public static class TypedNoticeConfigurationExtensions
 
 | name | description |
 | --- | --- |
-| static [UseTypedNotices](TypedNoticeConfigurationExtensions/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEventBase`](./EnterpriseEventBase.md) as the assumed base type. |
+| static [UseTypedNotices](TypedNoticeConfigurationExtensions/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](./EnterpriseEvent.md) as the assumed base type. |
 | enum [RoutingTypes](TypedNoticeConfigurationExtensions.RoutingTypes.md) | Notice event stream routing algorithms which are supported for configuration-based setup. |
 | enum [SerializationTypes](TypedNoticeConfigurationExtensions.SerializationTypes.md) | Notice serialization algorithms which are supported for configuration-based setup. |
 | class [TypedNoticeConfiguration](TypedNoticeConfigurationExtensions.TypedNoticeConfiguration.md) | Configuration-based setup for typed notices. |

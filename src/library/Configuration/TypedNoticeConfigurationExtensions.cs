@@ -52,10 +52,9 @@ public static class TypedNoticeConfigurationExtensions
     DataAttributes
   }
 
-
   /// <summary>
   ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
-  ///   using the default <see cref="EnterpriseEventBase" /> as the assumed base type.
+  ///   using the default <see cref="EnterpriseEvent" /> as the assumed base type.
   /// </summary>
   /// <remarks>
   ///   Use the
@@ -84,15 +83,15 @@ public static class TypedNoticeConfigurationExtensions
         switch (configuration.RoutingType)
         {
           case RoutingTypes.TypeFullName:
-            typedNoticesBuilder.WithTypeNameStreams(useFullTypeName: true);
+            typedNoticesBuilder.RouteToTypeNameStreams(useFullTypeName: true);
 
             break;
           case RoutingTypes.TypeName:
-            typedNoticesBuilder.WithTypeNameStreams(useFullTypeName: false);
+            typedNoticesBuilder.RouteToTypeNameStreams(useFullTypeName: false);
 
             break;
           default:
-            typedNoticesBuilder.WithTypeNameStreams(useFullTypeName: false);
+            typedNoticesBuilder.RouteToTypeNameStreams(useFullTypeName: false);
 
             break;
         }
@@ -100,11 +99,11 @@ public static class TypedNoticeConfigurationExtensions
         switch (configuration.SerializationType)
         {
           case SerializationTypes.Json:
-            typedNoticesBuilder.WithJsonSerializer();
+            typedNoticesBuilder.SerializeToJson();
 
             break;
           default:
-            typedNoticesBuilder.WithJsonSerializer();
+            typedNoticesBuilder.SerializeToJson();
 
             break;
         }
@@ -112,15 +111,15 @@ public static class TypedNoticeConfigurationExtensions
         switch (configuration.ValidationType)
         {
           case ValidationTypes.None:
-            typedNoticesBuilder.WithNoValidation();
+            typedNoticesBuilder.ValidateNothing();
 
             break;
           case ValidationTypes.DataAttributes:
-            typedNoticesBuilder.WithDataAnnotationsValidator();
+            typedNoticesBuilder.ValidateWithDataAnnotations();
 
             break;
           default:
-            typedNoticesBuilder.WithNoValidation();
+            typedNoticesBuilder.ValidateNothing();
 
             break;
         }

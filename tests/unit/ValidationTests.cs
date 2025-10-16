@@ -18,8 +18,8 @@ public class ValidationTests
       .BuildServiceProvider();
 
     // NOTE: ExampleLoginEnterpriseEvent has validation rules.
-    ITypedNoticeDispatcher<EnterpriseEventBase> dispatcher =
-      provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+    ITypedNoticeDispatcher<EnterpriseEvent> dispatcher =
+      provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
     ExampleLoginEnterpriseEvent shouldFail = new()
     {

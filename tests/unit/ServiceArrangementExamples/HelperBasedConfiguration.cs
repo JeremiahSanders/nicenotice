@@ -9,7 +9,7 @@ public static class HelperBasedConfiguration
   /// <summary>
   ///   <para>
   ///     Test arrangement:
-  ///     Adds a default typed notices implementation, where <see cref="EnterpriseEventBase" /> is the base type.
+  ///     Adds a default typed notices implementation, where <see cref="EnterpriseEvent" /> is the base type.
   ///     Requests that:
   ///     notices be serialized to JSON,
   ///     that events be routed to streams based on their type names,
@@ -30,9 +30,9 @@ public static class HelperBasedConfiguration
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
           eeBuilder => eeBuilder
-            .WithJsonSerializer()
-            .WithTypeNameStreams()
-            .WithDataAnnotationsValidator(),
+            .SerializeToJson()
+            .RouteToTypeNameStreams()
+            .ValidateWithDataAnnotations(),
           ServiceLifetime.Singleton
         )
         .UseDispatcher(dispatcher, ServiceLifetime.Singleton)

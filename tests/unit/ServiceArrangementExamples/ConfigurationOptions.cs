@@ -9,12 +9,12 @@ public static class ConfigurationOptions
   /// <summary>
   ///   <para>
   ///     Test arrangement:
-  ///     Adds a default typed notices implementation, where <see cref="EnterpriseEventBase" /> is the base type.
+  ///     Adds a default typed notices implementation, where <see cref="EnterpriseEvent" /> is the base type.
   ///     Requests that:
   ///     notices be serialized to JSON,
   ///     that events be routed to streams based on their full type names,
   ///     and messages are validated using <see cref="Validator" />.
-  ///     We register a custom <paramref name="dispatcher"/>.
+  ///     We register a custom <paramref name="dispatcher" />.
   ///   </para>
   /// </summary>
   /// <remarks>

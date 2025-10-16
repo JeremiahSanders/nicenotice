@@ -31,7 +31,10 @@ public static class StreamSelectors
   ///   Creates a notice stream selector which uses the provided <paramref name="selector" /> to determine
   ///   each enterprise event's stream.
   /// </summary>
-  /// <param name="selector">The function which will determine the stream for each event.</param>
+  /// <param name="selector">
+  ///   The function which will determine the stream for each event.
+  ///   This function is expected to be thread-safe.
+  /// </param>
   /// <typeparam name="TEnterpriseEventBaseType">The base enterprise event type.</typeparam>
   /// <returns>Returns a notice stream selector.</returns>
   public static NoticeStreamSelector<TEnterpriseEventBaseType> Delegate<TEnterpriseEventBaseType>(
@@ -69,7 +72,6 @@ public static class StreamSelectors
     return new TypeMapStreamSelector<TEnterpriseEventBaseType>(map, defaultStream);
   }
 
-
   /// <summary>
   ///   Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to
   ///   the specified stream ID.
@@ -83,13 +85,38 @@ public static class StreamSelectors
   ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
   ///   specified constant stream selector.
   /// </returns>
-  public static TypedNoticesBuilder<TEnterpriseEventBaseType> WithConstantStream<TEnterpriseEventBaseType>(
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteToConstantStream<TEnterpriseEventBaseType>(
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
     EventStreamId stream
   ) where TEnterpriseEventBaseType : notnull
   {
     return builder.UseStreamSelector(
       _ => Constant<TEnterpriseEventBaseType>(stream),
+      ServiceLifetime.Singleton
+    );
+  }
+
+  /// <summary>
+  ///   Configures the enterprise event builder to use a delegate stream selector, invoking
+  ///   <paramref name="routingFunction" /> for each notice.
+  /// </summary>
+  /// <param name="builder">The builder instance.</param>
+  /// <param name="routingFunction">
+  ///   The function which will determine the stream for each event.
+  ///   This function is expected to be thread-safe.
+  /// </param>
+  /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
+  /// <returns>
+  ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
+  ///   delegate stream selector.
+  /// </returns>
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteWithDelegate<TEnterpriseEventBaseType>(
+    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
+    Func<TEnterpriseEventBaseType, EventStreamId> routingFunction
+  ) where TEnterpriseEventBaseType : notnull
+  {
+    return builder.UseStreamSelector(
+      _ => Delegate(routingFunction),
       ServiceLifetime.Singleton
     );
   }
@@ -110,7 +137,7 @@ public static class StreamSelectors
   /// </param>
   /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
   /// <returns>Returns the builder after modification.</returns>
-  public static TypedNoticesBuilder<TEnterpriseEventBaseType> WithTypeNameStreams<TEnterpriseEventBaseType>(
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteToTypeNameStreams<TEnterpriseEventBaseType>(
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
     bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
   {

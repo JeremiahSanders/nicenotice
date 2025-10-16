@@ -3,7 +3,7 @@
 Represents an exception thrown when a required dependency is missing.
 
 ```csharp
-public class MissingDependencyException : Exception
+public class MissingDependencyException : InvalidOperationException
 ```
 
 ## Public Members

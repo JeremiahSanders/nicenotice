@@ -1,6 +1,6 @@
 # CapturingNoticeIo class
 
-An implementation of [`INoticeIo`](./INoticeIo.md) which is intended for test purposes. Each dispatched notice is captured and can be retrieved via [`CapturedNotices`](./CapturingNoticeIo/CapturedNotices.md).
+A thread-safe implementation of [`INoticeIo`](./INoticeIo.md) which is intended for test purposes. Each dispatched notice is captured and can be retrieved via [`CapturedNotices`](./CapturingNoticeIo/CapturedNotices.md).
 
 This dispatcher should not be used in a runtime environment; its use can lead to memory leaks.
 

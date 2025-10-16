@@ -12,6 +12,10 @@ public interface ITypedNoticeDispatcher
 | --- | --- |
 | [DispatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher/DispatchAsync.md)(…) | Dispatches an enterprise event notice to a specific event stream. |
 
+## Remarks
+
+When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](./TypedNoticeDispatcher.md) for easy implementation.
+
 ## See Also
 
 * namespace [Jds.NiceNotice](../NiceNotice.md)

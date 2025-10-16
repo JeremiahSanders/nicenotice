@@ -1,6 +1,6 @@
 # EnterpriseEvent.Schema property
 
-Gets the schema title of this enterprise event.
+Gets the schema title (name) of this enterprise event. Default: The type name.
 
 ```csharp
 public string Schema { get; set; }

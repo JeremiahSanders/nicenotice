@@ -20,7 +20,6 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>
 | [UseSerializer](TypedNoticesBuilder-1/UseSerializer.md)(…) | Configures the algorithm used to serialize enterprise events. (2 methods) |
 | [UseStreamSelector](TypedNoticesBuilder-1/UseStreamSelector.md)(…) | Configures the algorithm used to identify the [`EventStreamId`](./EventStreamId.md) to which a notice should be dispatched. Registers the provided instance in the service collection as a singleton. (2 methods) |
 | [UseValidator](TypedNoticesBuilder-1/UseValidator.md)(…) | Configures the enterprise event validation logic used, registering the provided instance as a singleton. (2 methods) |
-| [WithJsonSerializer](TypedNoticesBuilder-1/WithJsonSerializer.md)(…) | Configures the enterprise event builder to use a JSON serializer for serializing events. |
 
 ## See Also
 

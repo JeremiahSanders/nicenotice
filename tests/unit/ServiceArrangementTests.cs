@@ -62,12 +62,12 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     ServiceProvider provider = services.BuildServiceProvider();
 
     // Assert
-    ITypedNoticeDispatcher<EnterpriseEventBase> fromExplicitType =
-      provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+    ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+      provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
     fromExplicitType.ShouldNotBeNull();
 
-    ITypedNoticeDispatcher<EnterpriseEventBase> fromExtension =
-      provider.GetEnterpriseEventDispatcher<EnterpriseEventBase>();
+    ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
+      provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
     fromExtension.ShouldNotBeNull();
 
     ITypedNoticeDispatcher nonGenericExplicitType =
@@ -89,12 +89,12 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       IServiceProvider provider = ArrangeServices(new ServiceCollection());
 
       // Assert
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExplicitType =
-        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       fromExplicitType.ShouldNotBeNull();
 
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEventBase>();
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
+        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
       fromExtension.ShouldNotBeNull();
 
       ITypedNoticeDispatcher nonGenericExplicitType =
@@ -114,15 +114,15 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     public async Task DispatchingEventsSucceeds_GenericTypedNoticeDispatcher()
     {
       EventStreamId testStreamId = EventStreamId.From(value: "things");
-      EnterpriseEventBase notice = new();
+      EnterpriseEvent notice = new();
 
       // Act
       IServiceProvider provider = ArrangeServices(new ServiceCollection());
 
       // Assert
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExplicitType =
-        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
-      TypedNoticeDispatchResult<EnterpriseEventBase> fromExplicitTypeResult =
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      TypedNoticeDispatchResult<EnterpriseEvent> fromExplicitTypeResult =
         await fromExplicitType.DispatchAsync(notice);
       fromExplicitTypeResult.Serialized.ShouldNotBeNullOrWhiteSpace();
       fromExplicitTypeResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
@@ -137,15 +137,15 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     public async Task DispatchingEventsSucceeds_FromServiceProviderExtension()
     {
       EventStreamId testStreamId = EventStreamId.From(value: "things");
-      EnterpriseEventBase notice = new();
+      EnterpriseEvent notice = new();
 
       // Act
       IServiceProvider provider = ArrangeServices(new ServiceCollection());
 
       // Assert
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEventBase>();
-      TypedNoticeDispatchResult<EnterpriseEventBase> fromExtensionResult = await fromExtension.DispatchAsync(notice);
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
+        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
+      TypedNoticeDispatchResult<EnterpriseEvent> fromExtensionResult = await fromExtension.DispatchAsync(notice);
       fromExtensionResult.Serialized.ShouldNotBeNullOrWhiteSpace();
       fromExtensionResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
     }
@@ -159,7 +159,7 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     public async Task DispatchingEventsSucceeds_ITypedNoticeDispatcher()
     {
       EventStreamId testStreamId = EventStreamId.From(value: "things");
-      EnterpriseEventBase notice = new();
+      EnterpriseEvent notice = new();
 
       // Act
       IServiceProvider provider = ArrangeServices(new ServiceCollection());
@@ -167,7 +167,7 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       // Assert
       ITypedNoticeDispatcher nonGenericExplicitType =
         provider.GetRequiredService<ITypedNoticeDispatcher>();
-      TypedNoticeDispatchResult<EnterpriseEventBase> nonGenericExplicitTypeResult =
+      TypedNoticeDispatchResult<EnterpriseEvent> nonGenericExplicitTypeResult =
         await nonGenericExplicitType.DispatchAsync(notice, testStreamId);
       nonGenericExplicitTypeResult.Serialized.ShouldNotBeNullOrWhiteSpace();
       nonGenericExplicitTypeResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
@@ -182,7 +182,7 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     public async Task DispatchingEventsSucceeds_INoticeIo()
     {
       EventStreamId testStreamId = EventStreamId.From(value: "things");
-      EnterpriseEventBase notice = new();
+      EnterpriseEvent notice = new();
 
       // Act
       IServiceProvider provider = ArrangeServices(new ServiceCollection());
@@ -240,12 +240,12 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
         .BuildServiceProvider();
 
       // Assert
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExplicitType =
-        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       fromExplicitType.ShouldNotBeNull();
 
-      ITypedNoticeDispatcher<EnterpriseEventBase> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEventBase>();
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
+        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
       fromExtension.ShouldNotBeNull();
 
       ITypedNoticeDispatcher nonGenericExplicitType =
@@ -267,8 +267,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       ServiceProvider provider = new ServiceCollection()
         .ApplyHelperBasedConfiguration(serviceProvider => new CapturingNoticeIo())
         .BuildServiceProvider();
-      ITypedNoticeDispatcher<EnterpriseEventBase> dispatcher =
-        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEventBase>>();
+      ITypedNoticeDispatcher<EnterpriseEvent> dispatcher =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       CapturingNoticeIo destination = provider.GetRequiredService<INoticeIo>() as CapturingNoticeIo ??
                                       throw new NullReferenceException();
 

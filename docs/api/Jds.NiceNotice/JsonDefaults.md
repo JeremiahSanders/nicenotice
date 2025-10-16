@@ -10,7 +10,7 @@ public static class JsonDefaults
 
 | name | description |
 | --- | --- |
-| static [DefaultJsonSerializerOptions](JsonDefaults/DefaultJsonSerializerOptions.md) { get; } | Gets the default JSON serializer options to be used for notices. This includes pre-configured settings and converters, such as a JsonStringEnumConverter for serializing enums as strings. |
+| static [DefaultJsonSerializerOptions](JsonDefaults/DefaultJsonSerializerOptions.md) { get; } | Gets the default JSON serializer options to be used for notices. This uses the Web settings as a base, adds JsonStringEnumConverter for serializing enums as strings, and sets DefaultIgnoreCondition to WhenWritingNull. |
 
 ## See Also
 

@@ -1,10 +1,9 @@
 # NiceNoticeBuilder.UseTypedNotices method (1 of 3)
 
-Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEventBase`](../EnterpriseEventBase.md) as the assumed base type.
+Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../EnterpriseEvent.md) as the assumed base type.
 
 ```csharp
-public NiceNoticeBuilder UseTypedNotices(
-    Action<TypedNoticesBuilder<EnterpriseEventBase>> configure, 
+public NiceNoticeBuilder UseTypedNotices(Action<TypedNoticesBuilder<EnterpriseEvent>> configure, 
     ServiceLifetime dispatcherServiceLifetime)
 ```
 
@@ -24,7 +23,7 @@ Use the [`UseTypedNotices`](./UseTypedNotices.md) overload to specify a differen
 ## See Also
 
 * class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](../TypedNoticesBuilder-1.md)
-* record [EnterpriseEventBase](../EnterpriseEventBase.md)
+* record [EnterpriseEvent](../EnterpriseEvent.md)
 * class [NiceNoticeBuilder](../NiceNoticeBuilder.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

@@ -28,7 +28,8 @@ public class NiceNoticeBuilder(IServiceCollection services)
 
     // Then use a simple static resolver with the factory method overload.
     return UseDispatcher<TDispatcher>(
-      static serviceProvider => serviceProvider.GetRequiredService<TDispatcher>(),
+      static serviceProvider => serviceProvider.GetService<TDispatcher>() ??
+                                throw MissingDependencyException.For<TDispatcher>(),
       serviceLifetime
     );
   }
@@ -90,7 +91,7 @@ public class NiceNoticeBuilder(IServiceCollection services)
 
   /// <summary>
   ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
-  ///   using the default <see cref="EnterpriseEventBase" /> as the assumed base type.
+  ///   using the default <see cref="EnterpriseEvent" /> as the assumed base type.
   /// </summary>
   /// <remarks>
   ///   Use the
@@ -108,11 +109,11 @@ public class NiceNoticeBuilder(IServiceCollection services)
   /// </param>
   /// <returns>Returns this instance.</returns>
   public NiceNoticeBuilder UseTypedNotices(
-    Action<TypedNoticesBuilder<EnterpriseEventBase>> configure,
+    Action<TypedNoticesBuilder<EnterpriseEvent>> configure,
     ServiceLifetime dispatcherServiceLifetime
   )
   {
-    return UseTypedNotices<EnterpriseEventBase>(configure, dispatcherServiceLifetime);
+    return UseTypedNotices<EnterpriseEvent>(configure, dispatcherServiceLifetime);
   }
 
   /// <summary>
@@ -181,7 +182,7 @@ public class NiceNoticeBuilder(IServiceCollection services)
   internal NiceNoticeBuilder ApplyDefaults()
   {
     // UseTypedNotices should use TryAdd for its configuration, so this shouldn't override anything the user configured.
-    UseTypedNotices<EnterpriseEventBase>(static _ => { }, ServiceLifetime.Transient);
+    UseTypedNotices<EnterpriseEvent>(static _ => { }, ServiceLifetime.Transient);
 
     ServiceDescriptor dispatcherDescriptor = new(
       typeof(INoticeIo),

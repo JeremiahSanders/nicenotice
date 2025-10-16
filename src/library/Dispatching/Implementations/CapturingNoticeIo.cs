@@ -4,7 +4,7 @@ namespace Jds.NiceNotice;
 
 /// <summary>
 ///   <para>
-///     An implementation of <see cref="INoticeIo" /> which is intended for test purposes.
+///     A thread-safe implementation of <see cref="INoticeIo" /> which is intended for test purposes.
 ///     Each dispatched notice is captured and can be retrieved via <see cref="CapturedNotices" />.
 ///   </para>
 ///   <para>
@@ -34,6 +34,9 @@ public class CapturingNoticeIo : INoticeIo
     _maximumNoticesToRetain = maximumNoticesToRetain;
   }
 
+  /// <summary>
+  ///   Gets the captured notices.
+  /// </summary>
   private ConcurrentQueue<(EventStreamId, string)> Notices { get; } = [];
 
   /// <summary>

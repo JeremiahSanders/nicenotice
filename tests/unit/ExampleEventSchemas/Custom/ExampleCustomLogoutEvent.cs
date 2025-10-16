@@ -7,7 +7,7 @@ public record ExampleCustomLogoutEvent : ExampleCustomBaseEnterpriseEvent
 {
   public ExampleCustomLogoutEvent()
   {
-    Name = CreateEventName(eventTitle: "Logout", eventSchemaRevision: 0);
+    Name = "Logout";
   }
 
   [JsonPropertyName(name: "username")]
