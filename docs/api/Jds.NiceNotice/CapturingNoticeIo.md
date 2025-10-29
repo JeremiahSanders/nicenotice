@@ -5,7 +5,7 @@ A thread-safe implementation of [`INoticeIo`](./INoticeIo.md) which is intended 
 This dispatcher should not be used in a runtime environment; its use can lead to memory leaks.
 
 ```csharp
-public class CapturingNoticeIo : INoticeIo
+public class CapturingNoticeIo : INoticeBatchIo
 ```
 
 ## Public Members
@@ -16,11 +16,12 @@ public class CapturingNoticeIo : INoticeIo
 | static [Create](CapturingNoticeIo/Create.md)(…) | Creates a capturing dispatcher which limits the notices it retains. |
 | [CapturedNotices](CapturingNoticeIo/CapturedNotices.md) { get; } | Gets an enumerator for the captured notices. |
 | [DispatchAsync](CapturingNoticeIo/DispatchAsync.md)(…) |  |
+| [DispatchNoticesAsync](CapturingNoticeIo/DispatchNoticesAsync.md)(…) |  |
 | [PurgeNotices](CapturingNoticeIo/PurgeNotices.md)() | Purges the notices captured by this instance. |
 
 ## See Also
 
-* interface [INoticeIo](./INoticeIo.md)
+* interface [INoticeBatchIo](./INoticeBatchIo.md)
 * namespace [Jds.NiceNotice](../NiceNotice.md)
 * [CapturingNoticeIo.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/CapturingNoticeIo.cs)
 

@@ -11,6 +11,8 @@ namespace Jds.NiceNotice;
 /// </param>
 internal class JsonNoticeSerializer(JsonSerializerOptions? options = null) : NoticeSerializer
 {
+  private readonly JsonSerializerOptions _options = options ?? JsonDefaults.DefaultJsonSerializerOptions;
+
   /// <inheritdoc />
   public override string Serialize<TEventType>(TEventType notice)
   {
@@ -18,7 +20,7 @@ internal class JsonNoticeSerializer(JsonSerializerOptions? options = null) : Not
     // Otherwise, only properties in the generic parameter will be serialized. (I.e., only the base type's properties.)
     // The generic method argument is a type filter.
     Type noticeType = notice.GetType();
-    string json = JsonSerializer.Serialize(notice, noticeType, options ?? JsonDefaults.DefaultJsonSerializerOptions);
+    string json = JsonSerializer.Serialize(notice, noticeType, _options);
 
     return json;
   }

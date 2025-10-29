@@ -11,7 +11,7 @@ namespace Jds.NiceNotice;
 ///     This dispatcher should not be used in a runtime environment; its use can lead to memory leaks.
 ///   </para>
 /// </summary>
-public class CapturingNoticeIo : INoticeIo
+public class CapturingNoticeIo : INoticeBatchIo
 {
   private readonly int _maximumNoticesToRetain;
 
@@ -58,6 +58,45 @@ public class CapturingNoticeIo : INoticeIo
     }
 
     return Task.FromResult(notice);
+  }
+
+  /// <inheritdoc
+  ///   cref="INoticeBatchIo.DispatchNoticesAsync(IReadOnlyDictionary{string, BatchedIoRequestNotice}, BatchDispatchOptions, CancellationToken)" />
+  public async Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
+    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices,
+    BatchDispatchOptions? batchDispatchOptions = null,
+    CancellationToken cancellationToken = default)
+  {
+    ParallelOptions parallelOptions = new()
+    {
+      MaxDegreeOfParallelism = batchDispatchOptions?.MaxDegreeOfParallelism ?? 1,
+      CancellationToken = cancellationToken
+    };
+    ConcurrentBag<BatchedIoResponseNotice> successes = [];
+    ConcurrentBag<(BatchedIoResponseNotice, Exception)> failures = [];
+    await Parallel.ForEachAsync(
+      notices
+        .Select(static notice => new BatchedIoResponseNotice(notice.Key, notice.Value.Stream, notice.Value.Notice)),
+      parallelOptions,
+      async (notice, token) =>
+      {
+        try
+        {
+          await DispatchAsync(notice.Stream, notice.Notice, token);
+          successes.Add(notice);
+        }
+        catch (Exception e)
+        {
+          failures.Add((notice, e));
+        }
+      }
+    );
+
+    return new BatchIoNoticeDispatchResult
+    {
+      Failures = failures.ToList(),
+      Successes = successes.ToList()
+    };
   }
 
   /// <summary>

@@ -1,5 +1,7 @@
 # Serializers class
 
+Methods arranging implementations of [`NoticeSerializer`](./NoticeSerializer.md).
+
 ```csharp
 public static class Serializers
 ```
@@ -8,6 +10,7 @@ public static class Serializers
 
 | name | description |
 | --- | --- |
+| static [Json](Serializers/Json.md)(…) | Creates a [`NoticeSerializer`](./NoticeSerializer.md) which serializes to JSON. |
 | static [SerializeToJson&lt;TEnterpriseEventBaseType&gt;](Serializers/SerializeToJson.md)(…) | Configures the enterprise event builder to use a JSON serializer for serializing events. |
 
 ## See Also

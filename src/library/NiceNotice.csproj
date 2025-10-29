@@ -37,5 +37,9 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(ProjectName).Tests.Unit" />
+  </ItemGroup>
 
 </Project>

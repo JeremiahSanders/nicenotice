@@ -19,6 +19,22 @@ public static class Validators
   }
 
   /// <summary>
+  ///   Creates a validator that uses data annotations to validate
+  ///   typed notices (i.e., notification data transfer objects).
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     This validator does not constrain notifications to a base enterprise event type.
+  ///     For typed enterprise events, use <see cref="DataAnnotationsValidator{TEnterpriseEventBaseType}" />.
+  ///   </para>
+  /// </remarks>
+  /// <returns>Returns the created validator.</returns>
+  public static NoticeValidator DataAnnotationsValidator()
+  {
+    return new DataAnnotationsValidator();
+  }
+
+  /// <summary>
   ///   Creates a validator that uses a function (<paramref name="validatorFunction" />) to validate enterprise events.
   /// </summary>
   /// <remarks>

@@ -17,6 +17,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType> :
 | --- | --- |
 | static [Create](TypedNoticeDispatcher-1/Create.md)(…) | Creates an instance of [`TypedNoticeDispatcher`](./TypedNoticeDispatcher-1.md) with the specified dispatcher, stream selector, and notice serializer functions. |
 | virtual [DispatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher-1/DispatchAsync.md)(…) | Dispatches an enterprise event asynchronously after performing validation, stream determination, serialization, and dispatch through the configured notification dispatcher. |
+| [DispatchBatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher-1/DispatchBatchAsync.md)(…) |  |
 
 ## Protected Members
 
