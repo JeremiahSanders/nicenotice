@@ -1,4 +1,28 @@
-# Validators.DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt; method
+# Validators.DataAnnotationsValidator method (1 of 2)
+
+Creates a validator that uses data annotations to validate typed notices (i.e., notification data transfer objects).
+
+```csharp
+public static NoticeValidator DataAnnotationsValidator()
+```
+
+## Return Value
+
+Returns the created validator.
+
+## Remarks
+
+This validator does not constrain notifications to a base enterprise event type. For typed enterprise events, use [`DataAnnotationsValidator`](./DataAnnotationsValidator.md).
+
+## See Also
+
+* class [NoticeValidator](../NoticeValidator.md)
+* class [Validators](../Validators.md)
+* namespace [Jds.NiceNotice](../../NiceNotice.md)
+
+---
+
+# Validators.DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt; method (2 of 2)
 
 Creates a validator that uses data annotations to validate enterprise events.
 

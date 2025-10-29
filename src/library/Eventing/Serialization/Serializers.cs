@@ -4,8 +4,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Jds.NiceNotice;
 
+/// <summary>
+///   Methods arranging implementations of <see cref="NoticeSerializer" />.
+/// </summary>
 public static class Serializers
 {
+  /// <summary>
+  ///   Creates a <see cref="NoticeSerializer" /> which serializes to JSON.
+  /// </summary>
+  /// <param name="options">
+  ///   Optional. JSON serializer options. Default:
+  ///   <see cref="JsonDefaults.DefaultJsonSerializerOptions" />
+  /// </param>
+  /// <returns>Returns the created serializer.</returns>
+  public static NoticeSerializer Json(JsonSerializerOptions? options = null)
+  {
+    return new JsonNoticeSerializer(options);
+  }
+
   /// <summary>
   ///   Configures the enterprise event builder to use a JSON serializer for serializing events.
   /// </summary>
@@ -73,9 +89,8 @@ public static class Serializers
       {
         JsonSerializerOptions? possibleOptions = optionsAccessor?.Invoke(runtimeServiceProvider) ??
                                                  runtimeServiceProvider.GetService<JsonSerializerOptions>();
-        JsonNoticeSerializer func = new(possibleOptions);
 
-        return func;
+        return Json(possibleOptions);
       },
       serviceLifetime
     );

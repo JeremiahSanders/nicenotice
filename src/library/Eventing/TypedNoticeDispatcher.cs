@@ -19,28 +19,16 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
     EventStreamId streamId,
     CancellationToken cancellationToken = default) where TEventType : notnull
   {
-    string serialized = Serialize(notice);
-    string response = await Dispatch(streamId, Validate(notice, serialized));
+    RoutedTypedNotice routedNotice = RouteAndValidate(notice, streamId);
+    string response = await Dispatch(streamId, routedNotice.SerializedNotice);
 
     return new TypedNoticeDispatchResult<TEventType>
     {
       Notice = notice,
-      Serialized = serialized,
+      Serialized = routedNotice.SerializedNotice,
       IoResponse = response,
       Stream = streamId
     };
-
-    string Serialize(TEventType toSerialize)
-    {
-      try
-      {
-        return SerializeNotice(toSerialize);
-      }
-      catch (Exception e)
-      {
-        throw new SerializationException(message: "Failed to serialize notice.", e);
-      }
-    }
 
     async Task<string> Dispatch(EventStreamId stream, string serializedMessage)
     {
@@ -51,6 +39,78 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
       catch (Exception e)
       {
         throw new IOException(message: "Failed to dispatch notice.", e);
+      }
+    }
+  }
+
+  /// <inheritdoc />
+  public virtual async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
+    DispatchBatchRequest request,
+    CancellationToken cancellationToken = default)
+  {
+    return await BatchDispatching.DispatchBatchAsync(
+      IoDispatcher,
+      TrySerializeAndValidate,
+      request.Notices,
+      request.BatchDispatchOptions,
+      cancellationToken
+    );
+  }
+
+  private Either<Exception, string> TrySerialize(object toSerialize)
+  {
+    return Eithers
+      .Try(() => SerializeNotice(toSerialize))
+      .MapLeft<Exception>(e => new SerializationException(message: "Failed to serialize notice.", e));
+  }
+
+  private Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> TrySerializeAndValidate(
+    string batchedNoticeId,
+    BatchedRoutedTypedNotice batchedRoutedTypedNotice)
+  {
+    Either<Exception, string> serialized = TrySerialize(batchedRoutedTypedNotice.Notice);
+    Either<Exception, string> validated =
+      serialized.Map(serializedNotice => Validate(batchedRoutedTypedNotice.Notice, serializedNotice));
+    Either<Exception, BatchRoutedTypedNoticeResponse> rtn =
+      validated.Map(validatedNotice => new BatchRoutedTypedNoticeResponse(
+          batchedNoticeId,
+          batchedRoutedTypedNotice.Stream,
+          batchedRoutedTypedNotice.Notice,
+          validatedNotice
+        )
+      );
+
+    if (rtn.IsRight)
+    {
+      return Eithers
+        .Right<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(rtn.RightUnsafe);
+    }
+
+    // We failed some portion
+    Exception failure = rtn.LeftUnsafe;
+    string serializedOrEmpty = serialized.FoldRight(_ => string.Empty);
+
+    return Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
+      (new BatchRoutedTypedNoticeResponse(batchedNoticeId, batchedRoutedTypedNotice.Stream, batchedRoutedTypedNotice.Notice, serializedOrEmpty),
+        failure)
+    );
+  }
+
+  private RoutedTypedNotice RouteAndValidate(object notice, EventStreamId streamId)
+  {
+    string serialized = Serialize(notice);
+
+    return new RoutedTypedNotice(streamId, notice, Validate(notice, serialized));
+
+    string Serialize(object toSerialize)
+    {
+      try
+      {
+        return SerializeNotice(toSerialize);
+      }
+      catch (Exception e)
+      {
+        throw new SerializationException(message: "Failed to serialize notice.", e);
       }
     }
   }
@@ -133,6 +193,8 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
 
     return noticeJson;
   }
+
+  private record RoutedTypedNotice(EventStreamId Stream, object Notice, string SerializedNotice);
 }
 
 /// <summary>
@@ -171,9 +233,12 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
   )
     where TEventType : TEnterpriseEventBaseType
   {
-    EventStreamId streamId = GetStream();
-    string noticeJson = Serialize(notice);
-    string response = await Dispatch(streamId, Validate());
+    EventStreamId streamId = TryGetStream(notice).IfLeftThrow();
+
+    string noticeJson = TrySerialize(notice)
+      .Bind(serialized => TryValidate(notice, serialized))
+      .IfLeftThrow();
+    string response = await Dispatch(streamId, noticeJson);
 
     return new TypedNoticeDispatchResult<TEventType>
     {
@@ -182,30 +247,6 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
       IoResponse = response,
       Stream = streamId
     };
-
-    EventStreamId GetStream()
-    {
-      try
-      {
-        return GetStreamId(notice);
-      }
-      catch (Exception e)
-      {
-        throw new StreamDeterminationException(message: "Failed to determine event stream.", e);
-      }
-    }
-
-    string Serialize(TEventType toSerialize)
-    {
-      try
-      {
-        return SerializeNotice(toSerialize);
-      }
-      catch (Exception e)
-      {
-        throw new SerializationException(message: "Failed to serialize enterprise event.", e);
-      }
-    }
 
     async Task<string> Dispatch(EventStreamId stream, string serializedMessage)
     {
@@ -218,34 +259,115 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
         throw new IOException(message: "Failed to dispatch enterprise event.", e);
       }
     }
+  }
 
-    string Validate()
-    {
-      IReadOnlyList<string>? validationResults;
-      try
-      {
-        validationResults = ValidateNotice(notice, noticeJson);
-      }
-      catch (NoticeValidationException)
-      {
-        throw;
-      }
-      catch (Exception e)
-      {
-        throw new NoticeValidationException(message: "Failed to validate enterprise event.", e);
-      }
+  /// <inheritdoc />
+  public async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEventType>(
+    DispatchBatchRequest<TEventType> request,
+    CancellationToken cancellationToken = default) where TEventType : TEnterpriseEventBaseType
+  {
+    (List<(BatchRoutedTypedNoticeResponse, Exception failure)> lefts,
+      List<KeyValuePair<string, BatchedRoutedTypedNotice>> rights) routed = request
+        .Notices
+        .Select(kvp =>
+          {
+            TEnterpriseEventBaseType notice = kvp.Value;
+            Either<(BatchRoutedTypedNoticeResponse, Exception failure), KeyValuePair<string, BatchedRoutedTypedNotice>>
+              routeResult = Eithers
+                .Try(() => new KeyValuePair<string, BatchedRoutedTypedNotice>(
+                    kvp.Key,
+                    new BatchedRoutedTypedNotice(GetStreamId(notice), notice)
+                  )
+                )
+                .MapLeft(failure => (
+                  new BatchRoutedTypedNoticeResponse(kvp.Key, EventStreamId.From(string.Empty), notice, string.Empty),
+                  failure)
+                );
 
-      if (validationResults is {Count: > 0})
-      {
-        throw new NoticeValidationException(
-          $"{typeof(TEventType).Name} validation failed.",
-          validationResults,
-          innerException: null
-        );
-      }
+            return routeResult;
+          }
+        )
+        .ToList()
+        .Partition();
 
-      return noticeJson;
-    }
+    BatchTypedNoticeDispatchResult results = await BatchDispatching.DispatchBatchAsync(
+      IoDispatcher,
+      Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> (id, notice) =>
+        TrySerialize((TEnterpriseEventBaseType)notice.Notice)
+          .BiBind(
+            serialized => TryValidate((TEnterpriseEventBaseType)notice.Notice, serialized)
+              .Map(validated => new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, validated))
+              .MapLeft(exception => (new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, serialized),
+                exception)
+              ),
+            exception =>
+              Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception exception), BatchRoutedTypedNoticeResponse>(
+                (new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, string.Empty), exception)
+              )
+          ),
+      routed.rights.ToDictionary(),
+      request.BatchDispatchOptions,
+      cancellationToken
+    );
+
+    return results;
+  }
+
+  private Either<Exception, EventStreamId> TryGetStream<TEventType>(TEventType notice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    return Eithers.Try(() =>
+      {
+        try
+        {
+          return GetStreamId(notice);
+        }
+        catch (Exception e)
+        {
+          throw new StreamDeterminationException(message: "Failed to determine event stream.", e);
+        }
+      }
+    );
+  }
+
+  private Either<Exception, string> TryValidate<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    return Eithers.Try(() =>
+      {
+        IReadOnlyList<string>? validationResults;
+        try
+        {
+          validationResults = ValidateNotice(notice, serializedNotice);
+        }
+        catch (NoticeValidationException)
+        {
+          throw;
+        }
+        catch (Exception e)
+        {
+          throw new NoticeValidationException(message: "Failed to validate enterprise event.", e);
+        }
+
+        if (validationResults is {Count: > 0})
+        {
+          throw new NoticeValidationException(
+            $"{typeof(TEventType).Name} validation failed.",
+            validationResults,
+            innerException: null
+          );
+        }
+
+        return serializedNotice;
+      }
+    );
+  }
+
+  private Either<Exception, string> TrySerialize(TEnterpriseEventBaseType toSerialize)
+  {
+    return Eithers
+      .Try(() => SerializeNotice(toSerialize))
+      .MapLeft(Exception (e) => new SerializationException(message: "Failed to serialize enterprise event.", e));
   }
 
   /// <summary>

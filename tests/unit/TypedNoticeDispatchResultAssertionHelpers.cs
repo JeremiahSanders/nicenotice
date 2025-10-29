@@ -9,8 +9,16 @@ internal static class TypedNoticeDispatchResultAssertionHelpers
     JsonSerializerOptions? jsonSerializerOptions = null)
     where TEvent : notnull
   {
+    return DeserializeIoResponseAsJson<TEvent>(result.IoResponse);
+  }
+
+  public static TEvent DeserializeIoResponseAsJson<TEvent>(
+    string ioResponse,
+    JsonSerializerOptions? jsonSerializerOptions = null)
+    where TEvent : notnull
+  {
     return JsonSerializer.Deserialize<TEvent>(
-             result.IoResponse,
+             ioResponse,
              jsonSerializerOptions ?? JsonDefaults.DefaultJsonSerializerOptions
            )
            ?? throw new InvalidOperationException(message: "Received null from deserialization.");

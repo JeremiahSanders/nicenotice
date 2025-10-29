@@ -11,6 +11,7 @@ public interface ITypedNoticeDispatcher
 | name | description |
 | --- | --- |
 | [DispatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher/DispatchAsync.md)(…) | Dispatches an enterprise event notice to a specific event stream. |
+| [DispatchBatchAsync](ITypedNoticeDispatcher/DispatchBatchAsync.md)(…) | Dispatches a batch of enterprise event notices to logical event streams. |
 
 ## Remarks
 

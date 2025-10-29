@@ -16,6 +16,7 @@ public abstract class TypedNoticeDispatcher : ITypedNoticeDispatcher
 | --- | --- |
 | static [Create](TypedNoticeDispatcher/Create.md)(…) | Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator. |
 | virtual [DispatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher/DispatchAsync.md)(…) |  |
+| virtual [DispatchBatchAsync](TypedNoticeDispatcher/DispatchBatchAsync.md)(…) |  |
 
 ## Protected Members
 

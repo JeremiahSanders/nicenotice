@@ -9,10 +9,14 @@ public Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventType>(TEv
 
 | parameter | description |
 | --- | --- |
-| TEventType |  |
-| notice |  |
-| streamId |  |
-| cancellationToken |  |
+| TEventType | A notice type. |
+| notice | A notice to dispatch. |
+| streamId | A logical stream to which the *notice* is being dispatched. |
+| cancellationToken | An asynchronous operation cancellation token. |
+
+## Return Value
+
+Returns the result of dispatching the notice.
 
 ## Remarks
 

@@ -15,6 +15,7 @@ public interface ITypedNoticeDispatcher<in TEnterpriseEventBaseType>
 | name | description |
 | --- | --- |
 | [DispatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher-1/DispatchAsync.md)(…) | Dispatch an enterprise event notice to the appropriate event stream using the configured [`INoticeIo`](./INoticeIo.md). |
+| [DispatchBatchAsync&lt;TEventType&gt;](ITypedNoticeDispatcher-1/DispatchBatchAsync.md)(…) | Dispatches a batch of enterprise event notices to logical event streams using the configured [`INoticeIo`](./INoticeIo.md). |
 
 ## Remarks
 

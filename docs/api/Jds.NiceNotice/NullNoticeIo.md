@@ -3,7 +3,7 @@
 Provides a no-operation implementation of [`INoticeIo`](./INoticeIo.md), primarily used as a default or placeholder where event dispatching is not required.
 
 ```csharp
-public class NullNoticeIo : INoticeIo
+public class NullNoticeIo : INoticeBatchIo
 ```
 
 ## Public Members
@@ -11,11 +11,12 @@ public class NullNoticeIo : INoticeIo
 | name | description |
 | --- | --- |
 | [NullNoticeIo](NullNoticeIo/NullNoticeIo.md)() | The default constructor. |
-| [DispatchAsync](NullNoticeIo/DispatchAsync.md)(…) | Dispatches an asynchronous event to the specified event stream with the given notice. |
+| [DispatchAsync](NullNoticeIo/DispatchAsync.md)(…) |  |
+| [DispatchNoticesAsync](NullNoticeIo/DispatchNoticesAsync.md)(…) |  |
 
 ## See Also
 
-* interface [INoticeIo](./INoticeIo.md)
+* interface [INoticeBatchIo](./INoticeBatchIo.md)
 * namespace [Jds.NiceNotice](../NiceNotice.md)
 * [NullNoticeIo.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/NullNoticeIo.cs)
 

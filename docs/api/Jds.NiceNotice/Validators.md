@@ -10,6 +10,7 @@ public static class Validators
 
 | name | description |
 | --- | --- |
+| static [DataAnnotationsValidator](Validators/DataAnnotationsValidator.md)() | Creates a validator that uses data annotations to validate typed notices (i.e., notification data transfer objects). |
 | static [DataAnnotationsValidator&lt;TEnterpriseEventBaseType&gt;](Validators/DataAnnotationsValidator.md)() | Creates a validator that uses data annotations to validate enterprise events. |
 | static [DelegateValidator](Validators/DelegateValidator.md)(…) | Creates a validator that uses a function (*validatorFunction*) to validate enterprise events. |
 | static [DelegateValidator&lt;TEnterpriseEventBaseType&gt;](Validators/DelegateValidator.md)(…) | Creates a validator that uses a function (*validatorFunction*) to validate enterprise events. |

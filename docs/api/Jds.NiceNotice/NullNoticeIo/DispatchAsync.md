@@ -1,21 +1,9 @@
 # NullNoticeIo.DispatchAsync method
 
-Dispatches an asynchronous event to the specified event stream with the given notice.
-
 ```csharp
 public Task<string> DispatchAsync(EventStreamId stream, string notice, 
     CancellationToken cancellationToken = default)
 ```
-
-| parameter | description |
-| --- | --- |
-| stream | The event stream ID where the notice will be dispatched. |
-| notice | The content of the notice to be dispatched. |
-| cancellationToken | An asynchronous operation cancellation token. |
-
-## Return Value
-
-A task representing the asynchronous operation, containing the dispatched notice as its result.
 
 ## Remarks
 

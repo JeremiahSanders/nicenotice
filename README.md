@@ -136,19 +136,40 @@ public class MyService(ITypedNoticeDispatcher<MyApplicationEvent> dispatcher)
 
 #### `ITypedNoticeDispatcher`
 
-> #### _Special Mention_ `INoticeIO`
+The `ITypedNoticeDispatcher` encapsulates the idea of dispatching typed, serialized, validated notices. Its interface is very flexible, accepting notices of any `object` (_**required** to be a serializable data transfer object_).
+
+_Note: `ITypedNoticeDispatcher<TEnterpriseEventBaseType>` is recommended if your organization or project implements a standard structured notification schema. It encourages consistent event notifications._
+
+**Example using the `MyApplicationEvent` base event, above:**
+
+```csharp
+public class MyService(ITypedNoticeDispatcher dispatcher)
+{
+  public async Task SendImmediateNotice()
+  {
+    _ = await dispatcher.DispatchAsync(new ImportantNotice());
+  }
+  public record ImportantNotice : MyApplicationEvent;
+}
+```
+
+> #### _Special Mention_ `INoticeIo`
 >
-> An implementation of the `INoticeIO` interface is used to actually adapt the serialized events (emitted by the typed notice dispatcher) into the I/O requests needed for your application's chosen messaging infrastructure (e.g., AWS SNS).
+> An implementation of the `INoticeIo` interface is used to actually adapt the serialized events (emitted by the typed notice dispatcher) into the I/O requests needed for your application's chosen messaging infrastructure (e.g., AWS SNS).
 >
 > NiceNotice does **not** include any I/O adapters in the core library.
-> Two implementations of `INoticeIO` are provided:
+> Two implementations of `INoticeIo` are provided:
 >
 > * `NullNoticeIo`, the default implementation; notifications are **not** dispatched externally.
 > * `CapturingNoticeIo`, simply captures emitted notifications in memory; provided to support unit testing.
 >
 > The [`NiceNotice.Aws.Sns` nuget package][nicenotice-aws-sdk-nuget] offers a prebuilt adapter for **Amazon Web Services Simple Notification Service**.
 >
-> For other destinations (enterprise event buses), your application might require a custom `INoticeIO` implementation. _Don't worry, it's a simple interface._
+> _For other destinations (enterprise event buses)&hellip;_
+>
+> Your application might require a custom `INoticeIo` implementation. _Don't worry, it's a simple interface._
+>
+> If your event bus supports batches, then instead implement `INoticeBatchIo`. (Otherwise batches of notices are sent serially.)
 >
 > [Check out the `ExampleCustomDispatcher` class in the NiceNotice unit tests][example-custom-dispatcher] for an example showing how the `xUnit` test output helper was adapted to be an I/O destination for tests.
 > Or check out [the `SnsNoticeIo` implementation in `NiceNotice.Aws.Sns`][nicenotice-aws-sdk-snsnoticeio] to see how AWS SNS is adapted.
