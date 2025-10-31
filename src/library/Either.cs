@@ -8,15 +8,19 @@ internal class Either<TLeft, TRight>
   public Either(TLeft left)
   {
     _left = left;
+    IsLeft = true;
   }
 
   public Either(TRight right)
   {
     _right = right;
+    IsRight = true;
   }
 
-  public bool IsLeft => _left != null;
-  public bool IsRight => _right != null;
+  public bool IsLeft { get; }
+
+  public bool IsRight { get; }
+
   public TRight RightUnsafe => _right ?? throw new InvalidOperationException(message: "Either is not right.");
   public TLeft LeftUnsafe => _left ?? throw new InvalidOperationException(message: "Either is not left.");
   public bool IsBottom => !IsLeft && !IsRight;
