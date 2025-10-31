@@ -364,6 +364,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       result.Successes.ShouldAllBe(response =>
         request.Notices[response.BatchNoticeId].Notice == response.Notice
       );
+      result.Failures.ShouldBeEmpty();
 
       AssertNoticeWasDispatched(login1.Username, login1);
       AssertNoticeWasDispatched(login2.Username, login2);
@@ -574,6 +575,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       result.Successes.ShouldAllBe(response =>
         request.Notices[response.BatchNoticeId] == (ExampleCustomBaseEnterpriseEvent)response.Notice
       );
+      result.Failures.ShouldBeEmpty();
 
       AssertNoticeWasDispatched(login1.Username, login1);
       AssertNoticeWasDispatched(login2.Username, login2);

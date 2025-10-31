@@ -39,7 +39,8 @@ internal static class BatchDispatching
     {
       if (ioDispatcher is INoticeBatchIo batchIo)
       {
-        BatchIoNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () => await batchIo.DispatchNoticesAsync(
+        BatchIoNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () =>
+            await batchIo.DispatchNoticesAsync(
               routed
                 .rights
                 .ToDictionary(
@@ -53,14 +54,17 @@ internal static class BatchDispatching
           .MapLeft(exception => new BatchIoNoticeDispatchResult
             {
               Failures = routed
-                .rights.Select(n => (new BatchedIoResponseNotice(n.BatchNoticeId, n.Stream, n.SerializedNotice), exception))
+                .rights.Select(n =>
+                  (new BatchedIoResponseNotice(n.BatchNoticeId, n.Stream, n.SerializedNotice), exception)
+                )
                 .ToList(),
               Successes = []
             }
           )
           .Match(i => i, i => i);
 
-        IEnumerable<(BatchRoutedTypedNoticeResponse, Exception)> mappedFailures = from bf in batchIoResult.Failures
+        IEnumerable<(BatchRoutedTypedNoticeResponse, Exception)> mappedFailures =
+          from bf in batchIoResult.Failures
           join requestKvp in notices
             on bf.Item1.BatchNoticeId equals requestKvp.Key
           select
