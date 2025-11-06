@@ -10,7 +10,7 @@ public class DispatchBatchRequest<TBaseEnterpriseEvent>
 
 | name | description |
 | --- | --- |
-| static [Create](DispatchBatchRequest-1/Create.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). Unique identifiers (to identifier elements within the batch) are generated for each notice. |
+| static [CreateFromTypedNotices](DispatchBatchRequest-1/CreateFromTypedNotices.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest-1.md). Unique identifiers (to identify elements within the notice batch) are generated for each notice. If *TBaseEnterpriseEvent* extends [`EnterpriseEvent`](./EnterpriseEvent.md), then [`Id`](./EnterpriseEvent/Id.md) is used to identify the notice element within the batch. Otherwise, a new Guid is generated. (2 methods) |
 | [BatchDispatchOptions](DispatchBatchRequest-1/BatchDispatchOptions.md) { get; set; } | Gets the batch dispatch options. |
 | [Notices](DispatchBatchRequest-1/Notices.md) { get; set; } | Gets the notices which are being dispatched. Key is a unique identifier for the notice within the batch, which is used to correlate responses. Value is the notice itself. |
 
