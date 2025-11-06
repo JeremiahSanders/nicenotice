@@ -19,7 +19,7 @@ public class DelegateBatchNoticeIo(
     return dispatchNoticeBatchAsync(notices, batchDispatchOptions, cancellationToken);
   }
 
-  public static DelegateBatchNoticeIo AlwaysFails()
+  public static DelegateBatchNoticeIo AlwaysFails_Batch()
   {
     return new DelegateBatchNoticeIo(
       static (stream, notice, cancellationToken) => throw new Exception(message: "Dispatch failed"),

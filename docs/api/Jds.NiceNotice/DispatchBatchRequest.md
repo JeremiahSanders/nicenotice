@@ -10,7 +10,8 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchedRoutedTypedNotic
 
 | name | description |
 | --- | --- |
-| static [Create](DispatchBatchRequest/Create.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). Unique identifiers (to identifier elements within the batch) are generated for each notice. (2 methods) |
+| static [CreateForSingleStream](DispatchBatchRequest/CreateForSingleStream.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). All notices are routed to the same stream, *stream*. Unique identifiers (to identifier elements within the batch) are generated for each notice. |
+| static [CreateFromRoutedNotices](DispatchBatchRequest/CreateFromRoutedNotices.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). Unique identifiers (to identifier elements within the batch) are generated for each notice. |
 
 ## Remarks
 

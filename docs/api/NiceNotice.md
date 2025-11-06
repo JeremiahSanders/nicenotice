@@ -47,6 +47,7 @@
 | static class [TypedNoticeConfigurationExtensions](./Jds.NiceNotice/TypedNoticeConfigurationExtensions.md) | Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices. |
 | abstract class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/TypedNoticeDispatcher-1.md) | Represents an abstract base class for dispatching notifications of a specified type. |
 | abstract class [TypedNoticeDispatcher](./Jds.NiceNotice/TypedNoticeDispatcher.md) | A base class implementation of [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
+| static class [TypedNoticeDispatcherBatchExtensions](./Jds.NiceNotice/TypedNoticeDispatcherBatchExtensions.md) | Extensions to typed notice dispatchers supporting batch notice dispatch. |
 | static class [TypedNoticeDispatcherRoutingExtensions](./Jds.NiceNotice/TypedNoticeDispatcherRoutingExtensions.md) | Methods extending [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md) to support additional typed notice dispatch patterns. |
 | record [TypedNoticeDispatchResult&lt;TEventType&gt;](./Jds.NiceNotice/TypedNoticeDispatchResult-1.md) | The result of dispatching a typed notice. |
 | class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/TypedNoticesBuilder-1.md) | A builder for configuring typed notices (enterprise events) which derive from a base type. |
