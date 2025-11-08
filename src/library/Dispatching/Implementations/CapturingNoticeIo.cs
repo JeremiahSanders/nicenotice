@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Dispatching.Implementations;
 
 /// <summary>
 ///   <para>

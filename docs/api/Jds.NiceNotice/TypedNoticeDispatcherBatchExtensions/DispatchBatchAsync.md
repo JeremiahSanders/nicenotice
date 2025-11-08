@@ -1,6 +1,6 @@
 # TypedNoticeDispatcherBatchExtensions.DispatchBatchAsync&lt;TEnterpriseEventBaseType&gt; method
 
-Creates a [`DispatchBatchRequest`](../DispatchBatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher-1/DispatchBatchAsync.md).
+Creates a [`DispatchBatchRequest`](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher-1/DispatchBatchAsync.md).
 
 ```csharp
 public static Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEnterpriseEventBaseType>(
@@ -28,9 +28,9 @@ This overload generates unique identifiers for the notices. If *TEnterpriseEvent
 
 ## See Also
 
-* class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
+* class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
 * interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../ITypedNoticeDispatcher-1.md)
-* record [BatchDispatchOptions](../BatchDispatchOptions.md)
+* record [BatchDispatchOptions](../../Jds.NiceNotice.Dispatching/BatchDispatchOptions.md)
 * class [TypedNoticeDispatcherBatchExtensions](../TypedNoticeDispatcherBatchExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

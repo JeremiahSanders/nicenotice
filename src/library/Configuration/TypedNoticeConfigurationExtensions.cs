@@ -1,8 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Routing;
+using Jds.NiceNotice.TypedNotices.Serialization;
+using Jds.NiceNotice.TypedNotices.Validation;
+
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Configuration;
 
 /// <summary>
 ///   Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices.
@@ -59,7 +65,7 @@ public static class TypedNoticeConfigurationExtensions
   /// <remarks>
   ///   Use the
   ///   <see
-  ///     cref="NiceNoticeBuilder.UseTypedNotices{TNoticeBaseType}(System.Action{Jds.NiceNotice.TypedNoticesBuilder{TNoticeBaseType}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)" />
+  ///     cref="NiceNoticeBuilder.UseTypedNotices{TNoticeBaseType}(System.Action{Jds.NiceNotice.Configuration.TypedNoticesBuilder{TNoticeBaseType}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)" />
   ///   overload to specify a different base type.
   /// </remarks>
   /// <param name="builder">This nice notice builder instance.</param>

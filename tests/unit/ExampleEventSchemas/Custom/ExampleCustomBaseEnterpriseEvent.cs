@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
+using Jds.NiceNotice.TypedNotices;
+
 namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
 /// <summary>

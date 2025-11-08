@@ -1,4 +1,7 @@
+using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Validation;
 using Jds.TestingUtils.Randomization;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +26,7 @@ public class DelegateNoticeValidatorTests
       .AddNiceNotice(builder => builder.UseTypedNotices(
           typedNoticesBuilder =>
           {
-            typedNoticesBuilder.ValidateWithDelegate(GenericValidatorReference, UntypedValidatorReference);
+            Validators.ValidateWithDelegate<EnterpriseEvent>(typedNoticesBuilder, GenericValidatorReference, UntypedValidatorReference);
           },
           ServiceLifetime.Singleton
         )

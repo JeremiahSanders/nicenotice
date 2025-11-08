@@ -25,9 +25,9 @@ Due to the inherent complexities to batched and/or parallel work and aggregating
 
 ## See Also
 
-* class [BatchIoNoticeDispatchResult](../BatchIoNoticeDispatchResult.md)
-* class [BatchedIoRequestNotice](../BatchedIoRequestNotice.md)
-* record [BatchDispatchOptions](../BatchDispatchOptions.md)
+* class [BatchIoNoticeDispatchResult](../../Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md)
+* class [BatchedIoRequestNotice](../../Jds.NiceNotice.Dispatching/BatchedIoRequestNotice.md)
+* record [BatchDispatchOptions](../../Jds.NiceNotice.Dispatching/BatchDispatchOptions.md)
 * interface [INoticeBatchIo](../INoticeBatchIo.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

@@ -1,11 +1,11 @@
 # TypedNoticeDispatcherBatchExtensions.DispatchBatchToSingleStreamAsync method
 
-Creates a [`DispatchBatchRequest`](../DispatchBatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher/DispatchBatchAsync.md).
+Creates a [`DispatchBatchRequest`](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher/DispatchBatchAsync.md).
 
 ```csharp
 public static Task<BatchTypedNoticeDispatchResult> DispatchBatchToSingleStreamAsync(
     this ITypedNoticeDispatcher dispatcher, EventStreamId stream, IEnumerable<object> notices, 
-    Func<BatchedRoutedTypedNotice, string>? batchIdProvider = null, 
+    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null, 
     BatchDispatchOptions? options = null, CancellationToken cancellationToken = default)
 ```
 
@@ -24,11 +24,11 @@ Returns the typed notice dispatch result.
 
 ## See Also
 
-* class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
+* class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * struct [EventStreamId](../EventStreamId.md)
-* class [BatchedRoutedTypedNotice](../BatchedRoutedTypedNotice.md)
-* record [BatchDispatchOptions](../BatchDispatchOptions.md)
+* class [BatchRoutedTypedNoticeRequest](../../Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeRequest.md)
+* record [BatchDispatchOptions](../../Jds.NiceNotice.Dispatching/BatchDispatchOptions.md)
 * class [TypedNoticeDispatcherBatchExtensions](../TypedNoticeDispatcherBatchExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

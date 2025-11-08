@@ -1,5 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
+using Jds.NiceNotice.Configuration;
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Routing;
+using Jds.NiceNotice.TypedNotices.Serialization;
+using Jds.NiceNotice.TypedNotices.Validation;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jds.NiceNotice.Tests.Unit.ServiceArrangementExamples;
@@ -29,8 +36,8 @@ public static class HelperBasedConfiguration
     return services
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          eeBuilder => eeBuilder
-            .SerializeToJson()
+          eeBuilder => Serializers
+            .SerializeToJson<EnterpriseEvent>(eeBuilder)
             .RouteToTypeNameStreams()
             .ValidateWithDataAnnotations(),
           ServiceLifetime.Singleton

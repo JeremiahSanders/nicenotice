@@ -1,7 +1,13 @@
+using Jds.NiceNotice.TypedNotices.Routing;
+using Jds.NiceNotice.TypedNotices.Serialization;
+using Jds.NiceNotice.TypedNotices.Serialization.Implementations;
+using Jds.NiceNotice.TypedNotices.Validation;
+using Jds.NiceNotice.TypedNotices.Validation.Implementations;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Configuration;
 
 /// <summary>
 ///   A builder for configuring typed notices (enterprise events) which derive from a base type.
@@ -22,7 +28,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   /// </summary>
   /// <remarks>
   ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
-  ///   and a <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" /> which always throws.
+  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
   /// </remarks>
   /// <param name="validatorServiceLifetime"></param>
   /// <param name="jsonSerializerServiceLifetime"></param>
@@ -48,7 +54,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   /// </summary>
   /// <remarks>
   ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
-  ///   and a <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" /> which always throws.
+  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
   /// </remarks>
   /// <param name="validatorServiceLifetime"></param>
   /// <param name="services"></param>
@@ -94,8 +100,8 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     // Configure routing
     ServiceDescriptor typeNameRouter =
       new(
-        typeof(NoticeStreamSelector<TEnterpriseEventBaseType>),
-        static _ => StreamSelectors.TypeNameStreams<TEnterpriseEventBaseType>(),
+        typeof(NoticeRouter<TEnterpriseEventBaseType>),
+        static _ => Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
         routingServiceLifetime
       );
     services.TryAdd(typeNameRouter);
@@ -115,19 +121,19 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   ///     It is expected that most runtime use cases will use the overload that uses a factory method, which provides
   ///     access to dependencies:
   ///     <see
-  ///       cref="UseStreamSelector(Func{IServiceProvider, NoticeStreamSelector{TEnterpriseEventBaseType}}, ServiceLifetime)" />
+  ///       cref="UseStreamSelector(Func{IServiceProvider, NoticeRouter{TEnterpriseEventBaseType}}, ServiceLifetime)" />
   ///   </para>
   /// </remarks>
-  /// <param name="streamSelector">
-  ///   An implementation of <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" />.
+  /// <param name="router">
+  ///   An implementation of <see cref="NoticeRouter{TEnterpriseEventBaseType}" />.
   /// </param>
   /// <returns></returns>
   public TypedNoticesBuilder<TEnterpriseEventBaseType> UseStreamSelector(
-    NoticeStreamSelector<TEnterpriseEventBaseType> streamSelector
+    NoticeRouter<TEnterpriseEventBaseType> router
   )
   {
     Services.Add(
-      new ServiceDescriptor(typeof(NoticeStreamSelector<TEnterpriseEventBaseType>), streamSelector)
+      new ServiceDescriptor(typeof(NoticeRouter<TEnterpriseEventBaseType>), router)
     );
 
     return this;
@@ -139,39 +145,39 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   /// </summary>
   /// <remarks>
   ///   <para>
-  ///     See <see cref="StreamSelectors" /> for helper methods to create stream selectors.
+  ///     See <see cref="Routers" /> for helper methods to create stream selectors.
   ///   </para>
   ///   <para>
-  ///     Most projects find <see cref="StreamSelectors.TypeNameFactory" /> a good option,
+  ///     Most projects find <see cref="Routers.TypeNameFactory" /> a good option,
   ///     sending every notice to a stream matching its type name.
   ///   </para>
   ///   <para>
-  ///     For precise, type-based configuration, <see cref="StreamSelectors.TypeMap{TEnterpriseEventBaseType}" />
+  ///     For precise, type-based configuration, <see cref="Routers.TypeMap{TEnterpriseEventBaseType}" />
   ///     is a good fit.
   ///   </para>
   ///   <para>
-  ///     In many custom cases, you can use the <see cref="StreamSelectors.Delegate" /> stream selector to provide custom
+  ///     In many custom cases, you can use the <see cref="Routers.Delegate" /> stream selector to provide custom
   ///     routing
   ///     logic. Use of <c>static</c> lambda methods is recommended.
   ///   </para>
   ///   <para>
-  ///     Finally, <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" /> is abstract,
+  ///     Finally, <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> is abstract,
   ///     so you can create a custom implementation for the most control.
   ///   </para>
   /// </remarks>
   /// <param name="factory">
   ///   A factory method which receives an <see cref="IServiceProvider" />
-  ///   and returns an implementation of <see cref="NoticeStreamSelector{TEnterpriseEventBaseType}" />.
+  ///   and returns an implementation of <see cref="NoticeRouter{TEnterpriseEventBaseType}" />.
   /// </param>
   /// <param name="lifetime">A service lifetime for the stream selector created by the <paramref name="factory" />.</param>
   /// <returns>Returns this instance for further configuration.</returns>
   public TypedNoticesBuilder<TEnterpriseEventBaseType> UseStreamSelector(
-    Func<IServiceProvider, NoticeStreamSelector<TEnterpriseEventBaseType>> factory,
+    Func<IServiceProvider, NoticeRouter<TEnterpriseEventBaseType>> factory,
     ServiceLifetime lifetime
   )
   {
     Services.Add(
-      new ServiceDescriptor(typeof(NoticeStreamSelector<TEnterpriseEventBaseType>), factory, lifetime)
+      new ServiceDescriptor(typeof(NoticeRouter<TEnterpriseEventBaseType>), factory, lifetime)
     );
 
     return this;
@@ -242,7 +248,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   ///   <para>
   ///     See <see cref="Validators" /> for helper methods to create validators.
   ///   </para>
-  ///   <para><see cref="Jds.NiceNotice.Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
+  ///   <para><see cref="Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
   ///   <para>To skip validation, <see cref="Validators.NoOpValidator" />.</para>
   ///   <para>
   ///     For more complex or custom needs, try <see cref="DelegateNoticeValidator" />, or derive an implementation of
@@ -273,7 +279,7 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   ///   <para>
   ///     See <see cref="Validators" /> for helper methods to create validators.
   ///   </para>
-  ///   <para><see cref="Jds.NiceNotice.Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
+  ///   <para><see cref="Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
   ///   <para>To skip validation, <see cref="Validators.NoOpValidator" />.</para>
   ///   <para>
   ///     For more complex or custom needs, derive an implementation of

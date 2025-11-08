@@ -22,8 +22,8 @@ The default implementation applies (in order): (1) serialization, (2) validation
 
 ## See Also
 
-* class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest](../DispatchBatchRequest.md)
+* class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
+* class [DispatchBatchRequest](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

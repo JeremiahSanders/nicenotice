@@ -15,7 +15,7 @@ public interface ITypedNoticeDispatcher
 
 ## Remarks
 
-When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](./TypedNoticeDispatcher.md) for easy implementation.
+When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](../Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher.md) for easy implementation.
 
 ## See Also
 

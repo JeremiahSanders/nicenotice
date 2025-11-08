@@ -22,7 +22,7 @@ A task that represents the asynchronous operation. The task result contains the 
 
 ## See Also
 
-* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../TypedNoticeDispatchResult-1.md)
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * class [TypedNoticeDispatcherRoutingExtensions](../TypedNoticeDispatcherRoutingExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
@@ -53,7 +53,7 @@ A task that represents the asynchronous operation. The task result contains the 
 
 ## See Also
 
-* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../TypedNoticeDispatchResult-1.md)
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * struct [EventStreamId](../EventStreamId.md)
 * class [TypedNoticeDispatcherRoutingExtensions](../TypedNoticeDispatcherRoutingExtensions.md)

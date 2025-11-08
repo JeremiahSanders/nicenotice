@@ -24,7 +24,7 @@ The default implementation applies (in order): (1) serialization, (2) validation
 
 ## See Also
 
-* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../TypedNoticeDispatchResult-1.md)
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * struct [EventStreamId](../EventStreamId.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)

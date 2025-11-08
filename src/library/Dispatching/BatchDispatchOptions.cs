@@ -1,4 +1,6 @@
-namespace Jds.NiceNotice;
+using Jds.NiceNotice.TypedNotices;
+
+namespace Jds.NiceNotice.Dispatching;
 
 /// <summary>
 ///   Options configuring the behavior of batch dispatch.

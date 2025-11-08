@@ -1,5 +1,7 @@
 using System.Text.Json;
 
+using Jds.NiceNotice.TypedNotices;
+
 namespace Jds.NiceNotice.Tests.Unit;
 
 internal static class TypedNoticeDispatchResultAssertionHelpers

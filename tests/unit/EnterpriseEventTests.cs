@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Jds.NiceNotice.TypedNotices;
 using Jds.TestingUtils.Randomization;
 
 using Shouldly;
