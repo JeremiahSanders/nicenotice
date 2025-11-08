@@ -1,4 +1,5 @@
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+using Jds.NiceNotice.TypedNotices.Validation;
 
 namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 

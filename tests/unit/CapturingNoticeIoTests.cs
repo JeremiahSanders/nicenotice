@@ -1,3 +1,4 @@
+using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.TestingUtils.Randomization;
 
 using Shouldly;

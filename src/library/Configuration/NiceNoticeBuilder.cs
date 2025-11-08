@@ -1,7 +1,11 @@
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.Dispatching.Implementations;
+using Jds.NiceNotice.TypedNotices;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Configuration;
 
 /// <summary>
 ///   A fluent builder for configuring NiceNotice services.
@@ -96,7 +100,7 @@ public class NiceNoticeBuilder(IServiceCollection services)
   /// <remarks>
   ///   Use the
   ///   <see
-  ///     cref="UseTypedNotices{TNoticeBaseType}(System.Action{Jds.NiceNotice.TypedNoticesBuilder{TNoticeBaseType}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)" />
+  ///     cref="UseTypedNotices{TNoticeBaseType}(System.Action{Jds.NiceNotice.Configuration.TypedNoticesBuilder{TNoticeBaseType}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)" />
   ///   overload to specify a different base type.
   /// </remarks>
   /// <param name="configure">A method which configures the handling of typed notices.</param>

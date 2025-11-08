@@ -1,5 +1,8 @@
+using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 using Jds.NiceNotice.Tests.Unit.ServiceArrangementExamples;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 

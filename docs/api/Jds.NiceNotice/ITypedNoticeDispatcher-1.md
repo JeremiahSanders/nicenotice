@@ -21,7 +21,7 @@ public interface ITypedNoticeDispatcher<in TEnterpriseEventBaseType>
 
 This is the primary type dependency used in runtime applications when using NiceNotice. I.e., the type that is injected into the application's business logic via constructor.
 
-When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](./TypedNoticeDispatcher-1.md) for easy implementation.
+When creating a custom implementation of this interface, use [`TypedNoticeDispatcher`](../Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher-1.md) for easy implementation.
 
 ## See Also
 

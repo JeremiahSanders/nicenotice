@@ -10,9 +10,9 @@ public static class TypedNoticeDispatcherBatchExtensions
 
 | name | description |
 | --- | --- |
-| static [DispatchBatchAsync&lt;TEnterpriseEventBaseType&gt;](TypedNoticeDispatcherBatchExtensions/DispatchBatchAsync.md)(…) | Creates a [`DispatchBatchRequest`](./DispatchBatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](./ITypedNoticeDispatcher-1/DispatchBatchAsync.md). |
-| static [DispatchBatchFromRoutedNoticesAsync](TypedNoticeDispatcherBatchExtensions/DispatchBatchFromRoutedNoticesAsync.md)(…) | Creates a [`DispatchBatchRequest`](./DispatchBatchRequest.md) which sends all the provided routed *notices* using [`DispatchBatchAsync`](./ITypedNoticeDispatcher/DispatchBatchAsync.md). |
-| static [DispatchBatchToSingleStreamAsync](TypedNoticeDispatcherBatchExtensions/DispatchBatchToSingleStreamAsync.md)(…) | Creates a [`DispatchBatchRequest`](./DispatchBatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](./ITypedNoticeDispatcher/DispatchBatchAsync.md). |
+| static [DispatchBatchAsync&lt;TEnterpriseEventBaseType&gt;](TypedNoticeDispatcherBatchExtensions/DispatchBatchAsync.md)(…) | Creates a [`DispatchBatchRequest`](../Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](./ITypedNoticeDispatcher-1/DispatchBatchAsync.md). |
+| static [DispatchBatchFromRoutedNoticesAsync](TypedNoticeDispatcherBatchExtensions/DispatchBatchFromRoutedNoticesAsync.md)(…) | Creates a [`DispatchBatchRequest`](../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) which sends all the provided routed *notices* using [`DispatchBatchAsync`](./ITypedNoticeDispatcher/DispatchBatchAsync.md). |
+| static [DispatchBatchToSingleStreamAsync](TypedNoticeDispatcherBatchExtensions/DispatchBatchToSingleStreamAsync.md)(…) | Creates a [`DispatchBatchRequest`](../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](./ITypedNoticeDispatcher/DispatchBatchAsync.md). |
 
 ## See Also
 

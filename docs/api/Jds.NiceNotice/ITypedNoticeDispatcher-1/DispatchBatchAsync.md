@@ -24,8 +24,8 @@ The default implementation applies (in order): (1) logical routing, (2) serializ
 
 ## See Also
 
-* class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](../DispatchBatchRequest-1.md)
+* class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
+* class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md)
 * interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../ITypedNoticeDispatcher-1.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

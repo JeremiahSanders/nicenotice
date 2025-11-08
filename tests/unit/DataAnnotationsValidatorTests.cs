@@ -1,4 +1,7 @@
+using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +20,7 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
 
     ITypedNoticeDispatcher dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
-          typedNoticesBuilder => { typedNoticesBuilder.ValidateWithDataAnnotations(); },
+          typedNoticesBuilder => { Validators.ValidateWithDataAnnotations<EnterpriseEvent>(typedNoticesBuilder); },
           ServiceLifetime.Singleton
         )
       )

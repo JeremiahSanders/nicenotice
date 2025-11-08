@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Configuration;
 
 /// <summary>
 ///   Methods extending <see cref="IServiceCollection" /> to add cross-app notifications services.

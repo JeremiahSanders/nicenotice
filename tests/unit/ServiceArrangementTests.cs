@@ -1,7 +1,11 @@
+using Jds.NiceNotice.Configuration;
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.Tests.Unit.ExampleApplication;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 using Jds.NiceNotice.Tests.Unit.ServiceArrangementExamples;
+using Jds.NiceNotice.TypedNotices;
 using Jds.TestingUtils.Randomization;
 
 using Microsoft.Extensions.DependencyInjection;

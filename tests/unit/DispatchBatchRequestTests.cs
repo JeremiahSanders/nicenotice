@@ -1,4 +1,5 @@
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+using Jds.NiceNotice.TypedNotices;
 using Jds.TestingUtils.Randomization;
 
 using Shouldly;

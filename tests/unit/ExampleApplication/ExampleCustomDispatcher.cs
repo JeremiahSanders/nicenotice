@@ -1,3 +1,5 @@
+using Jds.NiceNotice.Dispatching;
+
 using Xunit.Abstractions;
 
 namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;

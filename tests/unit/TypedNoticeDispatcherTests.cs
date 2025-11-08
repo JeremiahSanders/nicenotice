@@ -1,7 +1,12 @@
 using System.Text.Json;
 
+using Jds.NiceNotice.Configuration;
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
+using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.TestingUtils.Randomization;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +31,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
   }
 
   /// <summary>
-  ///   Tests verifying use of <see cref="Jds.NiceNotice.NiceNoticeBuilder.UseTypedNotices" /> without any
+  ///   Tests verifying use of <see cref="NiceNoticeBuilder.UseTypedNotices" /> without any
   ///   type arguments.
   ///   This is the second-most basic configuration.
   ///   In this arrangement, we will assume that <see cref="EnterpriseEvent" /> is the default base type.
@@ -129,7 +134,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
   }
 
   /// <summary>
-  ///   Tests verifying the behavior when <see cref="Jds.NiceNotice.ServiceCollectionExtensions.AddNiceNotice" /> is invoked
+  ///   Tests verifying the behavior when <see cref="ServiceCollectionExtensions.AddNiceNotice" /> is invoked
   ///   and no typed notice configuration is provided.
   ///   This is the most basic configuration.
   /// </summary>
@@ -200,8 +205,8 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
   }
 
   /// <summary>
-  ///   This tests the behavior of a <see cref="Jds.NiceNotice.TypedNoticeDispatcher" /> (the non-generic version)
-  ///   in isolation (i.e., not related to the <see cref="Jds.NiceNotice.ServiceCollectionExtensions.AddNiceNotice" />
+  ///   This tests the behavior of a <see cref="TypedNoticeDispatcher" /> (the non-generic version)
+  ///   in isolation (i.e., not related to the <see cref="ServiceCollectionExtensions.AddNiceNotice" />
   ///   extension method).
   /// </summary>
   /// <param name="testOutputHelper"></param>
@@ -506,7 +511,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       {
         MaxDegreeOfParallelism = Randomizer.Shared.IntInRange(minInclusive: 1, maxExclusive: 9)
       };
-      List<BatchedRoutedTypedNotice> notices =
+      List<BatchRoutedTypedNoticeRequest> notices =
       [
         new(defaultStreamId, login1), new(defaultStreamId, login2),
         new(defaultStreamId, logout3), new(defaultStreamId, logout4)
@@ -558,9 +563,9 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
   }
 
   /// <summary>
-  ///   This tests the behavior of a <see cref="Jds.NiceNotice.TypedNoticeDispatcher{TEnterpriseEventBaseType}" />
+  ///   This tests the behavior of a <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />
   ///   (the generic version) in isolation
-  ///   (i.e., not related to the <see cref="Jds.NiceNotice.ServiceCollectionExtensions.AddNiceNotice" />
+  ///   (i.e., not related to the <see cref="ServiceCollectionExtensions.AddNiceNotice" />
   ///   extension method).
   /// </summary>
   /// <param name="testOutputHelper"></param>
@@ -577,7 +582,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> ee =
         TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>.Create(
           noticeIo,
-          StreamSelectors.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
+          Routers.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
         );
 
       ExampleCustomLoginEvent toDispatch = new()
@@ -616,7 +621,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> ee =
         TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>.Create(
           noticeIo,
-          StreamSelectors.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
+          Routers.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
         );
 
       // Create some events to dispatch.
@@ -656,7 +661,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> ee =
         TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>.Create(
           noticeIo,
-          StreamSelectors.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
+          Routers.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
         );
 
       // Create some events to dispatch.
@@ -696,7 +701,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> ee =
         TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>.Create(
           noticeIo,
-          StreamSelectors.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
+          Routers.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
         );
 
       // Create some events to dispatch.
@@ -778,7 +783,7 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
       TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> ee =
         TypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>.Create(
           noticeIo,
-          StreamSelectors.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
+          Routers.Constant<ExampleCustomBaseEnterpriseEvent>(defaultStreamId)
         );
 
       // Create some events to dispatch.

@@ -24,7 +24,7 @@ The default implementation applies (in order): (1) logical routing, (2) serializ
 
 ## See Also
 
-* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../TypedNoticeDispatchResult-1.md)
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../ITypedNoticeDispatcher-1.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

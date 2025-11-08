@@ -1,5 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
+using Jds.NiceNotice.Configuration;
+using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.TypedNotices;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jds.NiceNotice.Tests.Unit.ServiceArrangementExamples;

@@ -1,4 +1,4 @@
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Dispatching.Implementations;
 
 /// <summary>
 ///   Provides a no-operation implementation of <see cref="INoticeIo" />,

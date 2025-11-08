@@ -1,4 +1,4 @@
-namespace Jds.NiceNotice;
+namespace Jds.NiceNotice.Dispatching;
 
 /// <summary>
 ///   The result of dispatching a batch of notices.

@@ -1,3 +1,4 @@
+using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.Tests.Unit.ExampleApplication;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
@@ -26,7 +27,7 @@ public static class ComprehensiveCustomConfiguration
       .UseTypedNotices<ExampleCustomBaseEnterpriseEvent>(
         eeBuilder => eeBuilder
           .UseSerializer(static serviceProvider => new ExampleCustomNoticeSerializer(), ServiceLifetime.Singleton)
-          .UseStreamSelector(static serviceProvider => new ExampleCustomStreamSelector(), ServiceLifetime.Singleton)
+          .UseStreamSelector(static serviceProvider => new ExampleCustomRouter(), ServiceLifetime.Singleton)
           .UseValidator(
             static serviceProvider => new ExampleCustomNoticeValidator(maxNoticeSize: 2048),
             ServiceLifetime.Singleton

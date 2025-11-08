@@ -1,3 +1,5 @@
+using Jds.NiceNotice.Dispatching;
+
 namespace Jds.NiceNotice.Tests.Unit;
 
 /// <summary>
