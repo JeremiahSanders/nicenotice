@@ -4,7 +4,7 @@
 
 NiceNotice is intended to help address the arrangement and coordination of the logical work required to dispatch **typed**/structured notifications of application events to an event bus, e.g., AWS Simple Notification Service (SNS), RabbitMQ.
 
-Dispatching a typed notice is as simple as: `await dispatcher.DispatchAsync(new UserSessionStarted { SessionId = signInResult.SessionId, UserId = signInResult.UserId })`.
+Dispatching a typed notice is as simple as: `await dispatcher.DispatchAsync(new UserSessionStarted { SessionId = signInResult.SessionId, UserId = signInResult.UserId })`. (See [How the `ITypedNoticeDispatcher<TEnterpriseEventBaseType>` works][how-typednoticedispatcher-works] for details on how the dispatcher works.)
 
 NiceNotice applies a structured approach to building an application/enterprise event notification dispatch system in .NET applications using four basic components:
 
@@ -25,7 +25,7 @@ NiceNotice applies a structured approach to building an application/enterprise e
 
 Technically, NiceNotice only depends upon the `IServiceCollection` and `IServiceProvider` infrastructure, but most applications using cross-application event notifications will be using service resolution from the application `Host`.
 
-**External I/O Client**: You'll need to **install and configure** your chosen messaging I/O client, e.g., [AWS SDK for Simple Notification Service][awssdk-sns]. Make sure that the applicable I/O dependencies for that library are registered in the `Host` `ServiceCollection`. E.g., if you're using AWS SNS then you must make sure `IAmazonSimpleNotificationService` is registered.
+**External I/O Client**: You'll need to **install and configure** your chosen messaging I/O client, e.g., [AWS SDK for Simple Notification Service][awssdk-sns]. Make sure that the applicable I/O dependencies for that library are registered in the `Host` `ServiceCollection`. E.g., if you're using AWS SNS then you must make sure `IAmazonSimpleNotificationService` is registered. (See [Notice Dispatch][notice-dispatch] for an explanation of how NiceNotice represents/adapts an I/O client.)
 
 ## Getting Started
 
@@ -156,8 +156,9 @@ public class MyService(ITypedNoticeDispatcher dispatcher)
 > #### _Special Mention_ `INoticeIo`
 >
 > An implementation of the `INoticeIo` interface is used to actually adapt the serialized events (emitted by the typed notice dispatcher) into the I/O requests needed for your application's chosen messaging infrastructure (e.g., AWS SNS).
+> (See [Notice Dispatch][notice-dispatch] for an explanation of how NiceNotice represents/adapts an I/O client.)
 >
-> NiceNotice does **not** include any I/O adapters in the core library.
+> NiceNotice does **not** include any I/O _adapters_ in the core library.
 > Two implementations of `INoticeIo` are provided:
 >
 > * `NullNoticeIo`, the default implementation; notifications are **not** dispatched externally.
@@ -169,7 +170,7 @@ public class MyService(ITypedNoticeDispatcher dispatcher)
 >
 > Your application might require a custom `INoticeIo` implementation. _Don't worry, it's a simple interface._
 >
-> If your event bus supports batches, then instead implement `INoticeBatchIo`. (Otherwise batches of notices are sent serially.)
+> If your event bus supports batches, then instead implement `INoticeBatchIo`. (Otherwise batches of notices are sent by executing the single-notice process repeatedly.)
 >
 > [Check out the `ExampleCustomDispatcher` class in the NiceNotice unit tests][example-custom-dispatcher] for an example showing how the `xUnit` test output helper was adapted to be an I/O destination for tests.
 > Or check out [the `SnsNoticeIo` implementation in `NiceNotice.Aws.Sns`][nicenotice-aws-sdk-snsnoticeio] to see how AWS SNS is adapted.
@@ -202,9 +203,11 @@ Such an event would serialize like:
 [enterprise-event-example-custom]: https://github.com/JeremiahSanders/nicenotice/blob/98290345b0d51a3d9070afa1e118277e0e23be3f/tests/unit/ExampleEventSchemas/Custom/ExampleCustomBaseEnterpriseEvent.cs#L6-L51
 [enterprise-event-example-standard]: https://github.com/JeremiahSanders/nicenotice/blob/98290345b0d51a3d9070afa1e118277e0e23be3f/tests/unit/EnterpriseEventTests.cs#L104-L126
 [example-custom-dispatcher]: https://github.com/JeremiahSanders/nicenotice/blob/98290345b0d51a3d9070afa1e118277e0e23be3f/tests/unit/ExampleApplication/ExampleCustomDispatcher.cs#L5-L23
+[how-typednoticedispatcher-works]: https://github.com/JeremiahSanders/nicenotice/docs/how-does-it-work.md
 [Microsoft.Extensions.Hosting]: https://www.nuget.org/packages/Microsoft.Extensions.Hosting
 [nicenotice-aws-sdk-nuget]: https://www.nuget.org/packages/NiceNotice.Aws.Sns
 [nicenotice-aws-sdk-snsnoticeio]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/dev/src/library/SnsNoticeIo.cs
 [nicenotice-nuget]: https://www.nuget.org/packages/NiceNotice
+[notice-dispatch]: https://github.com/JeremiahSanders/nicenotice/docs/notice-dispatch.md
 [service-configuration-console-example]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/73d4bf5dbd46c6e0bafcd5bc72f8137b4e619e37/tests/example-console/Services.cs#L69-L93
 [service-configuration-webapi-example]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/73d4bf5dbd46c6e0bafcd5bc72f8137b4e619e37/tests/example-webapi/Program.cs#L20-L58
