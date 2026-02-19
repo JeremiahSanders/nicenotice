@@ -1,4 +1,3 @@
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
 using Jds.NiceNotice.TypedNotices.Serialization.Implementations;
@@ -11,14 +10,18 @@ namespace Jds.NiceNotice.TypedNotices;
 ///   A base class implementation of <see cref="ITypedNoticeDispatcher" />.
 ///   Provides <c>abstract</c> and <c>virtual</c> methods for customizing its behavior.
 /// </summary>
-/// <param name="ioDispatcher">A notice I/O implementation.</param>
-public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
+/// <param name="ioDispatcherProvider">
+///   A function which will return a notice I/O implementation.
+///   This function will be invoked each time a notice is dispatched.
+/// </param>
+public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider)
   : ITypedNoticeDispatcher
 {
   /// <summary>
-  ///   Gets the notification dispatcher responsible for sending enterprise events to specific event streams.
+  ///   Gets the function that provides a notification dispatcher,
+  ///   which is responsible for sending serialized enterprise events to specific event streams.
   /// </summary>
-  protected INoticeIo IoDispatcher { get; } = ioDispatcher;
+  protected Func<INoticeIo> IoDispatcherProvider { get; } = ioDispatcherProvider;
 
   /// <inheritdoc />
   public virtual async Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventType>(
@@ -41,7 +44,7 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
     {
       try
       {
-        return await IoDispatcher.DispatchAsync(stream, serializedMessage, cancellationToken);
+        return await IoDispatcherProvider().DispatchAsync(stream, serializedMessage, cancellationToken);
       }
       catch (Exception e)
       {
@@ -56,7 +59,7 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
     CancellationToken cancellationToken = default)
   {
     return await BatchDispatchingWorkflow.DispatchBatchAsync(
-      IoDispatcher,
+      IoDispatcherProvider,
       TrySerializeAndValidate,
       request.Notices,
       request.BatchDispatchOptions,
@@ -166,7 +169,34 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
     NoticeValidator? noticeValidator = null)
   {
     return new DefaultTypedNoticeDispatcher(
-      ioDispatcher,
+      () => ioDispatcher,
+      noticeSerializer ?? new JsonNoticeSerializer(),
+      noticeValidator ?? new NoOpNoticeValidator()
+    );
+  }
+
+  /// <summary>
+  ///   Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator.
+  /// </summary>
+  /// <param name="ioDispatcherProvider">
+  ///   A function that returns an I/O dispatcher which is responsible
+  ///   for sending enterprise events to specific event streams.
+  /// </param>
+  /// <param name="noticeSerializer">Optional. A notice serializer. Defaults to <c>json</c> serialization.</param>
+  /// <param name="noticeValidator">
+  ///   Optional. A notice serializer.
+  ///   Defaults to <see cref="NoOpNoticeValidator" /> (i.e., no validation is performed).
+  ///   Create an instance with <see cref="Validators.DataAnnotationsValidator" />
+  ///   to use standard data annotation validation.
+  /// </param>
+  /// <returns></returns>
+  public static TypedNoticeDispatcher Create(
+    Func<INoticeIo> ioDispatcherProvider,
+    NoticeSerializer? noticeSerializer = null,
+    NoticeValidator? noticeValidator = null)
+  {
+    return new DefaultTypedNoticeDispatcher(
+      ioDispatcherProvider,
       noticeSerializer ?? new JsonNoticeSerializer(),
       noticeValidator ?? new NoOpNoticeValidator()
     );
@@ -210,14 +240,19 @@ public abstract class TypedNoticeDispatcher(INoticeIo ioDispatcher)
 /// <typeparam name="TEnterpriseEventBaseType">
 ///   The base type of enterprise events that the dispatcher handles. Must be a non-nullable type.
 /// </typeparam>
-public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo ioDispatcher)
+/// <param name="ioDispatcherProvider">
+///   A function which will return a notice I/O implementation.
+///   This function will be invoked each time a notice is dispatched.
+/// </param>
+public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoticeIo> ioDispatcherProvider)
   : ITypedNoticeDispatcher<TEnterpriseEventBaseType>
   where TEnterpriseEventBaseType : notnull
 {
   /// <summary>
-  ///   Gets the notification dispatcher responsible for sending enterprise events to specific event streams.
+  ///   Gets the function that provides a notification dispatcher,
+  ///   which is responsible for sending serialized enterprise events to specific event streams.
   /// </summary>
-  protected INoticeIo IoDispatcher { get; } = ioDispatcher;
+  protected Func<INoticeIo> IoDispatcherProvider { get; } = ioDispatcherProvider;
 
   /// <summary>
   ///   Dispatches an enterprise event asynchronously after performing validation, stream determination, serialization,
@@ -259,7 +294,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
     {
       try
       {
-        return await IoDispatcher.DispatchAsync(stream, serializedMessage, cancellationToken);
+        return await IoDispatcherProvider().DispatchAsync(stream, serializedMessage, cancellationToken);
       }
       catch (Exception e)
       {
@@ -279,7 +314,8 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
         .Select(kvp =>
           {
             TEnterpriseEventBaseType notice = kvp.Value;
-            Either<(BatchRoutedTypedNoticeResponse, Exception failure), KeyValuePair<string, BatchRoutedTypedNoticeRequest>>
+            Either<(BatchRoutedTypedNoticeResponse, Exception failure),
+                KeyValuePair<string, BatchRoutedTypedNoticeRequest>>
               routeResult = Eithers
                 .Try(() => new KeyValuePair<string, BatchRoutedTypedNoticeRequest>(
                     kvp.Key,
@@ -298,7 +334,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
         .Partition();
 
     BatchTypedNoticeDispatchResult results = await BatchDispatchingWorkflow.DispatchBatchAsync(
-      IoDispatcher,
+      IoDispatcherProvider,
       Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> (id, notice) =>
         TrySerialize((TEnterpriseEventBaseType)notice.Notice)
           .BiBind(
@@ -433,7 +469,34 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(INoticeIo 
   )
   {
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
-      ioDispatcher,
+      () => ioDispatcher,
+      streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
+      noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
+      validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()
+    );
+  }
+
+  /// <summary>
+  ///   Creates an instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" /> with the specified
+  ///   dispatcher, stream selector, and notice serializer functions.
+  /// </summary>
+  /// <param name="ioDispatcherProvider">
+  ///   A function that returns an I/O dispatcher which is responsible
+  ///   for sending enterprise events to specific event streams.
+  /// </param>
+  /// <param name="streamSelector">A function to determine the <see cref="EventStreamId" /> for a given enterprise event.</param>
+  /// <param name="noticeSerializer">A function to serialize the enterprise event into a string.</param>
+  /// <param name="validateNotice">A function to identify any reasons the notice should not be dispatched.</param>
+  /// <returns>A new instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />.</returns>
+  public static TypedNoticeDispatcher<TEnterpriseEventBaseType> Create(
+    Func<INoticeIo> ioDispatcherProvider,
+    NoticeRouter<TEnterpriseEventBaseType>? streamSelector = null,
+    NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null,
+    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null
+  )
+  {
+    return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
+      ioDispatcherProvider,
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
       noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
       validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()

@@ -1,6 +1,8 @@
+using Jds.NiceNotice.Configuration;
+
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jds.NiceNotice.Configuration;
+namespace Jds.NiceNotice;
 
 /// <summary>
 ///   Methods extending <see cref="IServiceCollection" /> to add cross-app notifications services.
@@ -8,7 +10,7 @@ namespace Jds.NiceNotice.Configuration;
 public static class ServiceCollectionExtensions
 {
   /// <summary>
-  ///   Adds cross-app notifications services to this service collection.
+  ///   Adds NiceNotice cross-app notifications services to this service collection.
   /// </summary>
   /// <remarks>This is the primary entrypoint for adding cross-app notifications and typed &quot;enterprise events&quot;.</remarks>
   /// <param name="container">This service collection.</param>
@@ -16,7 +18,8 @@ public static class ServiceCollectionExtensions
   /// <returns>Returns this service collection instance.</returns>
   public static IServiceCollection AddNiceNotice(
     this IServiceCollection container,
-    Action<NiceNoticeBuilder> configure)
+    Action<NiceNoticeBuilder> configure
+  )
   {
     NiceNoticeBuilder builder = new(container);
     configure(builder);

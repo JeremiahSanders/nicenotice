@@ -51,7 +51,7 @@ public class BatchDispatchingWorkflowTests
   {
     Either<Exception, BatchTypedNoticeDispatchResult> result = await Eithers.TryAsync(() =>
       BatchDispatchingWorkflow.DispatchBatchAsync(
-        noticeIo ?? CapturingIo,
+        () => noticeIo ?? CapturingIo,
         TrySerializeAndValidate,
         notices,
         batchDispatchOptions

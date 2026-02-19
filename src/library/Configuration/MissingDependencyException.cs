@@ -47,11 +47,6 @@ public class MissingDependencyException : InvalidOperationException
   /// </exception>
   public static T ThrowIfNull<T>(T? value) where T : class
   {
-    if (value == null)
-    {
-      throw For<T>();
-    }
-
-    return value;
+    return value ?? throw For<T>();
   }
 }

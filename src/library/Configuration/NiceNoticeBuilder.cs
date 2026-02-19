@@ -1,6 +1,8 @@
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Routing;
+using Jds.NiceNotice.TypedNotices.Serialization;
+using Jds.NiceNotice.TypedNotices.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -56,10 +58,17 @@ public class NiceNoticeBuilder(IServiceCollection services)
   /// <returns>Returns this builder instance.</returns>
   public NiceNoticeBuilder UseDispatcher<TDispatcher>(
     Func<IServiceProvider, TDispatcher> resolver,
-    ServiceLifetime serviceLifetime)
+    ServiceLifetime serviceLifetime
+  )
     where TDispatcher : INoticeIo
   {
     Services.Add(new ServiceDescriptor(typeof(INoticeIo), provider => resolver(provider), serviceLifetime));
+
+    // If the dispatcher also implements INoticeBatchIo, register it for that abstraction as well.
+    if (typeof(TDispatcher).GetInterfaces().Any(i => i == typeof(INoticeBatchIo)))
+    {
+      Services.Add(new ServiceDescriptor(typeof(INoticeBatchIo), provider => resolver(provider), serviceLifetime));
+    }
 
     return this;
   }
@@ -83,7 +92,8 @@ public class NiceNoticeBuilder(IServiceCollection services)
   /// <returns>Returns this instance.</returns>
   public NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(
     Func<IServiceProvider, ITypedNoticeDispatcher<TNoticeBaseType>> resolver,
-    ServiceLifetime dispatcherServiceLifetime)
+    ServiceLifetime dispatcherServiceLifetime
+  )
     where TNoticeBaseType : notnull
   {
     Services.Add(
@@ -166,10 +176,23 @@ public class NiceNoticeBuilder(IServiceCollection services)
     Services.TryAdd(
       new ServiceDescriptor(
         typeof(ITypedNoticeDispatcher<TNoticeBaseType>),
-        typeof(DefaultTypedNoticeDispatcher<TNoticeBaseType>),
+        DispatcherFactory,
         dispatcherServiceLifetime
       )
     );
+
+    return;
+
+    static object DispatcherFactory(IServiceProvider provider)
+    {
+      return new DefaultTypedNoticeDispatcher<TNoticeBaseType>(
+        // Passing as a method group. It is NOT invoked during construction.
+        provider.GetServiceOrThrowMissingDependency<INoticeIo>,
+        provider.GetServiceOrThrowMissingDependency<NoticeRouter<TNoticeBaseType>>(),
+        provider.GetServiceOrThrowMissingDependency<NoticeSerializer<TNoticeBaseType>>(),
+        provider.GetServiceOrThrowMissingDependency<NoticeValidator<TNoticeBaseType>>()
+      );
+    }
   }
 
   private void TryAddNonGenericTypedNoticeDispatcher(ServiceLifetime? serviceLifetime = null)
@@ -177,10 +200,22 @@ public class NiceNoticeBuilder(IServiceCollection services)
     Services.TryAdd(
       new ServiceDescriptor(
         typeof(ITypedNoticeDispatcher),
-        typeof(DefaultTypedNoticeDispatcher),
+        DispatcherFactory,
         serviceLifetime ?? ServiceLifetime.Transient
       )
     );
+
+    return;
+
+    static object DispatcherFactory(IServiceProvider provider)
+    {
+      return new DefaultTypedNoticeDispatcher(
+        // Passing as a method group. It is NOT invoked during construction.
+        provider.GetServiceOrThrowMissingDependency<INoticeIo>,
+        provider.GetServiceOrThrowMissingDependency<NoticeSerializer>(),
+        provider.GetService<NoticeValidator>()
+      );
+    }
   }
 
   internal NiceNoticeBuilder ApplyDefaults()

@@ -8,14 +8,14 @@ namespace Jds.NiceNotice.TypedNotices;
 /// <summary>
 ///   Default implementation of <see cref="TypedNoticeDispatcher" />.
 /// </summary>
-/// <param name="ioDispatcher">An I/O dispatcher (which will send the serialized notices).</param>
+/// <param name="ioDispatcherProvider">A function that returns an I/O dispatcher (which will send the serialized notices).</param>
 /// <param name="noticeSerializer">A serializer for notices.</param>
 /// <param name="noticeValidator">Optional. A validator for notices.</param>
 internal class DefaultTypedNoticeDispatcher(
-  INoticeIo ioDispatcher,
+  Func<INoticeIo> ioDispatcherProvider,
   NoticeSerializer noticeSerializer,
   NoticeValidator? noticeValidator
-) : TypedNoticeDispatcher(ioDispatcher)
+) : TypedNoticeDispatcher(ioDispatcherProvider)
 {
   /// <inheritdoc />
   protected override string SerializeNotice<TEventType>(TEventType notice)
@@ -33,17 +33,17 @@ internal class DefaultTypedNoticeDispatcher(
 /// <summary>
 ///   Default implementation of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />.
 /// </summary>
-/// <param name="ioDispatcher">An I/O dispatcher (which will send the serialized notices).</param>
+/// <param name="ioDispatcherProvider">A function that returns an I/O dispatcher (which will send the serialized notices).</param>
 /// <param name="router">A stream selector for routing notices.</param>
 /// <param name="serializer">A serializer for notices.</param>
 /// <param name="validator">Optional. A validator for notices.</param>
 internal class DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
-  INoticeIo ioDispatcher,
+  Func<INoticeIo> ioDispatcherProvider,
   NoticeRouter<TEnterpriseEventBaseType> router,
   NoticeSerializer<TEnterpriseEventBaseType> serializer,
   NoticeValidator<TEnterpriseEventBaseType> validator
 )
-  : TypedNoticeDispatcher<TEnterpriseEventBaseType>(ioDispatcher)
+  : TypedNoticeDispatcher<TEnterpriseEventBaseType>(ioDispatcherProvider)
   where TEnterpriseEventBaseType : notnull
 {
   /// <inheritdoc />
