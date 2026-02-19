@@ -1,5 +1,3 @@
-using Jds.NiceNotice.Configuration;
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.Tests.Unit.ExampleApplication;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
@@ -38,10 +36,6 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       provider.GetRequiredService<ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>>();
     fromExplicitType.ShouldNotBeNull();
 
-    ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> fromExtension =
-      provider.GetEnterpriseEventDispatcher<ExampleCustomBaseEnterpriseEvent>();
-    fromExtension.ShouldNotBeNull();
-
     ITypedNoticeDispatcher nonGenericExplicitType =
       provider.GetRequiredService<ITypedNoticeDispatcher>();
     nonGenericExplicitType.ShouldNotBeNull();
@@ -70,10 +64,6 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
     fromExplicitType.ShouldNotBeNull();
 
-    ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
-      provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
-    fromExtension.ShouldNotBeNull();
-
     ITypedNoticeDispatcher nonGenericExplicitType =
       provider.GetRequiredService<ITypedNoticeDispatcher>();
     nonGenericExplicitType.ShouldNotBeNull();
@@ -96,10 +86,6 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
         provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       fromExplicitType.ShouldNotBeNull();
-
-      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
-      fromExtension.ShouldNotBeNull();
 
       ITypedNoticeDispatcher nonGenericExplicitType =
         provider.GetRequiredService<ITypedNoticeDispatcher>();
@@ -130,28 +116,6 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
         await fromExplicitType.DispatchAsync(notice);
       fromExplicitTypeResult.Serialized.ShouldNotBeNullOrWhiteSpace();
       fromExplicitTypeResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
-    }
-
-    /// <summary>
-    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
-    ///   that it can still be used to dispatch events.
-    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
-    /// </summary>
-    [Fact]
-    public async Task DispatchingEventsSucceeds_FromServiceProviderExtension()
-    {
-      EventStreamId testStreamId = EventStreamId.From(value: "things");
-      EnterpriseEvent notice = new();
-
-      // Act
-      IServiceProvider provider = ArrangeServices(new ServiceCollection());
-
-      // Assert
-      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
-      TypedNoticeDispatchResult<EnterpriseEvent> fromExtensionResult = await fromExtension.DispatchAsync(notice);
-      fromExtensionResult.Serialized.ShouldNotBeNullOrWhiteSpace();
-      fromExtensionResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
     }
 
     /// <summary>
@@ -247,10 +211,6 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
         provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       fromExplicitType.ShouldNotBeNull();
-
-      ITypedNoticeDispatcher<EnterpriseEvent> fromExtension =
-        provider.GetEnterpriseEventDispatcher<EnterpriseEvent>();
-      fromExtension.ShouldNotBeNull();
 
       ITypedNoticeDispatcher nonGenericExplicitType =
         provider.GetRequiredService<ITypedNoticeDispatcher>();

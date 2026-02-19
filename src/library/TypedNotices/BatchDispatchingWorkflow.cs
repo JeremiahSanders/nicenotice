@@ -12,7 +12,7 @@ namespace Jds.NiceNotice.TypedNotices;
 internal static class BatchDispatchingWorkflow
 {
   public static async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
-    INoticeIo ioDispatcher,
+    Func<INoticeIo> ioDispatcherProvider,
     Func<string, BatchRoutedTypedNoticeRequest,
       Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>> trySerializeAndValidate,
     IReadOnlyDictionary<string, BatchRoutedTypedNoticeRequest> notices,
@@ -44,7 +44,7 @@ internal static class BatchDispatchingWorkflow
 
     if (routed.rights.Count > 0)
     {
-      if (ioDispatcher is INoticeBatchIo batchIo)
+      if (ioDispatcherProvider() is INoticeBatchIo batchIo)
       {
         BatchIoNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () =>
             await batchIo.DispatchNoticesAsync(
@@ -113,11 +113,15 @@ internal static class BatchDispatchingWorkflow
               try
               {
                 token.ThrowIfCancellationRequested();
-                string response = await ioDispatcher.DispatchAsync(
-                  batchRoutedTypedNotice.Stream,
-                  batchRoutedTypedNotice.SerializedNotice,
-                  token
-                );
+                // NOTE: We're invoking the dispatcher provider here (within the parallel invocation) so that we
+                //   have the opportunity to use distinct instances of the dispatcher for each parallel invocation.
+                //   This can be useful if the dispatcher is not thread-safe.
+                string response = await ioDispatcherProvider()
+                  .DispatchAsync(
+                    batchRoutedTypedNotice.Stream,
+                    batchRoutedTypedNotice.SerializedNotice,
+                    token
+                  );
                 successes.Add(
                   batchRoutedTypedNotice with
                   {
