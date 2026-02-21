@@ -32,6 +32,12 @@ public static class TypedNoticeDispatcherRoutingExtensions
   /// <summary>
   ///   Asynchronously dispatches a notice to an event stream based on the type of the notice.
   /// </summary>
+  /// <remarks>
+  ///   If the <typeparamref name="TEventType" /> type has a <see cref="NoticeStreamAttribute" /> attribute,
+  ///   the stream name is obtained from the attribute.
+  ///   (The type's hierarchy is considered when searching for the attribute.)
+  ///   If not, the stream name is obtained from the type's name.
+  /// </remarks>
   /// <param name="dispatcher">This notice dispatcher, which will handle the dispatch operation.</param>
   /// <param name="notice">The notice to be dispatched.</param>
   /// <param name="dispatchToFullNameStream">
@@ -50,8 +56,8 @@ public static class TypedNoticeDispatcherRoutingExtensions
     return dispatcher.DispatchAsync(
       notice,
       dispatchToFullNameStream
-        ? Routers.FullNameStreamProvider(notice)
-        : Routers.TypeNameStreamProvider(notice),
+        ? Routers.DelegateAlgorithms.AttributeOrFullNameStreamProvider(notice)
+        : Routers.DelegateAlgorithms.AttributeOrTypeNameStreamProvider(notice),
       cancellationToken
     );
   }

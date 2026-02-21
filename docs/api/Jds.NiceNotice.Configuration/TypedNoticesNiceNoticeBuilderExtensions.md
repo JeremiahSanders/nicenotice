@@ -11,6 +11,7 @@ public static class TypedNoticesNiceNoticeBuilderExtensions
 | name | description |
 | --- | --- |
 | static [UseTypedNotices](TypedNoticesNiceNoticeBuilderExtensions/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../Jds.NiceNotice/EnterpriseEvent.md) as the assumed base type. |
+| static [UseTypedNotices&lt;TNoticeBaseType&gt;](TypedNoticesNiceNoticeBuilderExtensions/UseTypedNotices.md)(…) | Adds support for dispatching typed, serialized notices (JSON most commonly) using the *TNoticeBaseType* as the base type. |
 
 ## See Also
 

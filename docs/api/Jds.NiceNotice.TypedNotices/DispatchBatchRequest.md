@@ -10,6 +10,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
 
 | name | description |
 | --- | --- |
+| static [CreateForInferredRoutes](DispatchBatchRequest/CreateForInferredRoutes.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). Notices are routed to streams inferred from their type metadata. Preference is given to the [`NoticeStreamAttribute`](./NoticeStreamAttribute.md) on the notice type (or in its type hierarchy). If no attribute is present, the notices are routed to streams from their type name. Unique identifiers (to identifier elements within the batch) are generated for each notice. |
 | static [CreateForSingleStream](DispatchBatchRequest/CreateForSingleStream.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). All notices are routed to the same stream, *stream*. Unique identifiers (to identifier elements within the batch) are generated for each notice. |
 | static [CreateFromRoutedNotices](DispatchBatchRequest/CreateFromRoutedNotices.md)(…) | Creates a new instance of [`DispatchBatchRequest`](./DispatchBatchRequest.md). Unique identifiers (to identifier elements within the batch) are generated for each notice. |
 
