@@ -8,13 +8,13 @@ public abstract class TypedNoticeDispatcher : ITypedNoticeDispatcher
 
 | parameter | description |
 | --- | --- |
-| ioDispatcher | A notice I/O implementation. |
+| ioDispatcherProvider | A function which will return a notice I/O implementation. This function will be invoked each time a notice is dispatched. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| static [Create](TypedNoticeDispatcher/Create.md)(…) | Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator. |
+| static [Create](TypedNoticeDispatcher/Create.md)(…) | Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator. (2 methods) |
 | virtual [DispatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher/DispatchAsync.md)(…) |  |
 | virtual [DispatchBatchAsync](TypedNoticeDispatcher/DispatchBatchAsync.md)(…) |  |
 
@@ -23,7 +23,7 @@ public abstract class TypedNoticeDispatcher : ITypedNoticeDispatcher
 | name | description |
 | --- | --- |
 | [TypedNoticeDispatcher](TypedNoticeDispatcher/TypedNoticeDispatcher.md)(…) | A base class implementation of [`ITypedNoticeDispatcher`](../Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
-| [IoDispatcher](TypedNoticeDispatcher/IoDispatcher.md) { get; } | Gets the notification dispatcher responsible for sending enterprise events to specific event streams. |
+| [IoDispatcherProvider](TypedNoticeDispatcher/IoDispatcherProvider.md) { get; } | Gets the function that provides a notification dispatcher, which is responsible for sending serialized enterprise events to specific event streams. |
 | abstract [SerializeNotice&lt;TEventType&gt;](TypedNoticeDispatcher/SerializeNotice.md)(…) | Serializes the specified enterprise event notice to a string representation. |
 | virtual [ValidateNotice&lt;TEventType&gt;](TypedNoticeDispatcher/ValidateNotice.md)(…) | Validates the specified enterprise event notice. |
 

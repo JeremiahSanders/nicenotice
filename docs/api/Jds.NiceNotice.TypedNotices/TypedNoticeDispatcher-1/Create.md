@@ -1,4 +1,37 @@
-# TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;.Create method
+# TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;.Create method (1 of 2)
+
+Creates an instance of [`TypedNoticeDispatcher`](../TypedNoticeDispatcher-1.md) with the specified dispatcher, stream selector, and notice serializer functions.
+
+```csharp
+public static TypedNoticeDispatcher Create(Func<INoticeIo> ioDispatcherProvider, 
+    NoticeRouter<TEnterpriseEventBaseType>? streamSelector = null, 
+    NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null, 
+    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null)
+```
+
+| parameter | description |
+| --- | --- |
+| ioDispatcherProvider | A function that returns an I/O dispatcher which is responsible for sending enterprise events to specific event streams. |
+| streamSelector | A function to determine the [`EventStreamId`](../../Jds.NiceNotice/EventStreamId.md) for a given enterprise event. |
+| noticeSerializer | A function to serialize the enterprise event into a string. |
+| validateNotice | A function to identify any reasons the notice should not be dispatched. |
+
+## Return Value
+
+A new instance of [`TypedNoticeDispatcher`](../TypedNoticeDispatcher-1.md).
+
+## See Also
+
+* interface [INoticeIo](../../Jds.NiceNotice/INoticeIo.md)
+* class [NoticeRouter&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Routing/NoticeRouter-1.md)
+* class [NoticeSerializer&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer-1.md)
+* class [NoticeValidator&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator-1.md)
+* class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../TypedNoticeDispatcher-1.md)
+* namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
+
+---
+
+# TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;.Create method (2 of 2)
 
 Creates an instance of [`TypedNoticeDispatcher`](../TypedNoticeDispatcher-1.md) with the specified dispatcher, stream selector, and notice serializer functions.
 

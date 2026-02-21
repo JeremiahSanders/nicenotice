@@ -3,12 +3,12 @@
 A base class implementation of [`ITypedNoticeDispatcher`](../../Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior.
 
 ```csharp
-protected TypedNoticeDispatcher(INoticeIo ioDispatcher)
+protected TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider)
 ```
 
 | parameter | description |
 | --- | --- |
-| ioDispatcher | A notice I/O implementation. |
+| ioDispatcherProvider | A function which will return a notice I/O implementation. This function will be invoked each time a notice is dispatched. |
 
 ## See Also
 

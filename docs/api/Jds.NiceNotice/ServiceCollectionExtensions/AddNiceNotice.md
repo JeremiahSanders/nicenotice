@@ -1,6 +1,6 @@
 # ServiceCollectionExtensions.AddNiceNotice method
 
-Adds cross-app notifications services to this service collection.
+Adds NiceNotice cross-app notifications services to this service collection.
 
 ```csharp
 public static IServiceCollection AddNiceNotice(this IServiceCollection container, 
@@ -22,7 +22,7 @@ This is the primary entrypoint for adding cross-app notifications and typed "ent
 
 ## See Also
 
-* class [NiceNoticeBuilder](../NiceNoticeBuilder.md)
+* class [NiceNoticeBuilder](../../Jds.NiceNotice.Configuration/NiceNoticeBuilder.md)
 * class [ServiceCollectionExtensions](../ServiceCollectionExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 
