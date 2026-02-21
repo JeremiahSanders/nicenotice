@@ -1,5 +1,4 @@
 using Jds.NiceNotice.Configuration;
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.TypedNotices.Routing.Implementations;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +41,9 @@ public static class Routers
   /// <typeparam name="TEnterpriseEventBaseType">The base enterprise event type.</typeparam>
   /// <returns>Returns a notice stream selector.</returns>
   public static NoticeRouter<TEnterpriseEventBaseType> Delegate<TEnterpriseEventBaseType>(
-    Func<TEnterpriseEventBaseType, EventStreamId> selector) where TEnterpriseEventBaseType : notnull
+    Func<TEnterpriseEventBaseType, EventStreamId> selector
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return new DelegateRouter<TEnterpriseEventBaseType>(selector);
   }
@@ -71,7 +72,9 @@ public static class Routers
   /// <returns>Returns a notice stream selector.</returns>
   public static NoticeRouter<TEnterpriseEventBaseType> TypeMap<TEnterpriseEventBaseType>(
     IReadOnlyDictionary<Type, EventStreamId> map,
-    EventStreamId? defaultStream = null) where TEnterpriseEventBaseType : notnull
+    EventStreamId? defaultStream = null
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return new TypeMapRouter<TEnterpriseEventBaseType>(map, defaultStream);
   }
@@ -92,7 +95,8 @@ public static class Routers
   public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteToConstantStream<TEnterpriseEventBaseType>(
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
     EventStreamId stream
-  ) where TEnterpriseEventBaseType : notnull
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return builder.UseStreamSelector(
       _ => Constant<TEnterpriseEventBaseType>(stream),
@@ -117,7 +121,8 @@ public static class Routers
   public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteWithDelegate<TEnterpriseEventBaseType>(
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
     Func<TEnterpriseEventBaseType, EventStreamId> routingFunction
-  ) where TEnterpriseEventBaseType : notnull
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return builder.UseStreamSelector(
       _ => Delegate(routingFunction),
@@ -143,7 +148,9 @@ public static class Routers
   /// <returns>Returns the builder after modification.</returns>
   public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteToTypeNameStreams<TEnterpriseEventBaseType>(
     this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
-    bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
+    bool useFullTypeName = false
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return builder.UseStreamSelector(useFullTypeName ? FullName : TypeName, ServiceLifetime.Singleton);
 
@@ -154,7 +161,7 @@ public static class Routers
 
     static NoticeRouter<TEnterpriseEventBaseType> TypeName(IServiceProvider _)
     {
-      return FullNameFactory<TEnterpriseEventBaseType>();
+      return TypeNameFactory<TEnterpriseEventBaseType>();
     }
   }
 
@@ -174,7 +181,9 @@ public static class Routers
   /// <typeparam name="TEnterpriseEventBaseType">A base enterprise event notice type.</typeparam>
   /// <returns>Returns the constructed stream selector.</returns>
   public static NoticeRouter<TEnterpriseEventBaseType> TypeNameStreams<TEnterpriseEventBaseType>(
-    bool useFullTypeName = false) where TEnterpriseEventBaseType : notnull
+    bool useFullTypeName = false
+  )
+    where TEnterpriseEventBaseType : notnull
   {
     return useFullTypeName ? FullNameFactory<TEnterpriseEventBaseType>() : TypeNameFactory<TEnterpriseEventBaseType>();
   }
@@ -182,27 +191,37 @@ public static class Routers
   private static NoticeRouter<TEnterpriseEventBaseType> FullNameFactory<TEnterpriseEventBaseType>()
     where TEnterpriseEventBaseType : notnull
   {
-    return Delegate<TEnterpriseEventBaseType>(FullNameStreamProvider);
+    return Delegate<TEnterpriseEventBaseType>(DelegateAlgorithms.AttributeOrFullNameStreamProvider);
   }
 
   private static NoticeRouter<TEnterpriseEventBaseType> TypeNameFactory<TEnterpriseEventBaseType>()
     where TEnterpriseEventBaseType : notnull
   {
-    return Delegate<TEnterpriseEventBaseType>(TypeNameStreamProvider);
+    return Delegate<TEnterpriseEventBaseType>(DelegateAlgorithms.AttributeOrTypeNameStreamProvider);
   }
 
-  internal static EventStreamId FullNameStreamProvider<TEnterpriseEventBaseType>(TEnterpriseEventBaseType eventData)
-    where TEnterpriseEventBaseType : notnull
+  internal static class DelegateAlgorithms
   {
-    return (EventStreamId)(eventData.GetType()
-      .FullName ?? eventData.GetType()
-      .Name);
-  }
+    internal static EventStreamId AttributeOrFullNameStreamProvider<TEnterpriseEventBaseType>(
+      TEnterpriseEventBaseType eventData
+    )
+      where TEnterpriseEventBaseType : notnull
+    {
+      Type type = eventData.GetType();
 
-  internal static EventStreamId TypeNameStreamProvider<TEnterpriseEventBaseType>(TEnterpriseEventBaseType eventData)
-    where TEnterpriseEventBaseType : notnull
-  {
-    return (EventStreamId)eventData.GetType()
-      .Name;
+      return NoticeStreamAttributeHelpers.TryGetNoticeEventStreamId(type) ??
+             (EventStreamId)(type.FullName ?? type.Name);
+    }
+
+    internal static EventStreamId AttributeOrTypeNameStreamProvider<TEnterpriseEventBaseType>(
+      TEnterpriseEventBaseType eventData
+    )
+      where TEnterpriseEventBaseType : notnull
+    {
+      Type type = eventData.GetType();
+
+      return NoticeStreamAttributeHelpers.TryGetNoticeEventStreamId(type) ??
+             (EventStreamId)type.Name;
+    }
   }
 }

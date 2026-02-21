@@ -53,6 +53,7 @@
 | class [BatchTypedNoticeDispatchResult](./Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md) | The result of dispatching a batch of typed notices. |
 | class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) | A request to dispatch a batch of notices. |
 | class [DispatchBatchRequest](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) | A request to dispatch a batch of notices. |
+| class [NoticeStreamAttribute](./Jds.NiceNotice.TypedNotices/NoticeStreamAttribute.md) | An attribute indicating the logical identifier of the notice stream to which a notice type should be sent. I.e., the [`EventStreamId`](./Jds.NiceNotice/EventStreamId.md) value. |
 | abstract class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher-1.md) | Represents an abstract base class for dispatching notifications of a specified type. |
 | abstract class [TypedNoticeDispatcher](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher.md) | A base class implementation of [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
 | record [TypedNoticeDispatchResult&lt;TEventType&gt;](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md) | The result of dispatching a typed notice. |

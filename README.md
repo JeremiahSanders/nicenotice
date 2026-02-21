@@ -63,6 +63,14 @@ The above example _base_ application event, `MyApplicationEvent`, inherits `sche
 {"schema":"MyApplicationEvent","timestamp":"2025-10-11T23:17:59.5603648+00:00","id":"9fd368e0-23e2-4ec2-a30a-6ef99c3c2841"}
 ```
 
+#### Routing Considerations
+
+By default, NiceNotice internally routes notices to an `EventStreamId` which matches the notification **type name**. (E.g., `MyCompany.MyApplication.LoginEvent` would be routed to a "stream" named `LoginEvent`)
+
+When you create a new event **type**, you can optionally add [a `[NoticeStream("")]` attribute][notice-stream-attribute] to specify a custom stream name.
+
+**This is very helpful for "grouping" events.** For example, you might want all user session events (e.g., login, logout, timeout) to route to the same logical stream, `user-session`. To do so you'd simply add `[NoticeStream("user-session")]` to the applicable events' type definitions. This works on up the object hierarchy tree, so by applying a `[NoticeStream()]` attribute to a _base_ event type you can easily apply consistent routing to all event types derived from it.
+
 ### Step 2: Configure NiceNotice in application service configuration
 
 On your `Host`'s `IServiceCollection`, use the `.AddNiceNotice()` extension method to add NiceNotice services.
@@ -215,6 +223,7 @@ Such an event would serialize like:
 [nicenotice-aws-sdk-nuget]: https://www.nuget.org/packages/NiceNotice.Aws.Sns
 [nicenotice-aws-sdk-snsnoticeio]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/dev/src/library/SnsNoticeIo.cs
 [nicenotice-nuget]: https://www.nuget.org/packages/NiceNotice
-[notice-dispatch]: https://github.com/JeremiahSanders/nicenotice/docs/notice-dispatch.md
+[notice-dispatch]: https://github.com/JeremiahSanders/nicenotice/tree/dev/docs/notice-dispatch.md
+[notice-stream-attribute]: https://github.com/JeremiahSanders/nicenotice/tree/dev/docs/api/Jds.NiceNotice.TypedNotices/NoticeStreamAttribute.md
 [service-configuration-console-example]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/73d4bf5dbd46c6e0bafcd5bc72f8137b4e619e37/tests/example-console/Services.cs#L69-L93
 [service-configuration-webapi-example]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/73d4bf5dbd46c6e0bafcd5bc72f8137b4e619e37/tests/example-webapi/Program.cs#L20-L58

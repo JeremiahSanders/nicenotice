@@ -204,7 +204,10 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
     {
       // Act
       ServiceProvider provider = new ServiceCollection()
-        .ApplyHelperBasedConfiguration(serviceProvider => new ExampleCustomDispatcher(testOutputHelper))
+        .ApplyHelperBasedConfiguration(
+          serviceProvider => new ExampleCustomDispatcher(testOutputHelper),
+          useFullTypeName: false
+        )
         .BuildServiceProvider();
 
       // Assert
@@ -229,7 +232,7 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
         Username = $"{Randomizer.Shared.DemographicsSurnameUsa()}.{Randomizer.Shared.DemographicsForenameUsa()}"
       };
       ServiceProvider provider = new ServiceCollection()
-        .ApplyHelperBasedConfiguration(serviceProvider => new CapturingNoticeIo())
+        .ApplyHelperBasedConfiguration(serviceProvider => new CapturingNoticeIo(), useFullTypeName: true)
         .BuildServiceProvider();
       ITypedNoticeDispatcher<EnterpriseEvent> dispatcher =
         provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();

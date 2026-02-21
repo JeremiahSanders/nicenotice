@@ -28,17 +28,19 @@ public static class HelperBasedConfiguration
   /// </remarks>
   /// <param name="services"></param>
   /// <param name="dispatcher"></param>
+  /// <param name="useFullTypeName"></param>
   /// <returns></returns>
   public static IServiceCollection ApplyHelperBasedConfiguration(
     this IServiceCollection services,
-    Func<IServiceProvider, INoticeIo> dispatcher)
+    Func<IServiceProvider, INoticeIo> dispatcher,
+    bool useFullTypeName)
   {
     return services
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
           eeBuilder => Serializers
             .SerializeToJson<EnterpriseEvent>(eeBuilder)
-            .RouteToTypeNameStreams()
+            .RouteToTypeNameStreams(useFullTypeName)
             .ValidateWithDataAnnotations(),
           ServiceLifetime.Singleton
         )

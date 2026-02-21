@@ -1,4 +1,5 @@
 using Jds.NiceNotice.Dispatching;
+using Jds.NiceNotice.TypedNotices.Routing;
 
 namespace Jds.NiceNotice.TypedNotices;
 
@@ -79,6 +80,52 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   {
     return CreateFromRoutedNotices(
       notices.Select(notice => new BatchRoutedTypedNoticeRequest(stream, notice)),
+      batchIdProvider,
+      options
+    );
+  }
+
+  /// <summary>
+  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   Notices are routed to streams inferred from their type metadata.
+  ///   Preference is given to the <see cref="NoticeStreamAttribute" /> on the notice type (or in its type hierarchy).
+  ///   If no attribute is present, the notices are routed to streams from their type name.
+  ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
+  /// </summary>
+  /// <param name="notices">A sequence of notices which are being dispatched.</param>
+  /// <param name="defaultToFullTypeName">
+  ///   A value indicating whether to default to the full type name (e.g., <c>MyCompany.MyApp.MyEvent</c>).
+  ///   When <c>false</c>, the type name (e.g., <c>MyEvent</c>) is used.
+  /// </param>
+  /// <param name="batchIdProvider">
+  ///   A function which generates unique identifiers for each notice within the batch.
+  ///   Optional. Default: <see cref="Guid.NewGuid" />.
+  /// </param>
+  /// <param name="options">Optional. Batch dispatch configuration options.</param>
+  /// <returns>Returns the created request.</returns>
+  /// <exception cref="ArgumentException">
+  ///   Thrown if identities provided by <paramref name="batchIdProvider" />
+  ///   cannot be used to create a request dictionary.
+  /// </exception>
+  public static DispatchBatchRequest CreateForInferredRoutes(
+    IEnumerable<object> notices,
+    bool defaultToFullTypeName = false,
+    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
+    BatchDispatchOptions? options = null
+  )
+  {
+    return CreateFromRoutedNotices(
+      notices
+        .Select(notice =>
+          {
+            EventStreamId route =
+              defaultToFullTypeName
+                ? Routers.DelegateAlgorithms.AttributeOrFullNameStreamProvider(notice)
+                : Routers.DelegateAlgorithms.AttributeOrTypeNameStreamProvider(notice);
+
+            return new BatchRoutedTypedNoticeRequest(route, notice);
+          }
+        ),
       batchIdProvider,
       options
     );

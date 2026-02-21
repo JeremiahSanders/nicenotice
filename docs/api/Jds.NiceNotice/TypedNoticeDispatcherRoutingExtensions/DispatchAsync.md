@@ -20,6 +20,10 @@ public static Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventTy
 
 A task that represents the asynchronous operation. The task result contains the dispatch result.
 
+## Remarks
+
+If the *TEventType* type has a [`NoticeStreamAttribute`](../../Jds.NiceNotice.TypedNotices/NoticeStreamAttribute.md) attribute, the stream name is obtained from the attribute. (The type's hierarchy is considered when searching for the attribute.) If not, the stream name is obtained from the type's name.
+
 ## See Also
 
 * record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)

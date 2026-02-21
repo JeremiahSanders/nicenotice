@@ -1,4 +1,4 @@
-# TypedNoticesNiceNoticeBuilderExtensions.UseTypedNotices method
+# TypedNoticesNiceNoticeBuilderExtensions.UseTypedNotices method (1 of 2)
 
 Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../../Jds.NiceNotice/EnterpriseEvent.md) as the assumed base type.
 
@@ -13,9 +13,41 @@ public static NiceNoticeBuilder UseTypedNotices(this NiceNoticeBuilder builder,
 | configuration | A configuration object, used to configure typed notice dispatching using predefined algorithms. |
 | lifetime | A service lifetime for the typed notice dispatching services. The typed notice dispatcher depends upon the configured [`INoticeIo`](../../Jds.NiceNotice/INoticeIo.md), so be considerate of the thread-safety and best practices of your I/O implementation. |
 
+## Return Value
+
+Returns this [`NiceNoticeBuilder`](../NiceNoticeBuilder.md) for further configuration.
+
 ## Remarks
 
-Use the [`UseTypedNotices`](../NiceNoticeBuilder/UseTypedNotices.md) overload to specify a different base type.
+Use the [`UseTypedNotices`](./UseTypedNotices.md) overload to specify a different base type.
+
+## See Also
+
+* class [NiceNoticeBuilder](../NiceNoticeBuilder.md)
+* class [TypedNoticesBuilderOptions](../TypedNoticesBuilderOptions.md)
+* class [TypedNoticesNiceNoticeBuilderExtensions](../TypedNoticesNiceNoticeBuilderExtensions.md)
+* namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
+
+---
+
+# TypedNoticesNiceNoticeBuilderExtensions.UseTypedNotices&lt;TNoticeBaseType&gt; method (2 of 2)
+
+Adds support for dispatching typed, serialized notices (JSON most commonly) using the *TNoticeBaseType* as the base type.
+
+```csharp
+public static NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(this NiceNoticeBuilder builder, 
+    TypedNoticesBuilderOptions configuration, ServiceLifetime lifetime = ServiceLifetime.Scoped)
+```
+
+| parameter | description |
+| --- | --- |
+| builder | This nice notice builder instance. |
+| configuration | A configuration object, used to configure typed notice dispatching using predefined algorithms. |
+| lifetime | A service lifetime for the typed notice dispatching services. The typed notice dispatcher depends upon the configured [`INoticeIo`](../../Jds.NiceNotice/INoticeIo.md), so be considerate of the thread-safety and best practices of your I/O implementation. |
+
+## Return Value
+
+Returns this [`NiceNoticeBuilder`](../NiceNoticeBuilder.md) for further configuration.
 
 ## See Also
 
