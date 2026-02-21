@@ -83,8 +83,8 @@ services
         .ValidateWithDataAnnotations(),
       ServiceLifetime.Scoped
     )
-    .WithSnsDispatch( // Dispatch enterprise events to AWS SNS. Requires `NiceNotice.Aws.Sns` NuGet package.
-      "sns:topics", // IConfiguration section key
+    .DispatchToSns( // Dispatch enterprise events to AWS SNS. Requires `NiceNotice.Aws.Sns` NuGet package.
+      "sns:topics", // IConfiguration section key, unique to this application's configuration; contains NiceNotice SNS topic routing
       ServiceLifetime.Scoped
     )
   );
@@ -96,20 +96,26 @@ services
 services
   .AddNiceNotice(builder => builder
     .UseTypedNotices<MyApplicationEvent>(
-      new TypedNoticeConfigurationExtensions.TypedNoticeConfiguration
+      new TypedNoticesBuilderOptions
       {
-        RoutingType = TypedNoticeConfigurationExtensions.RoutingTypes.TypeFullName,
-        SerializationType = TypedNoticeConfigurationExtensions.SerializationTypes.Json,
-        ValidationType = TypedNoticeConfigurationExtensions.ValidationTypes.DataAttributes
+        RoutingType = TypedNoticesBuilderOptions.RoutingTypes.TypeFullName,
+        SerializationType = TypedNoticesBuilderOptions.SerializationTypes.Json,
+        ValidationType = TypedNoticesBuilderOptions.ValidationTypes.DataAttributes
       },
       ServiceLifetime.Scoped
     )
-    .WithSnsDispatch( // Dispatch enterprise events to AWS SNS. Requires `NiceNotice.Aws.Sns` NuGet package.
-      "sns:topics", // IConfiguration section key
+    .DispatchToSns( // Dispatch enterprise events to AWS SNS. Requires `NiceNotice.Aws.Sns` NuGet package.
+      "sns:topics", // IConfiguration section key, unique to this application's configuration; contains NiceNotice SNS topic routing
       ServiceLifetime.Scoped
     )
   );
 ```
+
+> The examples above use the NiceNotice Amazon Web Services (AWS) Simple Notification Service (SNS) dispatch library, [`NiceNotice.Aws.Sns`][nicenotice-aws-sdk-docs].
+> In all examples, SNS notification dispatch was arranged to load runtime configuration from the configuration at key `sns:topics`.
+> That _specific_ value is not required. Use the actual path **within your application's configuration** which contains SNS topic routing details.
+>
+> Refer to the [`NiceNotice.Aws.Sns`][nicenotice-aws-sdk-docs] documentation for more information.
 
 ### Step 3: Start sending notices
 
@@ -205,6 +211,7 @@ Such an event would serialize like:
 [example-custom-dispatcher]: https://github.com/JeremiahSanders/nicenotice/blob/98290345b0d51a3d9070afa1e118277e0e23be3f/tests/unit/ExampleApplication/ExampleCustomDispatcher.cs#L5-L23
 [how-typednoticedispatcher-works]: https://github.com/JeremiahSanders/nicenotice/docs/how-does-it-work.md
 [Microsoft.Extensions.Hosting]: https://www.nuget.org/packages/Microsoft.Extensions.Hosting
+[nicenotice-aws-sdk-docs]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/dev/README.md
 [nicenotice-aws-sdk-nuget]: https://www.nuget.org/packages/NiceNotice.Aws.Sns
 [nicenotice-aws-sdk-snsnoticeio]: https://github.com/JeremiahSanders/nicenotice-aws-sns/blob/dev/src/library/SnsNoticeIo.cs
 [nicenotice-nuget]: https://www.nuget.org/packages/NiceNotice

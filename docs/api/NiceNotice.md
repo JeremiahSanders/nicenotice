@@ -13,6 +13,7 @@
 | static class [JsonDefaults](./Jds.NiceNotice/JsonDefaults.md) | Provides default JSON serialization settings for the library. |
 | static class [NoticeIoFaultToleranceExtensions](./Jds.NiceNotice/NoticeIoFaultToleranceExtensions.md) | Methods extending [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) supporting fault tolerance. |
 | static class [NoticeIoJsonExtensions](./Jds.NiceNotice/NoticeIoJsonExtensions.md) | Provides extension methods for the [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) interface to dispatch notifications serialized as JSON. |
+| static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
 | static class [TypedNoticeDispatcherBatchExtensions](./Jds.NiceNotice/TypedNoticeDispatcherBatchExtensions.md) | Extensions to typed notice dispatchers supporting batch notice dispatch. |
 | static class [TypedNoticeDispatcherFaultToleranceExtensions](./Jds.NiceNotice/TypedNoticeDispatcherFaultToleranceExtensions.md) | Methods extending [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md) and [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) supporting fault tolerance. |
 | static class [TypedNoticeDispatcherRoutingExtensions](./Jds.NiceNotice/TypedNoticeDispatcherRoutingExtensions.md) | Methods extending [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md) to support additional typed notice dispatch patterns. |
@@ -23,10 +24,9 @@
 | --- | --- |
 | class [MissingDependencyException](./Jds.NiceNotice.Configuration/MissingDependencyException.md) | Represents an exception thrown when a required dependency is missing. |
 | class [NiceNoticeBuilder](./Jds.NiceNotice.Configuration/NiceNoticeBuilder.md) | A fluent builder for configuring NiceNotice services. |
-| static class [ServiceCollectionExtensions](./Jds.NiceNotice.Configuration/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
-| static class [ServiceProviderExtensions](./Jds.NiceNotice.Configuration/ServiceProviderExtensions.md) | Methods extending IServiceProvider to support cross-app notifications services. |
-| static class [TypedNoticeConfigurationExtensions](./Jds.NiceNotice.Configuration/TypedNoticeConfigurationExtensions.md) | Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices. |
 | class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.Configuration/TypedNoticesBuilder-1.md) | A builder for configuring typed notices (enterprise events) which derive from a base type. |
+| class [TypedNoticesBuilderOptions](./Jds.NiceNotice.Configuration/TypedNoticesBuilderOptions.md) | Configuration-based setup parameters for typed notices. |
+| static class [TypedNoticesNiceNoticeBuilderExtensions](./Jds.NiceNotice.Configuration/TypedNoticesNiceNoticeBuilderExtensions.md) | Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices. |
 
 ## Jds.NiceNotice.Dispatching namespace
 

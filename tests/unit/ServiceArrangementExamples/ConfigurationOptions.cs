@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
 using Jds.NiceNotice.Configuration;
-using Jds.NiceNotice.Dispatching;
-using Jds.NiceNotice.TypedNotices;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,16 +26,17 @@ public static class ConfigurationOptions
   /// <returns></returns>
   public static IServiceCollection ApplyConfigurationObjectConfiguration(
     this IServiceCollection services,
-    Func<IServiceProvider, INoticeIo> dispatcher)
+    Func<IServiceProvider, INoticeIo> dispatcher
+  )
   {
     return services
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          new TypedNoticeConfigurationExtensions.TypedNoticeConfiguration
+          new TypedNoticesBuilderOptions
           {
-            RoutingType = TypedNoticeConfigurationExtensions.RoutingTypes.TypeFullName,
-            SerializationType = TypedNoticeConfigurationExtensions.SerializationTypes.Json,
-            ValidationType = TypedNoticeConfigurationExtensions.ValidationTypes.DataAttributes
+            RoutingType = TypedNoticesBuilderOptions.RoutingTypes.TypeFullName,
+            SerializationType = TypedNoticesBuilderOptions.SerializationTypes.Json,
+            ValidationType = TypedNoticesBuilderOptions.ValidationTypes.DataAttributes
           },
           ServiceLifetime.Singleton
         )

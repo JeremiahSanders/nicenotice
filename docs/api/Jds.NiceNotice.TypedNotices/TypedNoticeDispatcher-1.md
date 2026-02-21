@@ -10,12 +10,13 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType> :
 | parameter | description |
 | --- | --- |
 | TEnterpriseEventBaseType | The base type of enterprise events that the dispatcher handles. Must be a non-nullable type. |
+| ioDispatcherProvider | A function which will return a notice I/O implementation. This function will be invoked each time a notice is dispatched. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| static [Create](TypedNoticeDispatcher-1/Create.md)(…) | Creates an instance of [`TypedNoticeDispatcher`](./TypedNoticeDispatcher-1.md) with the specified dispatcher, stream selector, and notice serializer functions. |
+| static [Create](TypedNoticeDispatcher-1/Create.md)(…) | Creates an instance of [`TypedNoticeDispatcher`](./TypedNoticeDispatcher-1.md) with the specified dispatcher, stream selector, and notice serializer functions. (2 methods) |
 | virtual [DispatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher-1/DispatchAsync.md)(…) | Dispatches an enterprise event asynchronously after performing validation, stream determination, serialization, and dispatch through the configured notification dispatcher. |
 | [DispatchBatchAsync&lt;TEventType&gt;](TypedNoticeDispatcher-1/DispatchBatchAsync.md)(…) |  |
 
@@ -24,7 +25,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType> :
 | name | description |
 | --- | --- |
 | [TypedNoticeDispatcher](TypedNoticeDispatcher-1/TypedNoticeDispatcher.md)(…) | Represents an abstract base class for dispatching notifications of a specified type. |
-| [IoDispatcher](TypedNoticeDispatcher-1/IoDispatcher.md) { get; } | Gets the notification dispatcher responsible for sending enterprise events to specific event streams. |
+| [IoDispatcherProvider](TypedNoticeDispatcher-1/IoDispatcherProvider.md) { get; } | Gets the function that provides a notification dispatcher, which is responsible for sending serialized enterprise events to specific event streams. |
 | abstract [GetStreamId](TypedNoticeDispatcher-1/GetStreamId.md)(…) | Gets the event stream ID for the specified enterprise event. |
 | abstract [SerializeNotice&lt;TEventType&gt;](TypedNoticeDispatcher-1/SerializeNotice.md)(…) | Serializes the specified enterprise event notice to a string representation. |
 | virtual [ValidateNotice&lt;TEventType&gt;](TypedNoticeDispatcher-1/ValidateNotice.md)(…) | Validates the specified enterprise event notice. |

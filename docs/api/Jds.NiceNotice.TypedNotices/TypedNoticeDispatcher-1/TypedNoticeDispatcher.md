@@ -3,12 +3,13 @@
 Represents an abstract base class for dispatching notifications of a specified type.
 
 ```csharp
-protected TypedNoticeDispatcher(INoticeIo ioDispatcher)
+protected TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider)
 ```
 
 | parameter | description |
 | --- | --- |
 | TEnterpriseEventBaseType | The base type of enterprise events that the dispatcher handles. Must be a non-nullable type. |
+| ioDispatcherProvider | A function which will return a notice I/O implementation. This function will be invoked each time a notice is dispatched. |
 
 ## See Also
 

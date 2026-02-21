@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
 
 | name | description |
 | --- | --- |
-| static [AddNiceNotice](ServiceCollectionExtensions/AddNiceNotice.md)(…) | Adds cross-app notifications services to this service collection. |
+| static [AddNiceNotice](ServiceCollectionExtensions/AddNiceNotice.md)(…) | Adds NiceNotice cross-app notifications services to this service collection. |
 
 ## See Also
 
