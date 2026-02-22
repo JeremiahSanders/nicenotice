@@ -1,4 +1,3 @@
-using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 using Jds.NiceNotice.TypedNotices;
 using Jds.NiceNotice.TypedNotices.Validation;
@@ -14,18 +13,18 @@ namespace Jds.NiceNotice.Tests.Unit;
 public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
 {
   [Fact]
-  public async Task UsingUntypedDispatcher_InvokesDelegate()
+  public async Task UsingGenericDispatcher_InvokesDelegate()
   {
     Exception? exception = null;
 
-    ITypedNoticeDispatcher dispatcher = new ServiceCollection()
+    ITypedNoticeDispatcher<EnterpriseEvent> dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
-          typedNoticesBuilder => { Validators.ValidateWithDataAnnotations<EnterpriseEvent>(typedNoticesBuilder); },
+          typedNoticesBuilder => { typedNoticesBuilder.ValidateWithDataAnnotations(); },
           ServiceLifetime.Singleton
         )
       )
       .BuildServiceProvider()
-      .GetRequiredService<ITypedNoticeDispatcher>();
+      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
 
     // Act
     TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent>? result = await dispatcher.TryDispatchAsync(
@@ -52,18 +51,18 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
   }
 
   [Fact]
-  public async Task UsingGenericDispatcher_InvokesDelegate()
+  public async Task UsingUntypedDispatcher_InvokesDelegate()
   {
     Exception? exception = null;
 
-    ITypedNoticeDispatcher<EnterpriseEvent> dispatcher = new ServiceCollection()
+    ITypedNoticeDispatcher dispatcher = new ServiceCollection()
       .AddNiceNotice(builder => builder.UseTypedNotices(
           typedNoticesBuilder => { typedNoticesBuilder.ValidateWithDataAnnotations(); },
           ServiceLifetime.Singleton
         )
       )
       .BuildServiceProvider()
-      .GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      .GetRequiredService<ITypedNoticeDispatcher>();
 
     // Act
     TypedNoticeDispatchResult<ExampleLogoutEnterpriseEvent>? result = await dispatcher.TryDispatchAsync(

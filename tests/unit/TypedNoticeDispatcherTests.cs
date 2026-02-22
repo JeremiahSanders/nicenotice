@@ -399,6 +399,87 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
+    public async Task DispatchBatchFromRoutedNoticesAsync_DispatchesExpectedContent()
+    {
+      string defaultStream = Guid
+        .NewGuid()
+        .ToString();
+      EventStreamId defaultStreamId = (EventStreamId)defaultStream;
+      CapturingNoticeIo noticeIo = new();
+      TypedNoticeDispatcher ee = TypedNoticeDispatcher.Create(noticeIo);
+
+      // Create some events to dispatch.
+      ExampleCustomLoginEvent login1 = new()
+      {
+        Username = "test1"
+      };
+      ExampleCustomLoginEvent login2 = new()
+      {
+        Username = "test2"
+      };
+      ExampleCustomLogoutEvent logout3 = new()
+      {
+        Username = "test3"
+      };
+      ExampleCustomLogoutEvent logout4 = new()
+      {
+        Username = "test4"
+      };
+      BatchDispatchOptions options = new()
+      {
+        MaxDegreeOfParallelism = Randomizer.Shared.IntInRange(minInclusive: 1, maxExclusive: 9)
+      };
+      List<BatchRoutedTypedNoticeRequest> notices =
+      [
+        new(defaultStreamId, login1), new(defaultStreamId, login2),
+        new(defaultStreamId, logout3), new(defaultStreamId, logout4)
+      ];
+
+      // Act
+      BatchTypedNoticeDispatchResult result = await ee.DispatchBatchFromRoutedNoticesAsync(
+        notices,
+        obj => obj.GetHashCode().ToString(),
+        options
+      );
+
+      OutputNotices(noticeIo.CapturedNotices);
+
+      // Assert
+      //   All the notices should have been returned as a success.
+      notices.ShouldAllBe(notice =>
+        result.Successes.Any(response => response.BatchNoticeId == notice.GetHashCode().ToString())
+      );
+      //   The dispatched notices should be returned.
+      result.Successes.ShouldAllBe(response => notices.Any(notice => ReferenceEquals(response.Notice, notice.Notice)));
+      result.Failures.ShouldBeEmpty();
+
+      AssertNoticeWasDispatched(login1.Username, login1);
+      AssertNoticeWasDispatched(login2.Username, login2);
+      AssertNoticeWasDispatched(logout3.Username, logout3);
+      AssertNoticeWasDispatched(logout4.Username, logout4);
+
+      return;
+
+      void AssertNoticeWasDispatched(string valueToFind, object expected)
+      {
+        // The notice should have gone to the default stream and it should contain the value to find.
+        noticeIo.CapturedNotices.ShouldContain(item =>
+          item.Item1 == (EventStreamId)defaultStream &&
+          item.Item2.Contains(valueToFind)
+        );
+
+        // The notice should have been serialized to JSON as expected.
+        (EventStreamId _, string actual) = noticeIo.CapturedNotices.First(item =>
+          item.Item1 == (EventStreamId)defaultStream &&
+          item.Item2.Contains(valueToFind)
+        );
+        string expectedJson = JsonSerializer.Serialize(expected, JsonDefaults.DefaultJsonSerializerOptions);
+
+        actual.ShouldBe(expectedJson);
+      }
+    }
+
+    [Fact]
     public async Task DispatchBatchToSingleStreamAsync_DispatchesExpectedContent()
     {
       string defaultStream = Guid
@@ -460,87 +541,6 @@ public class TypedNoticeDispatcherTests(ITestOutputHelper outputHelper)
 
       return;
 
-
-      void AssertNoticeWasDispatched(string valueToFind, object expected)
-      {
-        // The notice should have gone to the default stream and it should contain the value to find.
-        noticeIo.CapturedNotices.ShouldContain(item =>
-          item.Item1 == (EventStreamId)defaultStream &&
-          item.Item2.Contains(valueToFind)
-        );
-
-        // The notice should have been serialized to JSON as expected.
-        (EventStreamId _, string actual) = noticeIo.CapturedNotices.First(item =>
-          item.Item1 == (EventStreamId)defaultStream &&
-          item.Item2.Contains(valueToFind)
-        );
-        string expectedJson = JsonSerializer.Serialize(expected, JsonDefaults.DefaultJsonSerializerOptions);
-
-        actual.ShouldBe(expectedJson);
-      }
-    }
-
-    [Fact]
-    public async Task DispatchBatchFromRoutedNoticesAsync_DispatchesExpectedContent()
-    {
-      string defaultStream = Guid
-        .NewGuid()
-        .ToString();
-      EventStreamId defaultStreamId = (EventStreamId)defaultStream;
-      CapturingNoticeIo noticeIo = new();
-      TypedNoticeDispatcher ee = TypedNoticeDispatcher.Create(noticeIo);
-
-      // Create some events to dispatch.
-      ExampleCustomLoginEvent login1 = new()
-      {
-        Username = "test1"
-      };
-      ExampleCustomLoginEvent login2 = new()
-      {
-        Username = "test2"
-      };
-      ExampleCustomLogoutEvent logout3 = new()
-      {
-        Username = "test3"
-      };
-      ExampleCustomLogoutEvent logout4 = new()
-      {
-        Username = "test4"
-      };
-      BatchDispatchOptions options = new()
-      {
-        MaxDegreeOfParallelism = Randomizer.Shared.IntInRange(minInclusive: 1, maxExclusive: 9)
-      };
-      List<BatchRoutedTypedNoticeRequest> notices =
-      [
-        new(defaultStreamId, login1), new(defaultStreamId, login2),
-        new(defaultStreamId, logout3), new(defaultStreamId, logout4)
-      ];
-
-      // Act
-      BatchTypedNoticeDispatchResult result = await ee.DispatchBatchFromRoutedNoticesAsync(
-        notices,
-        obj => obj.GetHashCode().ToString(),
-        options
-      );
-
-      OutputNotices(noticeIo.CapturedNotices);
-
-      // Assert
-      //   All the notices should have been returned as a success.
-      notices.ShouldAllBe(notice =>
-        result.Successes.Any(response => response.BatchNoticeId == notice.GetHashCode().ToString())
-      );
-      //   The dispatched notices should be returned.
-      result.Successes.ShouldAllBe(response => notices.Any(notice => ReferenceEquals(response.Notice, notice.Notice)));
-      result.Failures.ShouldBeEmpty();
-
-      AssertNoticeWasDispatched(login1.Username, login1);
-      AssertNoticeWasDispatched(login2.Username, login2);
-      AssertNoticeWasDispatched(logout3.Username, logout3);
-      AssertNoticeWasDispatched(logout4.Username, logout4);
-
-      return;
 
       void AssertNoticeWasDispatched(string valueToFind, object expected)
       {

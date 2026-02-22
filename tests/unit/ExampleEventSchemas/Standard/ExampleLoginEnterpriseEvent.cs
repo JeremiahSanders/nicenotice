@@ -1,15 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-using Jds.NiceNotice.TypedNotices;
-
 namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 
 public record ExampleLoginEnterpriseEvent : EnterpriseEvent
 {
-  protected override string SchemaTitle => "Login";
-
   [Required(AllowEmptyStrings = false)]
   [JsonPropertyName(name: "username")]
   public required string Username { get; init; } = string.Empty;
+
+  protected override string SchemaTitle => "Login";
 }

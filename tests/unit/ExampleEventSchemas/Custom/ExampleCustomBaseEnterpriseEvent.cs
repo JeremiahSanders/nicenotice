@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-using Jds.NiceNotice.TypedNotices;
-
 namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
 /// <summary>
@@ -31,17 +29,17 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 public record ExampleCustomBaseEnterpriseEvent
 {
   /// <summary>
-  ///   Gets the timestamp associated with this enterprise event
-  ///   (in general, understood to mean &quot;when&quot; this event occurred).
-  /// </summary>
-  [JsonPropertyName(name: "ts")]
-  public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
-
-  /// <summary>
   ///   Gets the name of this schema/type of enterprise event.
   ///   This is not a message; interpret as an enumeration value shared by all notices of the same &quot;type&quot;.
   /// </summary>
   [Required(AllowEmptyStrings = false)]
   [JsonPropertyName(name: "name")]
   public string Name { get; init; } = string.Empty;
+
+  /// <summary>
+  ///   Gets the timestamp associated with this enterprise event
+  ///   (in general, understood to mean &quot;when&quot; this event occurred).
+  /// </summary>
+  [JsonPropertyName(name: "ts")]
+  public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
 }

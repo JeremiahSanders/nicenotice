@@ -6,12 +6,12 @@ namespace Jds.NiceNotice.Dispatching;
 public class BatchIoNoticeDispatchResult
 {
   /// <summary>
-  ///   Gets the notices that were successfully dispatched.
-  /// </summary>
-  public required IReadOnlyList<BatchedIoResponseNotice> Successes { get; init; }
-
-  /// <summary>
   ///   Gets the notices that failed to dispatch.
   /// </summary>
   public required IReadOnlyList<(BatchedIoResponseNotice, Exception)> Failures { get; init; }
+
+  /// <summary>
+  ///   Gets the notices that were successfully dispatched.
+  /// </summary>
+  public required IReadOnlyList<BatchedIoResponseNotice> Successes { get; init; }
 }

@@ -67,90 +67,6 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
     );
   }
 
-  private Either<Exception, string> TrySerialize(object toSerialize)
-  {
-    return Eithers
-      .Try(() => SerializeNotice(toSerialize))
-      .MapLeft<Exception>(e => new NoticeSerializationException(message: "Failed to serialize notice.", e));
-  }
-
-  private Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> TrySerializeAndValidate(
-    string batchedNoticeId,
-    BatchRoutedTypedNoticeRequest batchRoutedTypedNoticeRequest)
-  {
-    Either<Exception, string> serialized = TrySerialize(batchRoutedTypedNoticeRequest.Notice);
-    Either<Exception, string> validated =
-      serialized.Map(serializedNotice => Validate(batchRoutedTypedNoticeRequest.Notice, serializedNotice));
-    Either<Exception, BatchRoutedTypedNoticeResponse> rtn =
-      validated.Map(validatedNotice => new BatchRoutedTypedNoticeResponse(
-          batchedNoticeId,
-          batchRoutedTypedNoticeRequest.Stream,
-          batchRoutedTypedNoticeRequest.Notice,
-          validatedNotice
-        )
-      );
-
-    if (rtn.IsRight)
-    {
-      return Eithers
-        .Right<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(rtn.RightUnsafe);
-    }
-
-    // We failed some portion
-    Exception failure = rtn.LeftUnsafe;
-    string serializedOrEmpty = serialized.FoldRight(_ => string.Empty);
-
-    return Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
-      (new BatchRoutedTypedNoticeResponse(batchedNoticeId, batchRoutedTypedNoticeRequest.Stream, batchRoutedTypedNoticeRequest.Notice, serializedOrEmpty),
-        failure)
-    );
-  }
-
-  private RoutedTypedNotice RouteAndValidate(object notice, EventStreamId streamId)
-  {
-    string serialized = Serialize(notice);
-
-    return new RoutedTypedNotice(streamId, notice, Validate(notice, serialized));
-
-    string Serialize(object toSerialize)
-    {
-      try
-      {
-        return SerializeNotice(toSerialize);
-      }
-      catch (Exception e)
-      {
-        throw new NoticeSerializationException(message: "Failed to serialize notice.", e);
-      }
-    }
-  }
-
-  /// <summary>
-  ///   Serializes the specified enterprise event notice to a string representation.
-  /// </summary>
-  /// <param name="notice">The enterprise event notice.</param>
-  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
-  /// <returns></returns>
-  protected abstract string SerializeNotice<TEventType>(TEventType notice) where TEventType : notnull;
-
-  /// <summary>
-  ///   Validates the specified enterprise event notice.
-  /// </summary>
-  /// <param name="notice">The notice being dispatched.</param>
-  /// <param name="serializedNotice">
-  ///   The serialized <paramref name="notice" />.
-  ///   Useful for performing I/O-related validation.
-  ///   For example, rejecting notices whose serialized version exceeds API limits for the final enterprise event bus.
-  ///   (E.g., AWS SNS has a maximum allowed notification message length.)
-  /// </param>
-  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
-  /// <returns></returns>
-  protected virtual IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
-    where TEventType : notnull
-  {
-    return null;
-  }
-
   /// <summary>
   ///   Creates a typed notice dispatcher using the specified I/O dispatcher, notice serializer, and notice validator.
   /// </summary>
@@ -199,6 +115,90 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       ioDispatcherProvider,
       noticeSerializer ?? new JsonNoticeSerializer(),
       noticeValidator ?? new NoOpNoticeValidator()
+    );
+  }
+
+  /// <summary>
+  ///   Serializes the specified enterprise event notice to a string representation.
+  /// </summary>
+  /// <param name="notice">The enterprise event notice.</param>
+  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
+  /// <returns></returns>
+  protected abstract string SerializeNotice<TEventType>(TEventType notice) where TEventType : notnull;
+
+  /// <summary>
+  ///   Validates the specified enterprise event notice.
+  /// </summary>
+  /// <param name="notice">The notice being dispatched.</param>
+  /// <param name="serializedNotice">
+  ///   The serialized <paramref name="notice" />.
+  ///   Useful for performing I/O-related validation.
+  ///   For example, rejecting notices whose serialized version exceeds API limits for the final enterprise event bus.
+  ///   (E.g., AWS SNS has a maximum allowed notification message length.)
+  /// </param>
+  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
+  /// <returns></returns>
+  protected virtual IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : notnull
+  {
+    return null;
+  }
+
+  private RoutedTypedNotice RouteAndValidate(object notice, EventStreamId streamId)
+  {
+    string serialized = Serialize(notice);
+
+    return new RoutedTypedNotice(streamId, notice, Validate(notice, serialized));
+
+    string Serialize(object toSerialize)
+    {
+      try
+      {
+        return SerializeNotice(toSerialize);
+      }
+      catch (Exception e)
+      {
+        throw new NoticeSerializationException(message: "Failed to serialize notice.", e);
+      }
+    }
+  }
+
+  private Either<Exception, string> TrySerialize(object toSerialize)
+  {
+    return Eithers
+      .Try(() => SerializeNotice(toSerialize))
+      .MapLeft<Exception>(e => new NoticeSerializationException(message: "Failed to serialize notice.", e));
+  }
+
+  private Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> TrySerializeAndValidate(
+    string batchedNoticeId,
+    BatchRoutedTypedNoticeRequest batchRoutedTypedNoticeRequest)
+  {
+    Either<Exception, string> serialized = TrySerialize(batchRoutedTypedNoticeRequest.Notice);
+    Either<Exception, string> validated =
+      serialized.Map(serializedNotice => Validate(batchRoutedTypedNoticeRequest.Notice, serializedNotice));
+    Either<Exception, BatchRoutedTypedNoticeResponse> rtn =
+      validated.Map(validatedNotice => new BatchRoutedTypedNoticeResponse(
+          batchedNoticeId,
+          batchRoutedTypedNoticeRequest.Stream,
+          batchRoutedTypedNoticeRequest.Notice,
+          validatedNotice
+        )
+      );
+
+    if (rtn.IsRight)
+    {
+      return Eithers
+        .Right<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(rtn.RightUnsafe);
+    }
+
+    // We failed some portion
+    Exception failure = rtn.LeftUnsafe;
+    string serializedOrEmpty = serialized.FoldRight(_ => string.Empty);
+
+    return Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
+      (new BatchRoutedTypedNoticeResponse(batchedNoticeId, batchRoutedTypedNoticeRequest.Stream, batchRoutedTypedNoticeRequest.Notice, serializedOrEmpty),
+        failure)
     );
   }
 
@@ -356,102 +356,6 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
     return results;
   }
 
-  private Either<Exception, EventStreamId> TryGetStream<TEventType>(TEventType notice)
-    where TEventType : TEnterpriseEventBaseType
-  {
-    return Eithers.Try(() =>
-      {
-        try
-        {
-          return GetStreamId(notice);
-        }
-        catch (Exception e)
-        {
-          throw new NoticeRoutingException(message: "Failed to determine event stream.", e);
-        }
-      }
-    );
-  }
-
-  private Either<Exception, string> TryValidate<TEventType>(TEventType notice, string serializedNotice)
-    where TEventType : TEnterpriseEventBaseType
-  {
-    return Eithers.Try(() =>
-      {
-        IReadOnlyList<string>? validationResults;
-        try
-        {
-          validationResults = ValidateNotice(notice, serializedNotice);
-        }
-        catch (NoticeValidationException)
-        {
-          throw;
-        }
-        catch (Exception e)
-        {
-          throw new NoticeValidationException(message: "Failed to validate enterprise event.", e);
-        }
-
-        if (validationResults is {Count: > 0})
-        {
-          throw new NoticeValidationException(
-            $"{typeof(TEventType).Name} validation failed.",
-            validationResults,
-            innerException: null
-          );
-        }
-
-        return serializedNotice;
-      }
-    );
-  }
-
-  private Either<Exception, string> TrySerialize(TEnterpriseEventBaseType toSerialize)
-  {
-    return Eithers
-      .Try(() => SerializeNotice(toSerialize))
-      .MapLeft(Exception (e) => new NoticeSerializationException(message: "Failed to serialize enterprise event.", e));
-  }
-
-  /// <summary>
-  ///   Gets the event stream ID for the specified enterprise event.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     Implementations of this method often either return a constant value (if all notices go to the same stream)
-  ///     or are determined by switching upon the notice's type.
-  ///   </para>
-  /// </remarks>
-  /// <param name="notice">An enterprise event notice being dispatched.</param>
-  /// <returns>Returns the event stream ID.</returns>
-  protected abstract EventStreamId GetStreamId(TEnterpriseEventBaseType notice);
-
-  /// <summary>
-  ///   Serializes the specified enterprise event notice to a string representation.
-  /// </summary>
-  /// <param name="notice">The enterprise event notice.</param>
-  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
-  /// <returns></returns>
-  protected abstract string SerializeNotice<TEventType>(TEventType notice) where TEventType : TEnterpriseEventBaseType;
-
-  /// <summary>
-  ///   Validates the specified enterprise event notice.
-  /// </summary>
-  /// <param name="notice">The notice being dispatched.</param>
-  /// <param name="serializedNotice">
-  ///   The serialized <paramref name="notice" />.
-  ///   Useful for performing I/O-related validation.
-  ///   For example, rejecting notices whose serialized version exceeds API limits for the final enterprise event bus.
-  ///   (E.g., AWS SNS has a maximum allowed notification message length.)
-  /// </param>
-  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
-  /// <returns></returns>
-  protected virtual IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
-    where TEventType : TEnterpriseEventBaseType
-  {
-    return null;
-  }
-
   /// <summary>
   ///   Creates an instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" /> with the specified
   ///   dispatcher, stream selector, and notice serializer functions.
@@ -500,6 +404,102 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
       noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
       validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()
+    );
+  }
+
+  /// <summary>
+  ///   Gets the event stream ID for the specified enterprise event.
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     Implementations of this method often either return a constant value (if all notices go to the same stream)
+  ///     or are determined by switching upon the notice's type.
+  ///   </para>
+  /// </remarks>
+  /// <param name="notice">An enterprise event notice being dispatched.</param>
+  /// <returns>Returns the event stream ID.</returns>
+  protected abstract EventStreamId GetStreamId(TEnterpriseEventBaseType notice);
+
+  /// <summary>
+  ///   Serializes the specified enterprise event notice to a string representation.
+  /// </summary>
+  /// <param name="notice">The enterprise event notice.</param>
+  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
+  /// <returns></returns>
+  protected abstract string SerializeNotice<TEventType>(TEventType notice) where TEventType : TEnterpriseEventBaseType;
+
+  /// <summary>
+  ///   Validates the specified enterprise event notice.
+  /// </summary>
+  /// <param name="notice">The notice being dispatched.</param>
+  /// <param name="serializedNotice">
+  ///   The serialized <paramref name="notice" />.
+  ///   Useful for performing I/O-related validation.
+  ///   For example, rejecting notices whose serialized version exceeds API limits for the final enterprise event bus.
+  ///   (E.g., AWS SNS has a maximum allowed notification message length.)
+  /// </param>
+  /// <typeparam name="TEventType">The enterprise event notice type.</typeparam>
+  /// <returns></returns>
+  protected virtual IReadOnlyList<string>? ValidateNotice<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    return null;
+  }
+
+  private Either<Exception, EventStreamId> TryGetStream<TEventType>(TEventType notice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    return Eithers.Try(() =>
+      {
+        try
+        {
+          return GetStreamId(notice);
+        }
+        catch (Exception e)
+        {
+          throw new NoticeRoutingException(message: "Failed to determine event stream.", e);
+        }
+      }
+    );
+  }
+
+  private Either<Exception, string> TrySerialize(TEnterpriseEventBaseType toSerialize)
+  {
+    return Eithers
+      .Try(() => SerializeNotice(toSerialize))
+      .MapLeft(Exception (e) => new NoticeSerializationException(message: "Failed to serialize enterprise event.", e));
+  }
+
+  private Either<Exception, string> TryValidate<TEventType>(TEventType notice, string serializedNotice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    return Eithers.Try(() =>
+      {
+        IReadOnlyList<string>? validationResults;
+        try
+        {
+          validationResults = ValidateNotice(notice, serializedNotice);
+        }
+        catch (NoticeValidationException)
+        {
+          throw;
+        }
+        catch (Exception e)
+        {
+          throw new NoticeValidationException(message: "Failed to validate enterprise event.", e);
+        }
+
+        if (validationResults is {Count: > 0})
+        {
+          throw new NoticeValidationException(
+            $"{typeof(TEventType).Name} validation failed.",
+            validationResults,
+            innerException: null
+          );
+        }
+
+        return serializedNotice;
+      }
     );
   }
 }

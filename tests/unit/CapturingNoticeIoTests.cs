@@ -8,20 +8,6 @@ namespace Jds.NiceNotice.Tests.Unit;
 public class CapturingNoticeIoTests
 {
   [Fact]
-  public async Task CapturesMessages()
-  {
-    EventStreamId streamId = EventStreamId.From(value: "example-stream");
-    string notice =
-      Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
-    CapturingNoticeIo noticeIo = new();
-
-    string response = await noticeIo.DispatchAsync(streamId, notice);
-
-    response.ShouldBe(notice);
-    noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == notice);
-  }
-
-  [Fact]
   public async Task AppliesCaptureLimit()
   {
     EventStreamId streamId = EventStreamId.From(value: "example-stream");
@@ -43,6 +29,20 @@ public class CapturingNoticeIoTests
       noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == (toSend - 1 - i).ToString()
       );
     }
+  }
+
+  [Fact]
+  public async Task CapturesMessages()
+  {
+    EventStreamId streamId = EventStreamId.From(value: "example-stream");
+    string notice =
+      Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
+    CapturingNoticeIo noticeIo = new();
+
+    string response = await noticeIo.DispatchAsync(streamId, notice);
+
+    response.ShouldBe(notice);
+    noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == notice);
   }
 
   [Fact]

@@ -22,25 +22,6 @@ internal static class NoticeStreamAttributeHelpers
   /// </remarks>
   private static readonly ConcurrentBag<Type> TypeStreamIdKnownUndefined = [];
 
-  private static string? TryGetNoticeStreamName(Type eventType)
-  {
-    try
-    {
-      if (TypeStreamIdKnownUndefined.Contains(eventType))
-      {
-        return null;
-      }
-
-      return eventType
-        .GetCustomAttribute<NoticeStreamAttribute>(inherit: true)
-        ?.StreamName;
-    }
-    catch (Exception _)
-    {
-      return null;
-    }
-  }
-
   public static EventStreamId? TryGetNoticeEventStreamId(Type eventType)
   {
     if (TypeStreamIdCache.TryGetValue(eventType, out EventStreamId streamId))
@@ -67,5 +48,24 @@ internal static class NoticeStreamAttributeHelpers
   public static EventStreamId? TryGetNoticeEventStreamId<TEvent>(TEvent @event)
   {
     return @event is null ? null : TryGetNoticeEventStreamId(@event.GetType());
+  }
+
+  private static string? TryGetNoticeStreamName(Type eventType)
+  {
+    try
+    {
+      if (TypeStreamIdKnownUndefined.Contains(eventType))
+      {
+        return null;
+      }
+
+      return eventType
+        .GetCustomAttribute<NoticeStreamAttribute>(inherit: true)
+        ?.StreamName;
+    }
+    catch (Exception _)
+    {
+      return null;
+    }
   }
 }

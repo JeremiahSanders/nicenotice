@@ -11,17 +11,6 @@ namespace Jds.NiceNotice.TypedNotices.Validation;
 public static class Validators
 {
   /// <summary>
-  ///   Creates a validator that uses data annotations to validate enterprise events.
-  /// </summary>
-  /// <typeparam name="TEnterpriseEventBaseType">A base type for the application's enterprise event notifications.</typeparam>
-  /// <returns>Returns the created validator.</returns>
-  public static NoticeValidator<TEnterpriseEventBaseType> DataAnnotationsValidator<TEnterpriseEventBaseType>()
-    where TEnterpriseEventBaseType : notnull
-  {
-    return new DataAnnotationsValidator<TEnterpriseEventBaseType>();
-  }
-
-  /// <summary>
   ///   Creates a validator that uses data annotations to validate
   ///   typed notices (i.e., notification data transfer objects).
   /// </summary>
@@ -35,6 +24,43 @@ public static class Validators
   public static NoticeValidator DataAnnotationsValidator()
   {
     return new DataAnnotationsValidator();
+  }
+
+  /// <summary>
+  ///   Creates a validator that uses data annotations to validate enterprise events.
+  /// </summary>
+  /// <typeparam name="TEnterpriseEventBaseType">A base type for the application's enterprise event notifications.</typeparam>
+  /// <returns>Returns the created validator.</returns>
+  public static NoticeValidator<TEnterpriseEventBaseType> DataAnnotationsValidator<TEnterpriseEventBaseType>()
+    where TEnterpriseEventBaseType : notnull
+  {
+    return new DataAnnotationsValidator<TEnterpriseEventBaseType>();
+  }
+
+  /// <summary>
+  ///   Creates a validator that uses a function (<paramref name="validatorFunction" />) to validate enterprise events.
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     This is a very useful validator.
+  ///     It is a simpler alternative to implementing a custom <see cref="NoticeValidator" />.
+  ///   </para>
+  /// </remarks>
+  /// <param name="validatorFunction">
+  ///   <para>
+  ///     A custom validation logic function.
+  ///     Use of <c>static</c> delegates is highly recommended.
+  ///   </para>
+  ///   <para>
+  ///     The function receives the enterprise event to be validated and is expected to return <c>null</c>
+  ///     if the event is valid, or a list of validation errors if the event is invalid.
+  ///   </para>
+  /// </param>
+  /// <returns>Returns the created validator.</returns>
+  public static NoticeValidator DelegateValidator(
+    Func<object, string, IReadOnlyList<string>?> validatorFunction)
+  {
+    return new DelegateNoticeValidator(validatorFunction);
   }
 
   /// <summary>
@@ -66,32 +92,6 @@ public static class Validators
   }
 
   /// <summary>
-  ///   Creates a validator that uses a function (<paramref name="validatorFunction" />) to validate enterprise events.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     This is a very useful validator.
-  ///     It is a simpler alternative to implementing a custom <see cref="NoticeValidator" />.
-  ///   </para>
-  /// </remarks>
-  /// <param name="validatorFunction">
-  ///   <para>
-  ///     A custom validation logic function.
-  ///     Use of <c>static</c> delegates is highly recommended.
-  ///   </para>
-  ///   <para>
-  ///     The function receives the enterprise event to be validated and is expected to return <c>null</c>
-  ///     if the event is valid, or a list of validation errors if the event is invalid.
-  ///   </para>
-  /// </param>
-  /// <returns>Returns the created validator.</returns>
-  public static NoticeValidator DelegateValidator(
-    Func<object, string, IReadOnlyList<string>?> validatorFunction)
-  {
-    return new DelegateNoticeValidator(validatorFunction);
-  }
-
-  /// <summary>
   ///   Creates a validator that performs no validation; all enterprise events are considered valid.
   /// </summary>
   /// <typeparam name="TEnterpriseEventBaseType">A base type for the application's enterprise event notifications.</typeparam>
@@ -100,6 +100,23 @@ public static class Validators
     where TEnterpriseEventBaseType : notnull
   {
     return new NoOpNoticeValidator<TEnterpriseEventBaseType>();
+  }
+
+  /// <summary>
+  ///   Configures this typed notice builder to use a validator that performs no validation;
+  ///   all enterprise events are considered valid.
+  /// </summary>
+  /// <param name="builder">This typed notice builder.</param>
+  /// <typeparam name="TEnterpriseEventBaseType">A base type for the application's enterprise event notifications.</typeparam>
+  /// <returns>Returns this typed notice builder for further configuration.</returns>
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> ValidateNothing<TEnterpriseEventBaseType>(
+    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder)
+    where TEnterpriseEventBaseType : notnull
+  {
+    return builder.UseValidator(
+      static _ => NoOpValidator<TEnterpriseEventBaseType>(),
+      ServiceLifetime.Singleton
+    );
   }
 
   /// <summary>
@@ -182,22 +199,5 @@ public static class Validators
     );
 
     return builder;
-  }
-
-  /// <summary>
-  ///   Configures this typed notice builder to use a validator that performs no validation;
-  ///   all enterprise events are considered valid.
-  /// </summary>
-  /// <param name="builder">This typed notice builder.</param>
-  /// <typeparam name="TEnterpriseEventBaseType">A base type for the application's enterprise event notifications.</typeparam>
-  /// <returns>Returns this typed notice builder for further configuration.</returns>
-  public static TypedNoticesBuilder<TEnterpriseEventBaseType> ValidateNothing<TEnterpriseEventBaseType>(
-    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder)
-    where TEnterpriseEventBaseType : notnull
-  {
-    return builder.UseValidator(
-      static _ => NoOpValidator<TEnterpriseEventBaseType>(),
-      ServiceLifetime.Singleton
-    );
   }
 }

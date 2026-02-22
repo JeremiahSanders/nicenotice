@@ -5,8 +5,8 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 
 public class ExampleCustomRouter : NoticeRouter<ExampleCustomBaseEnterpriseEvent>
 {
-  public EventStreamId UserSessionStream { get; init; } = EventStreamId.From(value: "user-session");
   public EventStreamId DefaultStream { get; init; } = EventStreamId.From(value: "default");
+  public EventStreamId UserSessionStream { get; init; } = EventStreamId.From(value: "user-session");
 
   public override EventStreamId GetStreamId<TEventType>(TEventType notice)
   {

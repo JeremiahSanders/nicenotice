@@ -1,4 +1,3 @@
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
 using Jds.NiceNotice.TypedNotices.Validation;

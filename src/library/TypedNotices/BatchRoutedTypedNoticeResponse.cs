@@ -1,5 +1,3 @@
-using Jds.NiceNotice.Dispatching;
-
 namespace Jds.NiceNotice.TypedNotices;
 
 /// <summary>

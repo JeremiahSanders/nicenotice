@@ -1,4 +1,3 @@
-using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.Tests.Unit.ExampleApplication;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 
