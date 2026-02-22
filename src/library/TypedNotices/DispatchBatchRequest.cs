@@ -11,82 +11,6 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
 {
   /// <summary>
   ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
-  ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
-  /// </summary>
-  /// <param name="notices">A sequence of notices to dispatch.</param>
-  /// <param name="batchIdProvider">
-  ///   A function which generates unique identifiers for each notice within the batch.
-  ///   Optional. Default: <see cref="Guid.NewGuid" />.
-  /// </param>
-  /// <param name="options">Optional. Batch dispatch configuration options.</param>
-  /// <returns>Returns the created request.</returns>
-  /// <exception cref="ArgumentException">
-  ///   Thrown if identities provided by <paramref name="batchIdProvider" />
-  ///   cannot be used to create a request dictionary.
-  /// </exception>
-  public static DispatchBatchRequest CreateFromRoutedNotices(
-    IEnumerable<BatchRoutedTypedNoticeRequest> notices,
-    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
-    BatchDispatchOptions? options = null
-  )
-  {
-    return new DispatchBatchRequest
-    {
-      Notices = MakeDictionary(),
-      BatchDispatchOptions = options
-    };
-
-    Dictionary<string, BatchRoutedTypedNoticeRequest> MakeDictionary()
-    {
-      try
-      {
-        return notices.ToDictionary(
-          value => batchIdProvider?.Invoke(value) ?? Guid.NewGuid().ToString(),
-          static notice => notice
-        );
-      }
-      catch (Exception exception)
-      {
-        throw new ArgumentException(
-          $"Failed to create a dictionary of {nameof(notices)} using keys provided by {nameof(batchIdProvider)}.",
-          exception
-        );
-      }
-    }
-  }
-
-  /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
-  ///   All notices are routed to the same stream, <paramref name="stream" />.
-  ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
-  /// </summary>
-  /// <param name="stream">A logical stream where the <paramref name="notices" /> are dispatched.</param>
-  /// <param name="notices">A sequence of notices which are being dispatched.</param>
-  /// <param name="batchIdProvider">
-  ///   A function which generates unique identifiers for each notice within the batch.
-  ///   Optional. Default: <see cref="Guid.NewGuid" />.
-  /// </param>
-  /// <param name="options">Optional. Batch dispatch configuration options.</param>
-  /// <returns>Returns the created request.</returns>
-  /// <exception cref="ArgumentException">
-  ///   Thrown if identities provided by <paramref name="batchIdProvider" />
-  ///   cannot be used to create a request dictionary.
-  /// </exception>
-  public static DispatchBatchRequest CreateForSingleStream(
-    EventStreamId stream,
-    IEnumerable<object> notices,
-    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
-    BatchDispatchOptions? options = null)
-  {
-    return CreateFromRoutedNotices(
-      notices.Select(notice => new BatchRoutedTypedNoticeRequest(stream, notice)),
-      batchIdProvider,
-      options
-    );
-  }
-
-  /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
   ///   Notices are routed to streams inferred from their type metadata.
   ///   Preference is given to the <see cref="NoticeStreamAttribute" /> on the notice type (or in its type hierarchy).
   ///   If no attribute is present, the notices are routed to streams from their type name.
@@ -130,6 +54,82 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
       options
     );
   }
+
+  /// <summary>
+  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   All notices are routed to the same stream, <paramref name="stream" />.
+  ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
+  /// </summary>
+  /// <param name="stream">A logical stream where the <paramref name="notices" /> are dispatched.</param>
+  /// <param name="notices">A sequence of notices which are being dispatched.</param>
+  /// <param name="batchIdProvider">
+  ///   A function which generates unique identifiers for each notice within the batch.
+  ///   Optional. Default: <see cref="Guid.NewGuid" />.
+  /// </param>
+  /// <param name="options">Optional. Batch dispatch configuration options.</param>
+  /// <returns>Returns the created request.</returns>
+  /// <exception cref="ArgumentException">
+  ///   Thrown if identities provided by <paramref name="batchIdProvider" />
+  ///   cannot be used to create a request dictionary.
+  /// </exception>
+  public static DispatchBatchRequest CreateForSingleStream(
+    EventStreamId stream,
+    IEnumerable<object> notices,
+    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
+    BatchDispatchOptions? options = null)
+  {
+    return CreateFromRoutedNotices(
+      notices.Select(notice => new BatchRoutedTypedNoticeRequest(stream, notice)),
+      batchIdProvider,
+      options
+    );
+  }
+
+  /// <summary>
+  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
+  /// </summary>
+  /// <param name="notices">A sequence of notices to dispatch.</param>
+  /// <param name="batchIdProvider">
+  ///   A function which generates unique identifiers for each notice within the batch.
+  ///   Optional. Default: <see cref="Guid.NewGuid" />.
+  /// </param>
+  /// <param name="options">Optional. Batch dispatch configuration options.</param>
+  /// <returns>Returns the created request.</returns>
+  /// <exception cref="ArgumentException">
+  ///   Thrown if identities provided by <paramref name="batchIdProvider" />
+  ///   cannot be used to create a request dictionary.
+  /// </exception>
+  public static DispatchBatchRequest CreateFromRoutedNotices(
+    IEnumerable<BatchRoutedTypedNoticeRequest> notices,
+    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
+    BatchDispatchOptions? options = null
+  )
+  {
+    return new DispatchBatchRequest
+    {
+      Notices = MakeDictionary(),
+      BatchDispatchOptions = options
+    };
+
+    Dictionary<string, BatchRoutedTypedNoticeRequest> MakeDictionary()
+    {
+      try
+      {
+        return notices.ToDictionary(
+          value => batchIdProvider?.Invoke(value) ?? Guid.NewGuid().ToString(),
+          static notice => notice
+        );
+      }
+      catch (Exception exception)
+      {
+        throw new ArgumentException(
+          $"Failed to create a dictionary of {nameof(notices)} using keys provided by {nameof(batchIdProvider)}.",
+          exception
+        );
+      }
+    }
+  }
 }
 
 /// <summary>
@@ -142,16 +142,16 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
 public class DispatchBatchRequest<TBaseEnterpriseEvent>
 {
   /// <summary>
+  ///   Gets the batch dispatch options.
+  /// </summary>
+  public BatchDispatchOptions? BatchDispatchOptions { get; init; }
+
+  /// <summary>
   ///   Gets the notices which are being dispatched.
   ///   Key is a unique identifier for the notice within the batch, which is used to correlate responses.
   ///   Value is the notice itself.
   /// </summary>
   public required IReadOnlyDictionary<string, TBaseEnterpriseEvent> Notices { get; init; }
-
-  /// <summary>
-  ///   Gets the batch dispatch options.
-  /// </summary>
-  public BatchDispatchOptions? BatchDispatchOptions { get; init; }
 
   /// <summary>
   ///   Creates a new instance of <see cref="DispatchBatchRequest{TBaseEnterpriseEvent}" />.

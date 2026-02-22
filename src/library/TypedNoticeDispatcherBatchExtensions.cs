@@ -52,6 +52,40 @@ public static class TypedNoticeDispatcherBatchExtensions
   #region NonGenericTypedDispatcher
 
   /// <summary>
+  ///   Creates a <see cref="DispatchBatchRequest" /> which sends all the provided <paramref name="notices" />
+  ///   to streams inferred from their <see cref="NoticeStreamAttribute" /> (if present on the notice type
+  ///   or in its type hierarchy) or their type name.
+  ///   Sends the result using <see cref="ITypedNoticeDispatcher.DispatchBatchAsync" />.
+  /// </summary>
+  /// <param name="dispatcher">A typed notice dispatcher.</param>
+  /// <param name="notices">A sequence of notices to dispatch.</param>
+  /// <param name="defaultToFullTypeName">
+  ///   A value indicating whether to default to the full type name (e.g., <c>MyCompany.MyApp.MyEvent</c>).
+  ///   When <c>false</c>, the type name (e.g., <c>MyEvent</c>) is used.
+  /// </param>
+  /// <param name="batchIdProvider">
+  ///   A function which generates unique identifiers for each
+  ///   element of the notification batch.
+  ///   Optional. Default: <see cref="Guid.NewGuid" />
+  /// </param>
+  /// <param name="options">Batch dispatch options. Optional.</param>
+  /// <param name="cancellationToken">An asynchronous operation cancellation token.</param>
+  /// <returns>Returns the typed notice dispatch result.</returns>
+  public static Task<BatchTypedNoticeDispatchResult> DispatchBatchToInferredRoutesAsync(
+    this ITypedNoticeDispatcher dispatcher,
+    IEnumerable<object> notices,
+    bool defaultToFullTypeName = false,
+    Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
+    BatchDispatchOptions? options = null,
+    CancellationToken cancellationToken = default)
+  {
+    return dispatcher.DispatchBatchAsync(
+      DispatchBatchRequest.CreateForInferredRoutes(notices, defaultToFullTypeName, batchIdProvider, options),
+      cancellationToken
+    );
+  }
+
+  /// <summary>
   ///   Creates a <see cref="DispatchBatchRequest" />
   ///   which sends all the provided <paramref name="notices" />
   ///   to the provided <paramref name="stream" />

@@ -14,7 +14,7 @@ public static class ConfigurationOptions
   ///     Adds a default typed notices implementation, where <see cref="EnterpriseEvent" /> is the base type.
   ///     Requests that:
   ///     notices be serialized to JSON,
-  ///     that events be routed to streams based on their full type names,
+  ///     that events be routed to streams based on their (short) type names,
   ///     and messages are validated using <see cref="Validator" />.
   ///     We register a custom <paramref name="dispatcher" />.
   ///   </para>
@@ -34,7 +34,7 @@ public static class ConfigurationOptions
         .UseTypedNotices(
           new TypedNoticesBuilderOptions
           {
-            RoutingType = TypedNoticesBuilderOptions.RoutingTypes.TypeFullName,
+            RoutingType = TypedNoticesBuilderOptions.RoutingTypes.TypeName,
             SerializationType = TypedNoticesBuilderOptions.SerializationTypes.Json,
             ValidationType = TypedNoticesBuilderOptions.ValidationTypes.DataAttributes
           },

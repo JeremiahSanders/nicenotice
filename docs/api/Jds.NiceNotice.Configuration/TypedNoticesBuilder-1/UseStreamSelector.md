@@ -1,30 +1,4 @@
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseStreamSelector method (1 of 2)
-
-Configures the algorithm used to identify the [`EventStreamId`](../../Jds.NiceNotice/EventStreamId.md) to which a notice should be dispatched. Registers the provided instance in the service collection as a singleton.
-
-```csharp
-public TypedNoticesBuilder UseStreamSelector(NoticeRouter<TEnterpriseEventBaseType> router)
-```
-
-| parameter | description |
-| --- | --- |
-| router | An implementation of [`NoticeRouter`](../../Jds.NiceNotice.TypedNotices.Routing/NoticeRouter-1.md). |
-
-## Remarks
-
-This overload is most useful in test arrangement.
-
-It is expected that most runtime use cases will use the overload that uses a factory method, which provides access to dependencies: [`UseStreamSelector`](./UseStreamSelector.md)
-
-## See Also
-
-* class [NoticeRouter&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Routing/NoticeRouter-1.md)
-* class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](../TypedNoticesBuilder-1.md)
-* namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
-
----
-
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseStreamSelector method (2 of 2)
+# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseStreamSelector method
 
 Configures the algorithm used to identify the stream to which a notice should be dispatched (determining its [`EventStreamId`](../../Jds.NiceNotice/EventStreamId.md)).
 
