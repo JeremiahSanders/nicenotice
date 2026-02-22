@@ -53,16 +53,6 @@ public readonly record struct EventStreamId
   }
 
   /// <summary>
-  ///   Returns the string value of an <see cref="EventStreamId" />.
-  /// </summary>
-  /// <param name="id">An event stream id.</param>
-  /// <returns>Returns the string value of <paramref name="id" />.</returns>
-  public static implicit operator string(EventStreamId id)
-  {
-    return id._value;
-  }
-
-  /// <summary>
   ///   Converts a string <paramref name="value" /> to an <see cref="EventStreamId" />.
   /// </summary>
   /// <remarks>Explicit conversion from string reinforces conscious decisions about creation.</remarks>
@@ -71,6 +61,16 @@ public readonly record struct EventStreamId
   public static explicit operator EventStreamId(string value)
   {
     return From(value);
+  }
+
+  /// <summary>
+  ///   Returns the string value of an <see cref="EventStreamId" />.
+  /// </summary>
+  /// <param name="id">An event stream id.</param>
+  /// <returns>Returns the string value of <paramref name="id" />.</returns>
+  public static implicit operator string(EventStreamId id)
+  {
+    return id._value;
   }
 
   /// <summary>

@@ -1,5 +1,3 @@
-using Jds.NiceNotice.Dispatching;
-
 namespace Jds.NiceNotice.TypedNotices;
 
 /// <summary>
@@ -9,10 +7,10 @@ namespace Jds.NiceNotice.TypedNotices;
 public record TypedNoticeDispatchResult<TEventType> where TEventType : notnull
 {
   /// <summary>
-  ///   Gets the serialized notice.
+  ///   Gets the response from the I/O dispatcher.
   /// </summary>
-  /// <remarks>This value was sent to I/O <see cref="INoticeIo.DispatchAsync" />.</remarks>
-  public required string Serialized { get; init; }
+  /// <remarks>This value was returned from <see cref="INoticeIo.DispatchAsync" />.</remarks>
+  public required string IoResponse { get; init; }
 
   /// <summary>
   ///   Gets the typed notice.
@@ -20,13 +18,13 @@ public record TypedNoticeDispatchResult<TEventType> where TEventType : notnull
   public required TEventType Notice { get; init; }
 
   /// <summary>
+  ///   Gets the serialized notice.
+  /// </summary>
+  /// <remarks>This value was sent to I/O <see cref="INoticeIo.DispatchAsync" />.</remarks>
+  public required string Serialized { get; init; }
+
+  /// <summary>
   ///   Gets the stream to which the notice was dispatched.
   /// </summary>
   public required EventStreamId Stream { get; init; }
-
-  /// <summary>
-  ///   Gets the response from the I/O dispatcher.
-  /// </summary>
-  /// <remarks>This value was returned from <see cref="INoticeIo.DispatchAsync" />.</remarks>
-  public required string IoResponse { get; init; }
 }

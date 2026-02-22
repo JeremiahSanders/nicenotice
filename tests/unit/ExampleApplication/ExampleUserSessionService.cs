@@ -1,5 +1,4 @@
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
-using Jds.NiceNotice.TypedNotices;
 
 namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 
@@ -10,47 +9,6 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 /// </summary>
 public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> dispatcher)
 {
-  public async Task<LogoutResult> TryLogoutAsync(string authorizationToken)
-  {
-    if (await IsAuthorizationTokenValid(authorizationToken))
-    {
-      string username = await LogoutAsync(authorizationToken);
-      await dispatcher.DispatchAsync(
-        new ExampleCustomLogoutEvent
-        {
-          Username = username
-        }
-      );
-
-      return new LogoutResult
-      {
-        Username = username
-      };
-    }
-
-    return new LogoutResult
-    {
-      ErrorMessage = "Invalid authorization token"
-    };
-
-    async Task<bool> IsAuthorizationTokenValid(string token)
-    {
-      // This local function mimics the interaction patterns of rudimentary async authorization validation.
-      await Task.Delay(Random.Shared.Next(minValue: 1, maxValue: 50));
-
-      return !string.IsNullOrWhiteSpace(token);
-    }
-
-    async Task<string> LogoutAsync(string token)
-    {
-      // This local function mimics the interaction patterns of logging out a user.
-      await Task.Delay(Random.Shared.Next(minValue: 1, maxValue: 50));
-
-      // NOTE: Since this is a mock implementation, we don't really know what the username would be. This is just a stub.
-      return token;
-    }
-  }
-
   public async Task<LoginResult> TryLoginAsync(Credentials credentials)
   {
     if (await AreCredentialsValid())
@@ -97,25 +55,66 @@ public class ExampleUserSessionService(ITypedNoticeDispatcher<ExampleCustomBaseE
     }
   }
 
+  public async Task<LogoutResult> TryLogoutAsync(string authorizationToken)
+  {
+    if (await IsAuthorizationTokenValid(authorizationToken))
+    {
+      string username = await LogoutAsync(authorizationToken);
+      await dispatcher.DispatchAsync(
+        new ExampleCustomLogoutEvent
+        {
+          Username = username
+        }
+      );
+
+      return new LogoutResult
+      {
+        Username = username
+      };
+    }
+
+    return new LogoutResult
+    {
+      ErrorMessage = "Invalid authorization token"
+    };
+
+    async Task<bool> IsAuthorizationTokenValid(string token)
+    {
+      // This local function mimics the interaction patterns of rudimentary async authorization validation.
+      await Task.Delay(Random.Shared.Next(minValue: 1, maxValue: 50));
+
+      return !string.IsNullOrWhiteSpace(token);
+    }
+
+    async Task<string> LogoutAsync(string token)
+    {
+      // This local function mimics the interaction patterns of logging out a user.
+      await Task.Delay(Random.Shared.Next(minValue: 1, maxValue: 50));
+
+      // NOTE: Since this is a mock implementation, we don't really know what the username would be. This is just a stub.
+      return token;
+    }
+  }
+
   public record LogoutResult
   {
-    public string? Username { get; init; }
     public string? ErrorMessage { get; init; }
     public bool Success => !string.IsNullOrWhiteSpace(Username);
+    public string? Username { get; init; }
     public bool Warning => ErrorMessage is not null;
   }
 
   public record LoginResult
   {
     public string? AuthorizationToken { get; init; }
+    public string? ErrorMessage { get; init; }
     public bool Success => !string.IsNullOrWhiteSpace(AuthorizationToken);
     public bool Warning => ErrorMessage is not null;
-    public string? ErrorMessage { get; init; }
   }
 
   public record Credentials
   {
-    public string Username { get; init; } = string.Empty;
     public string Password { get; init; } = string.Empty;
+    public string Username { get; init; } = string.Empty;
   }
 }

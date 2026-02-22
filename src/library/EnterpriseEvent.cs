@@ -52,13 +52,6 @@ public record EnterpriseEvent
   }
 
   /// <summary>
-  ///   Gets the timestamp associated with this enterprise event
-  ///   (in general, understood to mean &quot;when&quot; this event occurred).
-  /// </summary>
-  [JsonPropertyName(name: "timestamp")]
-  public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
-
-  /// <summary>
   ///   Gets a unique identifier for this enterprise event.
   /// </summary>
   /// <remarks>
@@ -87,6 +80,29 @@ public record EnterpriseEvent
   }
 
   /// <summary>
+  ///   Gets the timestamp associated with this enterprise event
+  ///   (in general, understood to mean &quot;when&quot; this event occurred).
+  /// </summary>
+  [JsonPropertyName(name: "timestamp")]
+  public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
+
+  /// <summary>
+  ///   Gets the revision index of this enterprise event data transfer object schema.
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     This property is used to provide schema revision/change information, with the assumed initial revision being 0.
+  ///     When not null this value is, by default, incorporated into <see cref="Schema" />.
+  ///   </para>
+  ///   <para>
+  ///     The default <see cref="Schema" /> pattern, <c>Title@Revision</c> (e.g., <c>Logout@3</c>, allows applications
+  ///     to communicate and document an expectation.
+  ///   </para>
+  /// </remarks>
+  [JsonIgnore]
+  protected virtual int? SchemaRevision { get; init; }
+
+  /// <summary>
   ///   Gets the name of this enterprise event data transfer object schema, defaulting to the type name.
   /// </summary>
   /// <remarks>
@@ -107,22 +123,6 @@ public record EnterpriseEvent
     get => _schemaTitle;
     init => _schemaTitle = value;
   }
-
-  /// <summary>
-  ///   Gets the revision index of this enterprise event data transfer object schema.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     This property is used to provide schema revision/change information, with the assumed initial revision being 0.
-  ///     When not null this value is, by default, incorporated into <see cref="Schema" />.
-  ///   </para>
-  ///   <para>
-  ///     The default <see cref="Schema" /> pattern, <c>Title@Revision</c> (e.g., <c>Logout@3</c>, allows applications
-  ///     to communicate and document an expectation.
-  ///   </para>
-  /// </remarks>
-  [JsonIgnore]
-  protected virtual int? SchemaRevision { get; init; }
 
   /// <summary>
   ///   Generates an event schema from the provided event schema title and an optional schema revision index.

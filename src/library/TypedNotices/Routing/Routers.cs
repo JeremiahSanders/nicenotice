@@ -49,37 +49,6 @@ public static class Routers
   }
 
   /// <summary>
-  ///   Creates a notice stream selector which uses the provided type <paramref name="map" />
-  ///   and optional <paramref name="defaultStream" /> to specify where events should be routed.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     Use this stream selector to declaratively define event routing.
-  ///   </para>
-  ///   <para>
-  ///     It is strongly recommended to use the <paramref name="defaultStream" /> to ensure that all events have a
-  ///     destination. Without a default, dispatching any event types that are not included in <paramref name="map" />
-  ///     will instead trigger a <see cref="NoticeRoutingException" />.
-  ///   </para>
-  /// </remarks>
-  /// <param name="map">
-  ///   The type map which defines where each type
-  ///   (assumed to be derived from <typeparamref name="TEnterpriseEventBaseType" />)
-  ///   should be routed.
-  /// </param>
-  /// <param name="defaultStream">The default stream which should receive all events not included in <paramref name="map" />.</param>
-  /// <typeparam name="TEnterpriseEventBaseType">The base enterprise event type.</typeparam>
-  /// <returns>Returns a notice stream selector.</returns>
-  public static NoticeRouter<TEnterpriseEventBaseType> TypeMap<TEnterpriseEventBaseType>(
-    IReadOnlyDictionary<Type, EventStreamId> map,
-    EventStreamId? defaultStream = null
-  )
-    where TEnterpriseEventBaseType : notnull
-  {
-    return new TypeMapRouter<TEnterpriseEventBaseType>(map, defaultStream);
-  }
-
-  /// <summary>
   ///   Configures the enterprise event builder to use a constant stream selector, routing all enterprise event notices to
   ///   the specified stream ID.
   /// </summary>
@@ -100,32 +69,6 @@ public static class Routers
   {
     return builder.UseStreamSelector(
       _ => Constant<TEnterpriseEventBaseType>(stream),
-      ServiceLifetime.Singleton
-    );
-  }
-
-  /// <summary>
-  ///   Configures the enterprise event builder to use a delegate stream selector, invoking
-  ///   <paramref name="routingFunction" /> for each notice.
-  /// </summary>
-  /// <param name="builder">The builder instance.</param>
-  /// <param name="routingFunction">
-  ///   The function which will determine the stream for each event.
-  ///   This function is expected to be thread-safe.
-  /// </param>
-  /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
-  /// <returns>
-  ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
-  ///   delegate stream selector.
-  /// </returns>
-  public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteWithDelegate<TEnterpriseEventBaseType>(
-    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
-    Func<TEnterpriseEventBaseType, EventStreamId> routingFunction
-  )
-    where TEnterpriseEventBaseType : notnull
-  {
-    return builder.UseStreamSelector(
-      _ => Delegate(routingFunction),
       ServiceLifetime.Singleton
     );
   }
@@ -163,6 +106,63 @@ public static class Routers
     {
       return TypeNameFactory<TEnterpriseEventBaseType>();
     }
+  }
+
+  /// <summary>
+  ///   Configures the enterprise event builder to use a delegate stream selector, invoking
+  ///   <paramref name="routingFunction" /> for each notice.
+  /// </summary>
+  /// <param name="builder">The builder instance.</param>
+  /// <param name="routingFunction">
+  ///   The function which will determine the stream for each event.
+  ///   This function is expected to be thread-safe.
+  /// </param>
+  /// <typeparam name="TEnterpriseEventBaseType">An enterprise event base type.</typeparam>
+  /// <returns>
+  ///   Returns the modified <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured to use the
+  ///   delegate stream selector.
+  /// </returns>
+  public static TypedNoticesBuilder<TEnterpriseEventBaseType> RouteWithDelegate<TEnterpriseEventBaseType>(
+    this TypedNoticesBuilder<TEnterpriseEventBaseType> builder,
+    Func<TEnterpriseEventBaseType, EventStreamId> routingFunction
+  )
+    where TEnterpriseEventBaseType : notnull
+  {
+    return builder.UseStreamSelector(
+      _ => Delegate(routingFunction),
+      ServiceLifetime.Singleton
+    );
+  }
+
+  /// <summary>
+  ///   Creates a notice stream selector which uses the provided type <paramref name="map" />
+  ///   and optional <paramref name="defaultStream" /> to specify where events should be routed.
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     Use this stream selector to declaratively define event routing.
+  ///   </para>
+  ///   <para>
+  ///     It is strongly recommended to use the <paramref name="defaultStream" /> to ensure that all events have a
+  ///     destination. Without a default, dispatching any event types that are not included in <paramref name="map" />
+  ///     will instead trigger a <see cref="NoticeRoutingException" />.
+  ///   </para>
+  /// </remarks>
+  /// <param name="map">
+  ///   The type map which defines where each type
+  ///   (assumed to be derived from <typeparamref name="TEnterpriseEventBaseType" />)
+  ///   should be routed.
+  /// </param>
+  /// <param name="defaultStream">The default stream which should receive all events not included in <paramref name="map" />.</param>
+  /// <typeparam name="TEnterpriseEventBaseType">The base enterprise event type.</typeparam>
+  /// <returns>Returns a notice stream selector.</returns>
+  public static NoticeRouter<TEnterpriseEventBaseType> TypeMap<TEnterpriseEventBaseType>(
+    IReadOnlyDictionary<Type, EventStreamId> map,
+    EventStreamId? defaultStream = null
+  )
+    where TEnterpriseEventBaseType : notnull
+  {
+    return new TypeMapRouter<TEnterpriseEventBaseType>(map, defaultStream);
   }
 
   /// <summary>

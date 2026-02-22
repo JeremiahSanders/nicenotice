@@ -8,6 +8,24 @@ namespace Jds.NiceNotice.Tests.Unit;
 
 public class DispatchBatchRequestTests
 {
+  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithCustomFunction(
+    IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
+  )
+  {
+    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+      notices,
+      static customEvent => Randomizer.Shared.RandomStringLatin(length: 64, alphanumeric: true),
+      options: null
+    );
+  }
+
+  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithDefaultFunction(
+    IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
+  )
+  {
+    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(notices, options: null);
+  }
+
   [Fact]
   public void WithCustomIdFunction_CreatesExpectedResult()
   {
@@ -65,23 +83,5 @@ public class DispatchBatchRequestTests
         }
       )
       .ShouldAllBe(tuple => tuple.isGuid);
-  }
-
-  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithCustomFunction(
-    IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
-  )
-  {
-    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
-      notices,
-      static customEvent => Randomizer.Shared.RandomStringLatin(length: 64, alphanumeric: true),
-      options: null
-    );
-  }
-
-  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithDefaultFunction(
-    IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
-  )
-  {
-    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(notices, null);
   }
 }

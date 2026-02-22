@@ -8,12 +8,12 @@ namespace Jds.NiceNotice.TypedNotices;
 public class BatchRoutedTypedNoticeRequest(EventStreamId stream, object notice)
 {
   /// <summary>
-  ///   Gets the logical event stream to which the notice is routed.
-  /// </summary>
-  public EventStreamId Stream { get; } = stream;
-
-  /// <summary>
   ///   Gets the notice which is being dispatched.
   /// </summary>
   public object Notice { get; } = notice;
+
+  /// <summary>
+  ///   Gets the logical event stream to which the notice is routed.
+  /// </summary>
+  public EventStreamId Stream { get; } = stream;
 }

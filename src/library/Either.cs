@@ -17,13 +17,23 @@ internal class Either<TLeft, TRight>
     IsRight = true;
   }
 
-  public bool IsLeft { get; }
-
-  public bool IsRight { get; }
-
-  public TRight RightUnsafe => _right ?? throw new InvalidOperationException(message: "Either is not right.");
-  public TLeft LeftUnsafe => _left ?? throw new InvalidOperationException(message: "Either is not left.");
   public bool IsBottom => !IsLeft && !IsRight;
+  public bool IsLeft { get; }
+  public bool IsRight { get; }
+  public TLeft LeftUnsafe => _left ?? throw new InvalidOperationException(message: "Either is not left.");
+  public TRight RightUnsafe => _right ?? throw new InvalidOperationException(message: "Either is not right.");
+
+  public Either<TLeft2, TRight2> BiBind<TLeft2, TRight2>(
+    Func<TRight, Either<TLeft2, TRight2>> rightBinder,
+    Func<TLeft, Either<TLeft2, TRight2>> leftBinder)
+  {
+    return IsLeft ? leftBinder(LeftUnsafe) : rightBinder(RightUnsafe);
+  }
+
+  public Either<TLeft, TRight2> Bind<TRight2>(Func<TRight, Either<TLeft, TRight2>> binder)
+  {
+    return IsLeft ? Eithers.Left<TLeft, TRight2>(LeftUnsafe) : binder(RightUnsafe);
+  }
 
   public TRight FoldRight(Func<TLeft, TRight> leftMapper)
   {
@@ -33,18 +43,6 @@ internal class Either<TLeft, TRight>
   public Either<TLeft, TRight2> Map<TRight2>(Func<TRight, TRight2> mapper)
   {
     return IsLeft ? Eithers.Left<TLeft, TRight2>(LeftUnsafe) : Eithers.Right<TLeft, TRight2>(mapper(RightUnsafe));
-  }
-
-  public Either<TLeft, TRight2> Bind<TRight2>(Func<TRight, Either<TLeft, TRight2>> binder)
-  {
-    return IsLeft ? Eithers.Left<TLeft, TRight2>(LeftUnsafe) : binder(RightUnsafe);
-  }
-
-  public Either<TLeft2, TRight2> BiBind<TLeft2, TRight2>(
-    Func<TRight, Either<TLeft2, TRight2>> rightBinder,
-    Func<TLeft, Either<TLeft2, TRight2>> leftBinder)
-  {
-    return IsLeft ? leftBinder(LeftUnsafe) : rightBinder(RightUnsafe);
   }
 
   public Either<TLeft2, TRight> MapLeft<TLeft2>(Func<TLeft, TLeft2> mapper)

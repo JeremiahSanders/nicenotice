@@ -8,12 +8,12 @@ namespace Jds.NiceNotice.Dispatching;
 public class BatchedIoRequestNotice(EventStreamId stream, string notice)
 {
   /// <summary>
-  ///   Gets the logical event stream to which the notice is routed.
-  /// </summary>
-  public EventStreamId Stream { get; } = stream;
-
-  /// <summary>
   ///   Gets the content of the notice which is being dispatched.
   /// </summary>
   public string Notice { get; } = notice;
+
+  /// <summary>
+  ///   Gets the logical event stream to which the notice is routed.
+  /// </summary>
+  public EventStreamId Stream { get; } = stream;
 }

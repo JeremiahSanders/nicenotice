@@ -35,14 +35,14 @@ public class CapturingNoticeIo : INoticeBatchIo
   }
 
   /// <summary>
-  ///   Gets the captured notices.
-  /// </summary>
-  private ConcurrentQueue<(EventStreamId, string)> Notices { get; } = [];
-
-  /// <summary>
   ///   Gets an enumerator for the captured notices.
   /// </summary>
   public IEnumerable<(EventStreamId, string)> CapturedNotices => Notices;
+
+  /// <summary>
+  ///   Gets the captured notices.
+  /// </summary>
+  private ConcurrentQueue<(EventStreamId, string)> Notices { get; } = [];
 
   /// <inheritdoc />
   public Task<string> DispatchAsync(EventStreamId stream, string notice, CancellationToken cancellationToken = default)

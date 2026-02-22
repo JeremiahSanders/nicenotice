@@ -1,5 +1,3 @@
-using Jds.NiceNotice.Configuration;
-using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
 using Jds.NiceNotice.TypedNotices;
@@ -19,9 +17,7 @@ public class DelegateRouterTests
     ServiceProvider serviceProvider = new ServiceCollection()
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          typedNoticeBuilder => Routers.RouteWithDelegate<EnterpriseEvent>(
-            typedNoticeBuilder,
-            enterpriseEvent =>
+          typedNoticeBuilder => typedNoticeBuilder.RouteWithDelegate(enterpriseEvent =>
             EventStreamId.From(enterpriseEvent.Schema.ToUpperInvariant())
           ),
           ServiceLifetime.Transient
