@@ -20,7 +20,7 @@ public class TypedNoticesBuilderOptions
 
 ## Remarks
 
-This type supports [`UseTypedNotices`](./TypedNoticesNiceNoticeBuilderExtensions/UseTypedNotices.md).
+This type supports [`UseTypedNotices`](./NiceNoticeBuilder/UseTypedNotices.md).
 
 ## See Also
 

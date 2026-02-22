@@ -1,8 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-using Jds.NiceNotice.Configuration;
-using Jds.NiceNotice.Dispatching;
-using Jds.NiceNotice.TypedNotices;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
 using Jds.NiceNotice.TypedNotices.Validation;
@@ -33,13 +30,14 @@ public static class HelperBasedConfiguration
   public static IServiceCollection ApplyHelperBasedConfiguration(
     this IServiceCollection services,
     Func<IServiceProvider, INoticeIo> dispatcher,
-    bool useFullTypeName)
+    bool useFullTypeName
+  )
   {
     return services
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
-          eeBuilder => Serializers
-            .SerializeToJson<EnterpriseEvent>(eeBuilder)
+          eeBuilder => eeBuilder
+            .SerializeToJson()
             .RouteToTypeNameStreams(useFullTypeName)
             .ValidateWithDataAnnotations(),
           ServiceLifetime.Singleton

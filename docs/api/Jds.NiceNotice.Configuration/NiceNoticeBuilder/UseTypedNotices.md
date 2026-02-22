@@ -1,4 +1,4 @@
-# NiceNoticeBuilder.UseTypedNotices method (1 of 3)
+# NiceNoticeBuilder.UseTypedNotices method (1 of 4)
 
 Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../../Jds.NiceNotice/EnterpriseEvent.md) as the assumed base type.
 
@@ -29,7 +29,37 @@ Use the [`UseTypedNotices`](./UseTypedNotices.md) overload to specify a differen
 
 ---
 
-# NiceNoticeBuilder.UseTypedNotices&lt;TNoticeBaseType&gt; method (2 of 3)
+# NiceNoticeBuilder.UseTypedNotices method (2 of 4)
+
+Adds support for dispatching typed, serialized notices (JSON most commonly) using the default [`EnterpriseEvent`](../../Jds.NiceNotice/EnterpriseEvent.md) as the assumed base type.
+
+```csharp
+public NiceNoticeBuilder UseTypedNotices(TypedNoticesBuilderOptions configuration, 
+    ServiceLifetime lifetime = ServiceLifetime.Scoped)
+```
+
+| parameter | description |
+| --- | --- |
+| configuration | A configuration object, used to configure typed notice dispatching using predefined algorithms. |
+| lifetime | A service lifetime for the typed notice dispatching services. The typed notice dispatcher depends upon the configured [`INoticeIo`](../../Jds.NiceNotice/INoticeIo.md), so be considerate of the thread-safety and best practices of your I/O implementation. |
+
+## Return Value
+
+Returns this [`NiceNoticeBuilder`](../NiceNoticeBuilder.md) for further configuration.
+
+## Remarks
+
+Use the [`UseTypedNotices`](./UseTypedNotices.md) overload to specify a different base type.
+
+## See Also
+
+* class [TypedNoticesBuilderOptions](../TypedNoticesBuilderOptions.md)
+* class [NiceNoticeBuilder](../NiceNoticeBuilder.md)
+* namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
+
+---
+
+# NiceNoticeBuilder.UseTypedNotices&lt;TNoticeBaseType&gt; method (3 of 4)
 
 Adds support for dispatching typed, serialized notices (JSON most commonly).
 
@@ -57,29 +87,27 @@ Returns this instance.
 
 ---
 
-# NiceNoticeBuilder.UseTypedNotices&lt;TNoticeBaseType&gt; method (3 of 3)
+# NiceNoticeBuilder.UseTypedNotices&lt;TNoticeBaseType&gt; method (4 of 4)
 
-Adds support for dispatching typed, serialized notices (JSON most commonly).
+Adds support for dispatching typed, serialized notices (JSON most commonly) using the *TNoticeBaseType* as the base type.
 
 ```csharp
-public NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(
-    Func<IServiceProvider, ITypedNoticeDispatcher<TNoticeBaseType>> resolver, 
-    ServiceLifetime dispatcherServiceLifetime)
+public NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(TypedNoticesBuilderOptions configuration, 
+    ServiceLifetime lifetime = ServiceLifetime.Scoped)
 ```
 
 | parameter | description |
 | --- | --- |
-| TNoticeBaseType | A base notification type. Use this to enforce an inheritance-based notice structure. |
-| resolver | A method which will provide the [`ITypedNoticeDispatcher`](../../Jds.NiceNotice/ITypedNoticeDispatcher-1.md) service when given an IServiceProvider. |
-| dispatcherServiceLifetime | A service lifetime to assign the [`ITypedNoticeDispatcher`](../../Jds.NiceNotice/ITypedNoticeDispatcher-1.md) service. |
+| configuration | A configuration object, used to configure typed notice dispatching using predefined algorithms. |
+| lifetime | A service lifetime for the typed notice dispatching services. The typed notice dispatcher depends upon the configured [`INoticeIo`](../../Jds.NiceNotice/INoticeIo.md), so be considerate of the thread-safety and best practices of your I/O implementation. |
 
 ## Return Value
 
-Returns this instance.
+Returns this [`NiceNoticeBuilder`](../NiceNoticeBuilder.md) for further configuration.
 
 ## See Also
 
-* interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice/ITypedNoticeDispatcher-1.md)
+* class [TypedNoticesBuilderOptions](../TypedNoticesBuilderOptions.md)
 * class [NiceNoticeBuilder](../NiceNoticeBuilder.md)
 * namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
 

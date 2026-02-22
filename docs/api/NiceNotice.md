@@ -26,7 +26,6 @@
 | class [NiceNoticeBuilder](./Jds.NiceNotice.Configuration/NiceNoticeBuilder.md) | A fluent builder for configuring NiceNotice services. |
 | class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.Configuration/TypedNoticesBuilder-1.md) | A builder for configuring typed notices (enterprise events) which derive from a base type. |
 | class [TypedNoticesBuilderOptions](./Jds.NiceNotice.Configuration/TypedNoticesBuilderOptions.md) | Configuration-based setup parameters for typed notices. |
-| static class [TypedNoticesNiceNoticeBuilderExtensions](./Jds.NiceNotice.Configuration/TypedNoticesNiceNoticeBuilderExtensions.md) | Methods extending the NiceNoticeBuilder to support configuration-based setup for typed notices. |
 
 ## Jds.NiceNotice.Dispatching namespace
 

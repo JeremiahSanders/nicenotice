@@ -1,32 +1,4 @@
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseSerializer method (1 of 2)
-
-Configures the algorithm used to serialize enterprise events.
-
-```csharp
-public TypedNoticesBuilder UseSerializer(NoticeSerializer<TEnterpriseEventBaseType> serializer)
-```
-
-| parameter | description |
-| --- | --- |
-| serializer | The [`NoticeSerializer`](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer-1.md) implementation to be used for serializing notices. |
-
-## Return Value
-
-Returns this instance for further customization.
-
-## Remarks
-
-The recommended implementation is JsonNoticeSerializer. However, you can use any implementation of [`NoticeSerializer`](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer-1.md).
-
-## See Also
-
-* class [NoticeSerializer&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer-1.md)
-* class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](../TypedNoticesBuilder-1.md)
-* namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
-
----
-
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseSerializer method (2 of 2)
+# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseSerializer method
 
 Configures the algorithm used to serialize enterprise events.
 

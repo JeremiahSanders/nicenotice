@@ -21,89 +21,6 @@ public class NiceNoticeBuilder(IServiceCollection services)
   public IServiceCollection Services => services;
 
   /// <summary>
-  ///   Registers a notice dispatcher (i.e. I/O).
-  /// </summary>
-  /// <param name="serviceLifetime">A service lifetime for the resolved instances.</param>
-  /// <typeparam name="TDispatcher">A notice dispatch I/O type.</typeparam>
-  /// <returns>Returns this builder instance.</returns>
-  public NiceNoticeBuilder UseDispatcher<TDispatcher>(ServiceLifetime serviceLifetime)
-    where TDispatcher : INoticeIo
-  {
-    // Try to add the dispatcher type directly (in case it hasn't been registered yet).
-    Services.TryAdd(new ServiceDescriptor(typeof(TDispatcher), typeof(TDispatcher), serviceLifetime));
-
-    // Then use a simple static resolver with the factory method overload.
-    return UseDispatcher<TDispatcher>(
-      static serviceProvider => serviceProvider.GetService<TDispatcher>() ??
-                                throw MissingDependencyException.For<TDispatcher>(),
-      serviceLifetime
-    );
-  }
-
-  /// <summary>
-  ///   Registers a notice dispatcher (i.e. I/O).
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     This overload is useful when your I/O implementation uses a static constructor or requires constructor
-  ///     parameters which cannot be directly resolved from the application's service provider.
-  ///   </para>
-  /// </remarks>
-  /// <param name="resolver">
-  ///   A method which will provide the <see cref="INoticeIo" /> service when given an
-  ///   <see cref="IServiceProvider" />.
-  /// </param>
-  /// <param name="serviceLifetime">A service lifetime for the resolved instances.</param>
-  /// <typeparam name="TDispatcher">A notice dispatch I/O type.</typeparam>
-  /// <returns>Returns this builder instance.</returns>
-  public NiceNoticeBuilder UseDispatcher<TDispatcher>(
-    Func<IServiceProvider, TDispatcher> resolver,
-    ServiceLifetime serviceLifetime
-  )
-    where TDispatcher : INoticeIo
-  {
-    Services.Add(new ServiceDescriptor(typeof(INoticeIo), provider => resolver(provider), serviceLifetime));
-
-    // If the dispatcher also implements INoticeBatchIo, register it for that abstraction as well.
-    if (typeof(TDispatcher).GetInterfaces().Any(i => i == typeof(INoticeBatchIo)))
-    {
-      Services.Add(new ServiceDescriptor(typeof(INoticeBatchIo), provider => resolver(provider), serviceLifetime));
-    }
-
-    return this;
-  }
-
-  /// <summary>
-  ///   Adds support for dispatching typed, serialized notices (JSON most commonly).
-  /// </summary>
-  /// <param name="resolver">
-  ///   A method which will provide the
-  ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}" /> service
-  ///   when given an <see cref="IServiceProvider" />.
-  /// </param>
-  /// <param name="dispatcherServiceLifetime">
-  ///   A service lifetime to assign the
-  ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}" /> service.
-  /// </param>
-  /// <typeparam name="TNoticeBaseType">
-  ///   A base notification type.
-  ///   Use this to enforce an inheritance-based notice structure.
-  /// </typeparam>
-  /// <returns>Returns this instance.</returns>
-  public NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(
-    Func<IServiceProvider, ITypedNoticeDispatcher<TNoticeBaseType>> resolver,
-    ServiceLifetime dispatcherServiceLifetime
-  )
-    where TNoticeBaseType : notnull
-  {
-    Services.Add(
-      new ServiceDescriptor(typeof(ITypedNoticeDispatcher<TNoticeBaseType>), resolver, dispatcherServiceLifetime)
-    );
-
-    return this;
-  }
-
-  /// <summary>
   ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
   ///   using the default <see cref="EnterpriseEvent" /> as the assumed base type.
   /// </summary>
@@ -128,6 +45,35 @@ public class NiceNoticeBuilder(IServiceCollection services)
   )
   {
     return UseTypedNotices<EnterpriseEvent>(configure, dispatcherServiceLifetime);
+  }
+
+  /// <summary>
+  ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
+  ///   using the default <see cref="EnterpriseEvent" /> as the assumed base type.
+  /// </summary>
+  /// <remarks>
+  ///   Use the
+  ///   <see cref="UseTypedNotices{TNoticeBaseType}(TypedNoticesBuilderOptions,ServiceLifetime)" />
+  ///   overload to specify a different base type.
+  /// </remarks>
+  /// <param name="configuration">
+  ///   A configuration object, used to configure typed notice dispatching using predefined algorithms.
+  /// </param>
+  /// <param name="lifetime">
+  ///   A service lifetime for the typed notice dispatching services.
+  ///   The typed notice dispatcher depends upon the configured <see cref="INoticeIo" />,
+  ///   so be considerate of the thread-safety and best practices of your I/O implementation.
+  /// </param>
+  /// <returns>Returns this <see cref="NiceNoticeBuilder" /> for further configuration.</returns>
+  public NiceNoticeBuilder UseTypedNotices(
+    TypedNoticesBuilderOptions configuration,
+    ServiceLifetime lifetime = ServiceLifetime.Scoped
+  )
+  {
+    return UseTypedNotices(
+      typedNoticesBuilder => typedNoticesBuilder.ApplyTypedNoticesBuilderOptions(configuration),
+      lifetime
+    );
   }
 
   /// <summary>
@@ -166,6 +112,45 @@ public class NiceNoticeBuilder(IServiceCollection services)
 
     // By registering the non-generic typed notice dispatcher here we can apply a desired lifetime.
     TryAddNonGenericTypedNoticeDispatcher(dispatcherServiceLifetime);
+
+    return this;
+  }
+
+  /// <summary>
+  ///   Adds support for dispatching typed, serialized notices (JSON most commonly)
+  ///   using the <typeparamref name="TNoticeBaseType" /> as the base type.
+  /// </summary>
+  /// <param name="configuration">
+  ///   A configuration object, used to configure typed notice dispatching using predefined algorithms.
+  /// </param>
+  /// <param name="lifetime">
+  ///   A service lifetime for the typed notice dispatching services.
+  ///   The typed notice dispatcher depends upon the configured <see cref="INoticeIo" />,
+  ///   so be considerate of the thread-safety and best practices of your I/O implementation.
+  /// </param>
+  /// <returns>Returns this <see cref="NiceNoticeBuilder" /> for further configuration.</returns>
+  public NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(
+    TypedNoticesBuilderOptions configuration,
+    ServiceLifetime lifetime = ServiceLifetime.Scoped
+  ) where TNoticeBaseType : notnull
+  {
+    return UseTypedNotices<TNoticeBaseType>(
+      typedNoticesBuilder => typedNoticesBuilder.ApplyTypedNoticesBuilderOptions(configuration),
+      lifetime
+    );
+  }
+
+  internal NiceNoticeBuilder ApplyDefaults()
+  {
+    // UseTypedNotices should use TryAdd for its configuration, so this shouldn't override anything the user configured.
+    UseTypedNotices<EnterpriseEvent>(static _ => { }, ServiceLifetime.Transient);
+
+    ServiceDescriptor dispatcherDescriptor = new(
+      typeof(INoticeIo),
+      typeof(NullNoticeIo),
+      ServiceLifetime.Singleton // NullNoticeIo is thread-safe.
+    );
+    Services.TryAdd(dispatcherDescriptor);
 
     return this;
   }
@@ -218,18 +203,93 @@ public class NiceNoticeBuilder(IServiceCollection services)
     }
   }
 
-  internal NiceNoticeBuilder ApplyDefaults()
+  /// <summary>
+  ///   Adds support for dispatching typed, serialized notices (JSON most commonly).
+  /// </summary>
+  /// <param name="resolver">
+  ///   A method which will provide the
+  ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}" /> service
+  ///   when given an <see cref="IServiceProvider" />.
+  /// </param>
+  /// <param name="dispatcherServiceLifetime">
+  ///   A service lifetime to assign the
+  ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}" /> service.
+  /// </param>
+  /// <typeparam name="TNoticeBaseType">
+  ///   A base notification type.
+  ///   Use this to enforce an inheritance-based notice structure.
+  /// </typeparam>
+  /// <returns>Returns this instance.</returns>
+  [Obsolete(
+    message: "Not sure if this should be supported. What value does implementing a custom notice dispatcher provide?"
+  )]
+  private NiceNoticeBuilder UseTypedNotices<TNoticeBaseType>(
+    Func<IServiceProvider, ITypedNoticeDispatcher<TNoticeBaseType>> resolver,
+    ServiceLifetime dispatcherServiceLifetime
+  )
+    where TNoticeBaseType : notnull
   {
-    // UseTypedNotices should use TryAdd for its configuration, so this shouldn't override anything the user configured.
-    UseTypedNotices<EnterpriseEvent>(static _ => { }, ServiceLifetime.Transient);
-
-    ServiceDescriptor dispatcherDescriptor = new(
-      typeof(INoticeIo),
-      typeof(NullNoticeIo),
-      ServiceLifetime.Singleton // NullNoticeIo is thread-safe.
+    Services.Add(
+      new ServiceDescriptor(typeof(ITypedNoticeDispatcher<TNoticeBaseType>), resolver, dispatcherServiceLifetime)
     );
-    Services.TryAdd(dispatcherDescriptor);
 
     return this;
   }
+
+  #region Dispatcher Registration
+
+  /// <summary>
+  ///   Registers a notice dispatcher (i.e. I/O).
+  /// </summary>
+  /// <param name="serviceLifetime">A service lifetime for the resolved instances.</param>
+  /// <typeparam name="TDispatcher">A notice dispatch I/O type.</typeparam>
+  /// <returns>Returns this builder instance.</returns>
+  public NiceNoticeBuilder UseDispatcher<TDispatcher>(ServiceLifetime serviceLifetime)
+    where TDispatcher : INoticeIo
+  {
+    // Try to add the dispatcher type directly (in case it hasn't been registered yet).
+    Services.TryAdd(new ServiceDescriptor(typeof(TDispatcher), typeof(TDispatcher), serviceLifetime));
+
+    // Then use a simple static resolver with the factory method overload.
+    return UseDispatcher<TDispatcher>(
+      static serviceProvider => serviceProvider.GetService<TDispatcher>() ??
+                                throw MissingDependencyException.For<TDispatcher>(),
+      serviceLifetime
+    );
+  }
+
+  /// <summary>
+  ///   Registers a notice dispatcher (i.e. I/O).
+  /// </summary>
+  /// <remarks>
+  ///   <para>
+  ///     This overload is useful when your I/O implementation uses a static constructor or requires constructor
+  ///     parameters which cannot be directly resolved from the application's service provider.
+  ///   </para>
+  /// </remarks>
+  /// <param name="resolver">
+  ///   A method which will provide the <see cref="INoticeIo" /> service when given an
+  ///   <see cref="IServiceProvider" />.
+  /// </param>
+  /// <param name="serviceLifetime">A service lifetime for the resolved instances.</param>
+  /// <typeparam name="TDispatcher">A notice dispatch I/O type.</typeparam>
+  /// <returns>Returns this builder instance.</returns>
+  public NiceNoticeBuilder UseDispatcher<TDispatcher>(
+    Func<IServiceProvider, TDispatcher> resolver,
+    ServiceLifetime serviceLifetime
+  )
+    where TDispatcher : INoticeIo
+  {
+    Services.Add(new ServiceDescriptor(typeof(INoticeIo), provider => resolver(provider), serviceLifetime));
+
+    // If the dispatcher also implements INoticeBatchIo, register it for that abstraction as well.
+    if (typeof(TDispatcher).GetInterfaces().Any(i => i == typeof(INoticeBatchIo)))
+    {
+      Services.Add(new ServiceDescriptor(typeof(INoticeBatchIo), provider => resolver(provider), serviceLifetime));
+    }
+
+    return this;
+  }
+
+  #endregion
 }

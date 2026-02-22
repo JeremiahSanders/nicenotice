@@ -163,8 +163,8 @@ public class NoticeStreamAttributeTests
       /// </summary>
       public class BaseTypeNoAttribute
       {
-        public string Id { get; init; } = Guid.NewGuid().ToString();
         public virtual string? ExpectedStreamName => null;
+        public string Id { get; init; } = Guid.NewGuid().ToString();
       }
 
       /// <summary>
@@ -203,8 +203,8 @@ public class NoticeStreamAttributeTests
       [NoticeStream(BaseTypeStreamName)]
       public class BaseTypeWithAttribute
       {
-        public string Id { get; init; } = Guid.NewGuid().ToString();
         public virtual string? ExpectedStreamName => BaseTypeStreamName;
+        public string Id { get; init; } = Guid.NewGuid().ToString();
       }
 
       [NoticeStream(DerivedL1StreamName)]
@@ -229,86 +229,6 @@ public class NoticeStreamAttributeTests
 
   public class DefaultTypedNoticeDispatcherTypedTests : NoticeStreamAttributeTests
   {
-    [Theory]
-    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
-    public async Task DispatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
-      string caseName,
-      TypedNoticesBuilderOptions.RoutingTypes routingType,
-      string noticeType,
-      string expected
-    )
-    {
-      ITypedNoticeDispatcher<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> dispatcher =
-        Create<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute>(routingType);
-
-      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
-      TypedNoticeDispatchResult<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> result =
-        await dispatcher.DispatchAsync(notice);
-
-      result.Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
-    [Theory]
-    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
-    public async Task DispatchBatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
-      string caseName,
-      TypedNoticesBuilderOptions.RoutingTypes routingType,
-      string noticeType,
-      string expected
-    )
-    {
-      ITypedNoticeDispatcher<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> dispatcher =
-        Create<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute>(routingType);
-
-      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
-      BatchTypedNoticeDispatchResult result =
-        await dispatcher.DispatchBatchAsync([notice]);
-
-      result
-        .Successes.ShouldHaveSingleItem()
-        .Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
-    [Theory]
-    [MemberData(nameof(CreateBaseTypeWithAttributeTestCases))]
-    public async Task DispatchAsync_GivenBaseTypeWithAttribute_InfersExpectedStreamName(
-      string caseName,
-      TypedNoticesBuilderOptions.RoutingTypes routingType,
-      string noticeType,
-      string expected
-    )
-    {
-      ITypedNoticeDispatcher<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> dispatcher =
-        Create<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute>(routingType);
-
-      NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute notice = CreateWithAttributeNoticeByName(noticeType);
-      TypedNoticeDispatchResult<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> result =
-        await dispatcher.DispatchAsync(notice);
-
-      result.Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
-    [Theory]
-    [MemberData(nameof(CreateBaseTypeWithAttributeTestCases))]
-    public async Task DispatchBatchAsync_GivenBaseTypeWithAttribute_InfersExpectedStreamName(
-      string caseName,
-      TypedNoticesBuilderOptions.RoutingTypes routingType,
-      string noticeType,
-      string expected
-    )
-    {
-      ITypedNoticeDispatcher<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> dispatcher =
-        Create<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute>(routingType);
-
-      NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute notice = CreateWithAttributeNoticeByName(noticeType);
-      BatchTypedNoticeDispatchResult result =
-        await dispatcher.DispatchBatchAsync([notice]);
-
-      result
-        .Successes.ShouldHaveSingleItem()
-        .Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
     public static ITypedNoticeDispatcher<TEventType> Create<TEventType>(
       TypedNoticesBuilderOptions.RoutingTypes routingType
     )
@@ -332,10 +252,111 @@ public class NoticeStreamAttributeTests
 
       return provider.GetRequiredService<ITypedNoticeDispatcher<TEventType>>();
     }
+
+    [Theory]
+    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
+    public async Task DispatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
+      string caseName,
+      TypedNoticesBuilderOptions.RoutingTypes routingType,
+      string noticeType,
+      string expected
+    )
+    {
+      ITypedNoticeDispatcher<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> dispatcher =
+        Create<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute>(routingType);
+
+      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
+      TypedNoticeDispatchResult<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> result =
+        await dispatcher.DispatchAsync(notice);
+
+      result.Stream.ShouldBe(EventStreamId.From(expected));
+    }
+
+    [Theory]
+    [MemberData(nameof(CreateBaseTypeWithAttributeTestCases))]
+    public async Task DispatchAsync_GivenBaseTypeWithAttribute_InfersExpectedStreamName(
+      string caseName,
+      TypedNoticesBuilderOptions.RoutingTypes routingType,
+      string noticeType,
+      string expected
+    )
+    {
+      ITypedNoticeDispatcher<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> dispatcher =
+        Create<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute>(routingType);
+
+      NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute notice = CreateWithAttributeNoticeByName(noticeType);
+      TypedNoticeDispatchResult<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> result =
+        await dispatcher.DispatchAsync(notice);
+
+      result.Stream.ShouldBe(EventStreamId.From(expected));
+    }
+
+    [Theory]
+    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
+    public async Task DispatchBatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
+      string caseName,
+      TypedNoticesBuilderOptions.RoutingTypes routingType,
+      string noticeType,
+      string expected
+    )
+    {
+      ITypedNoticeDispatcher<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> dispatcher =
+        Create<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute>(routingType);
+
+      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
+      BatchTypedNoticeDispatchResult result =
+        await dispatcher.DispatchBatchAsync([notice]);
+
+      result
+        .Successes.ShouldHaveSingleItem()
+        .Stream.ShouldBe(EventStreamId.From(expected));
+    }
+
+    [Theory]
+    [MemberData(nameof(CreateBaseTypeWithAttributeTestCases))]
+    public async Task DispatchBatchAsync_GivenBaseTypeWithAttribute_InfersExpectedStreamName(
+      string caseName,
+      TypedNoticesBuilderOptions.RoutingTypes routingType,
+      string noticeType,
+      string expected
+    )
+    {
+      ITypedNoticeDispatcher<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> dispatcher =
+        Create<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute>(routingType);
+
+      NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute notice = CreateWithAttributeNoticeByName(noticeType);
+      BatchTypedNoticeDispatchResult result =
+        await dispatcher.DispatchBatchAsync([notice]);
+
+      result
+        .Successes.ShouldHaveSingleItem()
+        .Stream.ShouldBe(EventStreamId.From(expected));
+    }
   }
 
   public class DefaultTypedNoticeDispatcherUntypedTests : NoticeStreamAttributeTests
   {
+    public static ITypedNoticeDispatcher Create(TypedNoticesBuilderOptions.RoutingTypes routingType)
+    {
+      ServiceProvider provider = new ServiceCollection()
+        .AddNiceNotice(nnb =>
+          nnb.UseTypedNotices(
+            tnb =>
+            {
+              // Use default config (which we assume routes to type names), unless full is specified by the case
+              if (routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName)
+              {
+                tnb.RouteToTypeNameStreams(routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName);
+              }
+            },
+            ServiceLifetime.Transient
+          )
+        )
+        .BuildServiceProvider();
+
+      return provider.GetRequiredService<ITypedNoticeDispatcher>();
+    }
+
     [Theory]
     [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
     public async Task DispatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
@@ -353,29 +374,6 @@ public class NoticeStreamAttributeTests
         await dispatcher.DispatchAsync(notice, defaultToFullName);
 
       result.Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
-    [Theory]
-    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
-    public async Task DispatchBatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
-      string caseName,
-      TypedNoticesBuilderOptions.RoutingTypes routingType,
-      string noticeType,
-      string expected
-    )
-    {
-      ITypedNoticeDispatcher dispatcher = Create(routingType);
-
-      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
-      bool defaultToFullName = routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName;
-      BatchTypedNoticeDispatchResult? result =
-        await dispatcher.DispatchBatchAsync(
-          DispatchBatchRequest.CreateForInferredRoutes([notice], defaultToFullName)
-        );
-
-      result
-        .Successes.ShouldHaveSingleItem()
-        .Stream.ShouldBe(EventStreamId.From(expected));
     }
 
     [Theory]
@@ -398,6 +396,27 @@ public class NoticeStreamAttributeTests
     }
 
     [Theory]
+    [MemberData(nameof(CreateBaseTypeNoAttributeTestCases))]
+    public async Task DispatchBatchAsync_GivenBaseTypeNoAttribute_InfersExpectedStreamName(
+      string caseName,
+      TypedNoticesBuilderOptions.RoutingTypes routingType,
+      string noticeType,
+      string expected
+    )
+    {
+      ITypedNoticeDispatcher dispatcher = Create(routingType);
+
+      NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute notice = CreateNoAttributeNoticeByName(noticeType);
+      bool defaultToFullName = routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName;
+      BatchTypedNoticeDispatchResult result =
+        await dispatcher.DispatchBatchToInferredRoutesAsync([notice], defaultToFullName);
+
+      result
+        .Successes.ShouldHaveSingleItem()
+        .Stream.ShouldBe(EventStreamId.From(expected));
+    }
+
+    [Theory]
     [MemberData(nameof(CreateBaseTypeWithAttributeTestCases))]
     public async Task DispatchBatchAsync_GivenBaseTypeWithAttribute_InfersExpectedStreamName(
       string caseName,
@@ -410,35 +429,12 @@ public class NoticeStreamAttributeTests
 
       NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute notice = CreateWithAttributeNoticeByName(noticeType);
       bool defaultToFullName = routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName;
-      BatchTypedNoticeDispatchResult? result =
-        await dispatcher.DispatchBatchAsync(
-          DispatchBatchRequest.CreateForInferredRoutes([notice], defaultToFullName)
-        );
+      BatchTypedNoticeDispatchResult result =
+        await dispatcher.DispatchBatchToInferredRoutesAsync([notice], defaultToFullName);
 
       result
         .Successes.ShouldHaveSingleItem()
         .Stream.ShouldBe(EventStreamId.From(expected));
-    }
-
-    public static ITypedNoticeDispatcher Create(TypedNoticesBuilderOptions.RoutingTypes routingType)
-    {
-      ServiceProvider provider = new ServiceCollection()
-        .AddNiceNotice(nnb =>
-          nnb.UseTypedNotices(
-            tnb =>
-            {
-              // Use default config (which we assume routes to type names), unless full is specified by the case
-              if (routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName)
-              {
-                tnb.RouteToTypeNameStreams(routingType == TypedNoticesBuilderOptions.RoutingTypes.TypeFullName);
-              }
-            },
-            ServiceLifetime.Transient
-          )
-        )
-        .BuildServiceProvider();
-
-      return provider.GetRequiredService<ITypedNoticeDispatcher>();
     }
   }
 }

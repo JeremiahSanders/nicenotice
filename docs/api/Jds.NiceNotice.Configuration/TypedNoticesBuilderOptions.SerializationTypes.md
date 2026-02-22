@@ -10,7 +10,7 @@ public enum SerializationTypes
 
 | name | value | description |
 | --- | --- | --- |
-| Json | `0` | A serialization implementation using JSON. |
+| Json | `1` | A serialization implementation using JSON. |
 
 ## See Also
 

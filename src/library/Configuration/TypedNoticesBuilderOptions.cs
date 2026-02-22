@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Jds.NiceNotice.Configuration;
 
 /// <summary>
 ///   Configuration-based setup parameters for typed notices.
 /// </summary>
 /// <remarks>
-///   This type supports <see cref="TypedNoticesNiceNoticeBuilderExtensions.UseTypedNotices" />.
+///   This type supports <see cref="NiceNoticeBuilder.UseTypedNotices(TypedNoticesBuilderOptions, ServiceLifetime)" />.
 /// </remarks>
 public class TypedNoticesBuilderOptions
 {
@@ -18,12 +20,12 @@ public class TypedNoticesBuilderOptions
     /// <summary>
     ///   A routing implementation using the full type name (including namespace).
     /// </summary>
-    TypeFullName,
+    TypeFullName = 2,
 
     /// <summary>
     ///   A routing implementation using the type name only.
     /// </summary>
-    TypeName
+    TypeName = 1
   }
 
   /// <summary>
@@ -34,7 +36,7 @@ public class TypedNoticesBuilderOptions
     /// <summary>
     ///   A serialization implementation using JSON.
     /// </summary>
-    Json
+    Json = 1
   }
 
   /// <summary>
@@ -45,12 +47,12 @@ public class TypedNoticesBuilderOptions
     /// <summary>
     ///   No validation.
     /// </summary>
-    None,
+    None = 0,
 
     /// <summary>
     ///   Validation using data annotations data attributes, e.g., <see cref="RequiredAttribute" />.
     /// </summary>
-    DataAttributes
+    DataAttributes = 1
   }
 
   /// <summary>

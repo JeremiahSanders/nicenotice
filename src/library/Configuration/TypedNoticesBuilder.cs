@@ -23,117 +23,26 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   public IServiceCollection Services => services;
 
   /// <summary>
-  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
-  ///   and configurations necessary for operation.
+  ///   Configures the algorithm used to serialize enterprise events.
   /// </summary>
   /// <remarks>
-  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
-  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
-  /// </remarks>
-  /// <param name="validatorServiceLifetime"></param>
-  /// <param name="jsonSerializerServiceLifetime"></param>
-  /// <param name="routerServiceLifetime"></param>
-  /// <returns>
-  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
-  ///   default settings.
-  /// </returns>
-  internal TypedNoticesBuilder<TEnterpriseEventBaseType> ApplyDefaults(
-    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
-    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
-    ServiceLifetime routerServiceLifetime = ServiceLifetime.Singleton
-  )
-  {
-    ApplyDefaults(Services, jsonSerializerServiceLifetime, validatorServiceLifetime, routerServiceLifetime);
-
-    return this;
-  }
-
-  /// <summary>
-  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
-  ///   and configurations necessary for operation.
-  /// </summary>
-  /// <remarks>
-  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
-  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
-  /// </remarks>
-  /// <param name="validatorServiceLifetime"></param>
-  /// <param name="services"></param>
-  /// <param name="jsonSerializerServiceLifetime"></param>
-  /// <param name="routingServiceLifetime"></param>
-  /// <returns>
-  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
-  ///   default settings.
-  /// </returns>
-  internal static IServiceCollection ApplyDefaults(
-    IServiceCollection services,
-    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
-    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
-    ServiceLifetime routingServiceLifetime = ServiceLifetime.Singleton
-  )
-  {
-    // Configure serializer
-    ServiceDescriptor jsonSerializer =
-      Serializers.CreateJsonSerializerDescriptor<TEnterpriseEventBaseType>(
-        optionsAccessor: null,
-        jsonSerializerServiceLifetime
-      );
-    services.TryAdd(jsonSerializer);
-    ServiceDescriptor nonGeneric =
-      Serializers.CreateNonGenericJsonSerializerDescriptor(optionsAccessor: null, jsonSerializerServiceLifetime);
-    services.TryAdd(nonGeneric);
-
-    // Configure validation
-    ServiceDescriptor validator = new(
-      typeof(NoticeValidator<TEnterpriseEventBaseType>),
-      static _ => Validators.DataAnnotationsValidator<TEnterpriseEventBaseType>(),
-      validatorServiceLifetime
-    );
-    services.TryAdd(validator);
-    services.TryAdd(
-      new ServiceDescriptor(
-        typeof(NoticeValidator),
-        static _ => new DataAnnotationsValidator(),
-        validatorServiceLifetime
-      )
-    );
-
-    // Configure routing
-    ServiceDescriptor typeNameRouter =
-      new(
-        typeof(NoticeRouter<TEnterpriseEventBaseType>),
-        static _ => Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
-        routingServiceLifetime
-      );
-    services.TryAdd(typeNameRouter);
-
-    return services;
-  }
-
-  #region Routing
-
-  /// <summary>
-  ///   Configures the algorithm used to identify the <see cref="EventStreamId" /> to which a notice should be dispatched.
-  ///   Registers the provided instance in the service collection as a singleton.
-  /// </summary>
-  /// <remarks>
-  ///   <para>This overload is most useful in test arrangement.</para>
   ///   <para>
-  ///     It is expected that most runtime use cases will use the overload that uses a factory method, which provides
-  ///     access to dependencies:
-  ///     <see
-  ///       cref="UseStreamSelector(Func{IServiceProvider, NoticeRouter{TEnterpriseEventBaseType}}, ServiceLifetime)" />
+  ///     The recommended implementation is <see cref="JsonNoticeSerializer{TEnterpriseEventBaseType}" />.
+  ///     However, you can use any implementation of <see cref="NoticeSerializer{TEnterpriseEventBaseType}" />.
   ///   </para>
   /// </remarks>
-  /// <param name="router">
-  ///   An implementation of <see cref="NoticeRouter{TEnterpriseEventBaseType}" />.
+  /// <param name="factory">
+  ///   A factory method which receives an <see cref="IServiceProvider" /> and returns an implementation
+  ///   of <see cref="NoticeSerializer{TEnterpriseEventBaseType}" />.
   /// </param>
-  /// <returns></returns>
-  public TypedNoticesBuilder<TEnterpriseEventBaseType> UseStreamSelector(
-    NoticeRouter<TEnterpriseEventBaseType> router
-  )
+  /// <param name="lifetime">The service lifetime of the instance returned by <paramref name="factory" />.</param>
+  /// <returns>Returns this instance for further customization</returns>
+  public TypedNoticesBuilder<TEnterpriseEventBaseType> UseSerializer(
+    Func<IServiceProvider, NoticeSerializer<TEnterpriseEventBaseType>> factory,
+    ServiceLifetime lifetime)
   {
     Services.Add(
-      new ServiceDescriptor(typeof(NoticeRouter<TEnterpriseEventBaseType>), router)
+      new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), factory, lifetime)
     );
 
     return this;
@@ -183,64 +92,6 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
     return this;
   }
 
-  #endregion
-
-  #region Serialization
-
-  /// <summary>
-  ///   Configures the algorithm used to serialize enterprise events.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     The recommended implementation is <see cref="JsonNoticeSerializer{TEnterpriseEventBaseType}" />.
-  ///     However, you can use any implementation of <see cref="NoticeSerializer{TEnterpriseEventBaseType}" />.
-  ///   </para>
-  /// </remarks>
-  /// <param name="factory">
-  ///   A factory method which receives an <see cref="IServiceProvider" /> and returns an implementation
-  ///   of <see cref="NoticeSerializer{TEnterpriseEventBaseType}" />.
-  /// </param>
-  /// <param name="lifetime">The service lifetime of the instance returned by <paramref name="factory" />.</param>
-  /// <returns>Returns this instance for further customization</returns>
-  public TypedNoticesBuilder<TEnterpriseEventBaseType> UseSerializer(
-    Func<IServiceProvider, NoticeSerializer<TEnterpriseEventBaseType>> factory,
-    ServiceLifetime lifetime)
-  {
-    Services.Add(
-      new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), factory, lifetime)
-    );
-
-    return this;
-  }
-
-  /// <summary>
-  ///   Configures the algorithm used to serialize enterprise events.
-  /// </summary>
-  /// <remarks>
-  ///   <para>
-  ///     The recommended implementation is <see cref="JsonNoticeSerializer{TEnterpriseEventBaseType}" />.
-  ///     However, you can use any implementation of <see cref="NoticeSerializer{TEnterpriseEventBaseType}" />.
-  ///   </para>
-  /// </remarks>
-  /// <param name="serializer">
-  ///   The <see cref="NoticeSerializer{TEnterpriseEventBaseType}" /> implementation to be used for serializing notices.
-  /// </param>
-  /// <returns>
-  ///   Returns this instance for further customization.
-  /// </returns>
-  public TypedNoticesBuilder<TEnterpriseEventBaseType> UseSerializer(
-    NoticeSerializer<TEnterpriseEventBaseType> serializer
-  )
-  {
-    Services.Add(new ServiceDescriptor(typeof(NoticeSerializer<TEnterpriseEventBaseType>), serializer));
-
-    return this;
-  }
-
-  #endregion
-
-  #region Validation
-
   /// <summary>
   ///   Configures the enterprise event validation logic used, registering the provided instance as a singleton.
   /// </summary>
@@ -273,32 +124,138 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
   }
 
   /// <summary>
-  ///   Configures the enterprise event validation logic used, registering the provided instance as a singleton.
+  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
+  ///   and configurations necessary for operation.
   /// </summary>
   /// <remarks>
-  ///   <para>
-  ///     See <see cref="Validators" /> for helper methods to create validators.
-  ///   </para>
-  ///   <para><see cref="Validators.DataAnnotationsValidator" /> uses standard data annotation validation.</para>
-  ///   <para>To skip validation, <see cref="Validators.NoOpValidator" />.</para>
-  ///   <para>
-  ///     For more complex or custom needs, derive an implementation of
-  ///     <see cref="NoticeValidator{TEnterpriseEventBaseType}" />.
-  ///   </para>
+  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
+  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
   /// </remarks>
-  /// <param name="validator">
-  ///   An instance of <see cref="NoticeValidator{TEnterpriseEventBaseType}" /> to be used for validating events.
-  /// </param>
-  /// <returns>Returns this builder instance for further configuration.</returns>
-  public TypedNoticesBuilder<TEnterpriseEventBaseType> UseValidator(
-    NoticeValidator<TEnterpriseEventBaseType> validator)
+  /// <param name="validatorServiceLifetime"></param>
+  /// <param name="jsonSerializerServiceLifetime"></param>
+  /// <param name="routerServiceLifetime"></param>
+  /// <returns>
+  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
+  ///   default settings.
+  /// </returns>
+  internal TypedNoticesBuilder<TEnterpriseEventBaseType> ApplyDefaults(
+    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime routerServiceLifetime = ServiceLifetime.Singleton
+  )
   {
-    Services.Add(
-      new ServiceDescriptor(typeof(NoticeValidator<TEnterpriseEventBaseType>), validator)
-    );
+    ApplyDefaults(Services, jsonSerializerServiceLifetime, validatorServiceLifetime, routerServiceLifetime);
 
     return this;
   }
 
-  #endregion
+  internal void ApplyTypedNoticesBuilderOptions(
+    TypedNoticesBuilderOptions configuration
+  )
+  {
+    switch (configuration.RoutingType)
+    {
+      case TypedNoticesBuilderOptions.RoutingTypes.TypeFullName:
+        this.RouteToTypeNameStreams(useFullTypeName: true);
+
+        break;
+      case TypedNoticesBuilderOptions.RoutingTypes.TypeName:
+        this.RouteToTypeNameStreams(useFullTypeName: false);
+
+        break;
+      default:
+        this.RouteToTypeNameStreams(useFullTypeName: false);
+
+        break;
+    }
+
+    switch (configuration.SerializationType)
+    {
+      case TypedNoticesBuilderOptions.SerializationTypes.Json:
+        this.SerializeToJson();
+
+        break;
+      default:
+        this.SerializeToJson();
+
+        break;
+    }
+
+    switch (configuration.ValidationType)
+    {
+      case TypedNoticesBuilderOptions.ValidationTypes.None:
+        this.ValidateNothing();
+
+        break;
+      case TypedNoticesBuilderOptions.ValidationTypes.DataAttributes:
+        this.ValidateWithDataAnnotations();
+
+        break;
+      default:
+        this.ValidateNothing();
+
+        break;
+    }
+  }
+
+  /// <summary>
+  ///   Configures the <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance with default services
+  ///   and configurations necessary for operation.
+  /// </summary>
+  /// <remarks>
+  ///   Registers a JSON <see cref="NoticeSerializer" />, a NoOp <see cref="NoticeValidator{TEnterpriseEventBaseType}" />,
+  ///   and a <see cref="NoticeRouter{TEnterpriseEventBaseType}" /> which always throws.
+  /// </remarks>
+  /// <param name="validatorServiceLifetime"></param>
+  /// <param name="services"></param>
+  /// <param name="jsonSerializerServiceLifetime"></param>
+  /// <param name="routingServiceLifetime"></param>
+  /// <returns>
+  ///   Returns the updated <see cref="TypedNoticesBuilder{TEnterpriseEventBaseType}" /> instance configured with
+  ///   default settings.
+  /// </returns>
+  private static IServiceCollection ApplyDefaults(
+    IServiceCollection services,
+    ServiceLifetime jsonSerializerServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime validatorServiceLifetime = ServiceLifetime.Singleton,
+    ServiceLifetime routingServiceLifetime = ServiceLifetime.Singleton
+  )
+  {
+    // Configure serializer
+    ServiceDescriptor jsonSerializer =
+      Serializers.CreateJsonSerializerDescriptor<TEnterpriseEventBaseType>(
+        optionsAccessor: null,
+        jsonSerializerServiceLifetime
+      );
+    services.TryAdd(jsonSerializer);
+    ServiceDescriptor nonGeneric =
+      Serializers.CreateNonGenericJsonSerializerDescriptor(optionsAccessor: null, jsonSerializerServiceLifetime);
+    services.TryAdd(nonGeneric);
+
+    // Configure validation
+    ServiceDescriptor validator = new(
+      typeof(NoticeValidator<TEnterpriseEventBaseType>),
+      static _ => Validators.DataAnnotationsValidator<TEnterpriseEventBaseType>(),
+      validatorServiceLifetime
+    );
+    services.TryAdd(validator);
+    services.TryAdd(
+      new ServiceDescriptor(
+        typeof(NoticeValidator),
+        static _ => new DataAnnotationsValidator(),
+        validatorServiceLifetime
+      )
+    );
+
+    // Configure routing
+    ServiceDescriptor typeNameRouter =
+      new(
+        typeof(NoticeRouter<TEnterpriseEventBaseType>),
+        static _ => Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
+        routingServiceLifetime
+      );
+    services.TryAdd(typeNameRouter);
+
+    return services;
+  }
 }

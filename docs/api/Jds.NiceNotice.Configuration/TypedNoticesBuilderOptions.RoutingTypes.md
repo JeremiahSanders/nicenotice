@@ -10,7 +10,7 @@ public enum RoutingTypes
 
 | name | value | description |
 | --- | --- | --- |
-| TypeFullName | `0` | A routing implementation using the full type name (including namespace). |
+| TypeFullName | `2` | A routing implementation using the full type name (including namespace). |
 | TypeName | `1` | A routing implementation using the type name only. |
 
 ## See Also

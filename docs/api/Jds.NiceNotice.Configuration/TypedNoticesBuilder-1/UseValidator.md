@@ -1,38 +1,4 @@
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseValidator method (1 of 2)
-
-Configures the enterprise event validation logic used, registering the provided instance as a singleton.
-
-```csharp
-public TypedNoticesBuilder UseValidator(NoticeValidator<TEnterpriseEventBaseType> validator)
-```
-
-| parameter | description |
-| --- | --- |
-| validator | An instance of [`NoticeValidator`](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator-1.md) to be used for validating events. |
-
-## Return Value
-
-Returns this builder instance for further configuration.
-
-## Remarks
-
-See [`Validators`](../../Jds.NiceNotice.TypedNotices.Validation/Validators.md) for helper methods to create validators.
-
-[`DataAnnotationsValidator`](../../Jds.NiceNotice.TypedNotices.Validation/Validators/DataAnnotationsValidator.md) uses standard data annotation validation.
-
-To skip validation, [`NoOpValidator`](../../Jds.NiceNotice.TypedNotices.Validation/Validators/NoOpValidator.md).
-
-For more complex or custom needs, derive an implementation of [`NoticeValidator`](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator-1.md).
-
-## See Also
-
-* class [NoticeValidator&lt;TEnterpriseEventBaseType&gt;](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator-1.md)
-* class [TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;](../TypedNoticesBuilder-1.md)
-* namespace [Jds.NiceNotice.Configuration](../../NiceNotice.md)
-
----
-
-# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseValidator method (2 of 2)
+# TypedNoticesBuilder&lt;TEnterpriseEventBaseType&gt;.UseValidator method
 
 Configures the enterprise event validation logic used, registering the provided instance as a singleton.
 
