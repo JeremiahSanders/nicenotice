@@ -18,7 +18,7 @@ public record EnterpriseEvent
 | --- | --- |
 | [EnterpriseEvent](EnterpriseEvent/EnterpriseEvent.md)() | Initializes a new instance of the [`EnterpriseEvent`](./EnterpriseEvent.md) class. |
 | [Id](EnterpriseEvent/Id.md) { get; set; } | Gets a unique identifier for this enterprise event. |
-| [Schema](EnterpriseEvent/Schema.md) { get; set; } | Gets the schema title (name) of this enterprise event. Default: The type name. |
+| [Schema](EnterpriseEvent/Schema.md) { get; set; } | Gets the schema identifier of this enterprise event. Default: The type name. |
 | [Timestamp](EnterpriseEvent/Timestamp.md) { get; set; } | Gets the timestamp associated with this enterprise event (in general, understood to mean "when" this event occurred). |
 | static [DefaultSchema](EnterpriseEvent/DefaultSchema.md)(…) | Generates an event schema from the provided event schema title and an optional schema revision index. Pattern: If the schema is provided, `Title@Revision`. Otherwise, *eventTitle* is returned unchanged. |
 

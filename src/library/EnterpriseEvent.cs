@@ -65,9 +65,21 @@ public record EnterpriseEvent
   public Guid Id { get; init; } = Guid.NewGuid();
 
   /// <summary>
-  ///   Gets the schema title (name) of this enterprise event. Default: The type name.
+  ///   Gets the schema identifier of this enterprise event. Default: The type name.
   /// </summary>
-  [JsonPropertyName(name: "schema")]
+  /// <remarks>
+  ///   <para>This property is intended to support JSON Schema. This declares the schema to which this event conforms.</para>
+  ///   <para>
+  ///     Optimally, this will be set to a resolvable URL which provides a JSON Schema document.
+  ///     Such configuration supports developer and diagnostic tools, e.g., IDEs.
+  ///   </para>
+  ///   <para>
+  ///     <a href="https://json-schema.org/understanding-json-schema/keywords#dollarschema">
+  ///       See JSON Schema documentation for <c>$schema</c>.
+  ///     </a>
+  ///   </para>
+  /// </remarks>
+  [JsonPropertyName(name: "$schema")]
   public string Schema
   {
     get
