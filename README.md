@@ -60,7 +60,7 @@ public record MyApplicationEvent : EnterpriseEvent;
 The above example _base_ application event, `MyApplicationEvent`, inherits `schema`, `timestamp`, and `id` properties from `EnterpriseEvent`. When serialized using the default NiceNotice serializer, an instance of `MyApplicationEvent` would be emitted like the following:
 
 ```json
-{"schema":"MyApplicationEvent","timestamp":"2025-10-11T23:17:59.5603648+00:00","id":"9fd368e0-23e2-4ec2-a30a-6ef99c3c2841"}
+{"$schema":"MyApplicationEvent","timestamp":"2025-10-11T23:17:59.5603648+00:00","id":"9fd368e0-23e2-4ec2-a30a-6ef99c3c2841"}
 ```
 
 #### Routing Considerations
