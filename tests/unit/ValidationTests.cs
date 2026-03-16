@@ -28,11 +28,17 @@ public class ValidationTests
     {
       Username = string.Empty
     };
+    const string expectedFailureMessage =
+      $"{nameof(ExampleLoginEnterpriseEvent.Username)}: The {nameof(ExampleLoginEnterpriseEvent.Username)} field is required.";
+    const string expectedExceptionMessage =
+      $"{nameof(ExampleLoginEnterpriseEvent)} validation failed. " + expectedFailureMessage;
 
 
     Func<Task<TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent>>> act = () => dispatcher.DispatchAsync(shouldFail);
 
-    await act.ShouldThrowAsync<NoticeValidationException>();
+    NoticeValidationException validationException = await act.ShouldThrowAsync<NoticeValidationException>();
+    validationException.ValidationFailures.ShouldContain(expectedFailureMessage);
+    validationException.Message.ShouldBe(expectedExceptionMessage);
   }
 
   [Fact]
@@ -51,11 +57,17 @@ public class ValidationTests
     {
       Username = string.Empty
     };
+    const string expectedFailureMessage =
+      $"{nameof(ExampleLoginEnterpriseEvent.Username)}: The {nameof(ExampleLoginEnterpriseEvent.Username)} field is required.";
+    const string expectedExceptionMessage =
+      $"{nameof(ExampleLoginEnterpriseEvent)} validation failed. " + expectedFailureMessage;
 
 
     Func<Task<TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent>>> act = () =>
       dispatcher.DispatchAsync(shouldFail, eventStreamId);
 
-    await act.ShouldThrowAsync<NoticeValidationException>();
+    NoticeValidationException validationException = await act.ShouldThrowAsync<NoticeValidationException>();
+    validationException.ValidationFailures.ShouldContain(expectedFailureMessage);
+    validationException.Message.ShouldBe(expectedExceptionMessage);
   }
 }
