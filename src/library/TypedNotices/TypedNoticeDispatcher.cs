@@ -222,7 +222,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
     if (validationResults is {Count: > 0})
     {
       throw new NoticeValidationException(
-        $"{typeof(TEvent).Name} validation failed.",
+        $"{notice.GetType().Name} validation failed.",
         validationResults,
         innerException: null
       );
@@ -492,7 +492,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
         if (validationResults is {Count: > 0})
         {
           throw new NoticeValidationException(
-            $"{typeof(TEventType).Name} validation failed.",
+            $"{notice.GetType().Name} validation failed.",
             validationResults,
             innerException: null
           );

@@ -19,7 +19,7 @@ public class NoticeValidationException : Exception
   ///   Initializes a new instance of the <see cref="NoticeValidationException" /> class.
   /// </summary>
   public NoticeValidationException(string message, IReadOnlyList<string> validationFailures, Exception? innerException)
-    : base(message, innerException)
+    : base($"{message} {string.Join(separator: " ; ", validationFailures)}", innerException)
   {
     ValidationFailures = validationFailures;
   }
