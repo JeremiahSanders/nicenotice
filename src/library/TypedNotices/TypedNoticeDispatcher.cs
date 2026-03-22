@@ -375,8 +375,8 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
       () => ioDispatcher,
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
-      noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
-      validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()
+      noticeSerializer ?? Serializers.Json<TEnterpriseEventBaseType>(),
+      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>()
     );
   }
 
@@ -402,8 +402,8 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
       ioDispatcherProvider,
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
-      noticeSerializer ?? new JsonNoticeSerializer<TEnterpriseEventBaseType>(),
-      validateNotice ?? new NoOpNoticeValidator<TEnterpriseEventBaseType>()
+      noticeSerializer ?? Serializers.Json<TEnterpriseEventBaseType>(),
+      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>()
     );
   }
 

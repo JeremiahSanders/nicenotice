@@ -26,6 +26,21 @@ public static class Serializers
   }
 
   /// <summary>
+  ///   Creates a <see cref="NoticeSerializer{TEnterpriseEventBaseType}" /> which serializes to JSON.
+  /// </summary>
+  /// <param name="options">
+  ///   Optional. JSON serializer options. Default:
+  ///   <see cref="JsonDefaults.DefaultJsonSerializerOptions" />
+  /// </param>
+  /// <returns>Returns the created serializer.</returns>
+  public static NoticeSerializer<TEnterpriseEventBaseType> Json<TEnterpriseEventBaseType>(
+    JsonSerializerOptions? options = null
+  )
+  {
+    return new JsonNoticeSerializer<TEnterpriseEventBaseType>(options);
+  }
+
+  /// <summary>
   ///   Configures the enterprise event builder to use a JSON serializer for serializing events.
   /// </summary>
   /// <param name="builder">A typed notices builder.</param>
@@ -68,17 +83,17 @@ public static class Serializers
     static NoticeSerializer<TEnterpriseEventBaseType> WithConfiguredOptions(IServiceProvider runtimeServiceProvider)
     {
       JsonSerializerOptions? possibleOptions = runtimeServiceProvider.GetService<JsonSerializerOptions>();
-      JsonNoticeSerializer<TEnterpriseEventBaseType> func = new(possibleOptions);
+      NoticeSerializer<TEnterpriseEventBaseType> serializer = Json<TEnterpriseEventBaseType>(possibleOptions);
 
-      return func;
+      return serializer;
     }
 
     NoticeSerializer<TEnterpriseEventBaseType> WithOptionsAccessor(IServiceProvider runtimeServiceProvider)
     {
       JsonSerializerOptions? possibleOptions = optionsAccessor.Invoke(runtimeServiceProvider);
-      JsonNoticeSerializer<TEnterpriseEventBaseType> func = new(possibleOptions);
+      NoticeSerializer<TEnterpriseEventBaseType> serializer = Json<TEnterpriseEventBaseType>(possibleOptions);
 
-      return func;
+      return serializer;
     }
   }
 
