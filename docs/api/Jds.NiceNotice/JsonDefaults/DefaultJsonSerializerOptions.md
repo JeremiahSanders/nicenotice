@@ -1,10 +1,14 @@
 # JsonDefaults.DefaultJsonSerializerOptions property
 
-Gets the default JSON serializer options to be used for notices. This uses the Web settings as a base, adds JsonStringEnumConverter for serializing enums as strings, and sets DefaultIgnoreCondition to WhenWritingNull.
+Gets the default JSON serializer options to be used for notices. This uses the Web settings as a base, adds JsonStringEnumConverter for serializing enums as strings, sets DefaultIgnoreCondition to WhenWritingNull, and sets Encoder to UnsafeRelaxedJsonEscaping.
 
 ```csharp
 public static JsonSerializerOptions DefaultJsonSerializerOptions { get; }
 ```
+
+## Remarks
+
+The UnsafeRelaxedJsonEscapingEncoder is used to enable cleaner, more readable JSON output (by reducing the amount of character escaping).
 
 ## See Also
 
