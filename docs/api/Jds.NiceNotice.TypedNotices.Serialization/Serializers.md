@@ -11,6 +11,7 @@ public static class Serializers
 | name | description |
 | --- | --- |
 | static [Json](Serializers/Json.md)(…) | Creates a [`NoticeSerializer`](./NoticeSerializer.md) which serializes to JSON. |
+| static [Json&lt;TEnterpriseEventBaseType&gt;](Serializers/Json.md)(…) | Creates a [`NoticeSerializer`](./NoticeSerializer-1.md) which serializes to JSON. |
 | static [SerializeToJson&lt;TEnterpriseEventBaseType&gt;](Serializers/SerializeToJson.md)(…) | Configures the enterprise event builder to use a JSON serializer for serializing events. |
 
 ## See Also

@@ -1,4 +1,4 @@
-# Serializers.Json method
+# Serializers.Json method (1 of 2)
 
 Creates a [`NoticeSerializer`](../NoticeSerializer.md) which serializes to JSON.
 
@@ -17,6 +17,31 @@ Returns the created serializer.
 ## See Also
 
 * class [NoticeSerializer](../NoticeSerializer.md)
+* class [Serializers](../Serializers.md)
+* namespace [Jds.NiceNotice.TypedNotices.Serialization](../../NiceNotice.md)
+
+---
+
+# Serializers.Json&lt;TEnterpriseEventBaseType&gt; method (2 of 2)
+
+Creates a [`NoticeSerializer`](../NoticeSerializer-1.md) which serializes to JSON.
+
+```csharp
+public static NoticeSerializer<TEnterpriseEventBaseType> Json<TEnterpriseEventBaseType>(
+    JsonSerializerOptions? options = null)
+```
+
+| parameter | description |
+| --- | --- |
+| options | Optional. JSON serializer options. Default: [`DefaultJsonSerializerOptions`](../../Jds.NiceNotice/JsonDefaults/DefaultJsonSerializerOptions.md) |
+
+## Return Value
+
+Returns the created serializer.
+
+## See Also
+
+* class [NoticeSerializer&lt;TEnterpriseEventBaseType&gt;](../NoticeSerializer-1.md)
 * class [Serializers](../Serializers.md)
 * namespace [Jds.NiceNotice.TypedNotices.Serialization](../../NiceNotice.md)
 
