@@ -11,7 +11,7 @@ internal static class TypedNoticeDispatchResultAssertionHelpers
     JsonSerializerOptions? jsonSerializerOptions = null)
     where TEvent : notnull
   {
-    return DeserializeIoResponseAsJson<TEvent>(result.IoResponse);
+    return DeserializeIoResponseAsJson<TEvent>(result.IoRequest.Notice);
   }
 
   public static TEvent DeserializeIoResponseAsJson<TEvent>(

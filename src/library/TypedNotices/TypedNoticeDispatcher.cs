@@ -1,6 +1,6 @@
+using Jds.NiceNotice.TypedNotices.Metadata;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
-using Jds.NiceNotice.TypedNotices.Serialization.Implementations;
 using Jds.NiceNotice.TypedNotices.Validation;
 using Jds.NiceNotice.TypedNotices.Validation.Implementations;
 
@@ -29,26 +29,83 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
     EventStreamId streamId,
     CancellationToken cancellationToken = default) where TEventType : notnull
   {
-    RoutedTypedNotice routedNotice = RouteAndValidate(notice, streamId);
-    string response = await Dispatch(streamId, routedNotice.SerializedNotice);
+    Either<Exception, string> possibleSerialized = Eithers.Try(() => Serialize(notice));
+    if (possibleSerialized.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleSerialized.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, string.Empty, metadata: null, contentType: null)
+      };
+    }
+
+    string serialized = possibleSerialized.IfLeftThrow();
+    string? serializedContentType = Eithers.Try(GetSerializerContentType).FoldRight(_ => string.Empty);
+
+    Either<Exception, string> possibleValidated = Eithers.Try(() => Validate(notice, serialized));
+    if (possibleValidated.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleValidated.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, serialized, contentType: serializedContentType, metadata: null)
+      };
+    }
+
+    string validated = possibleValidated.IfLeftThrow();
+
+    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
+    if (possibleMetadata.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleMetadata.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, validated, contentType: serializedContentType, metadata: null)
+      };
+    }
+
+    IReadOnlyDictionary<string, string>? metadata = possibleMetadata.IfLeftThrow();
+
+    IoRequestNotice ioRequest = new(streamId, validated, metadata, serializedContentType);
+    IoNoticeDispatchResult response = await Dispatch(ioRequest);
 
     return new TypedNoticeDispatchResult<TEventType>
     {
       Notice = notice,
-      Serialized = routedNotice.SerializedNotice,
-      IoResponse = response,
-      Stream = streamId
+      IoRequest = ioRequest,
+      Exception = response.Exception
     };
 
-    async Task<string> Dispatch(EventStreamId stream, string serializedMessage)
+    string Serialize(object toSerialize)
     {
       try
       {
-        return await IoDispatcherProvider().DispatchAsync(stream, serializedMessage, cancellationToken);
+        return SerializeNotice(toSerialize);
       }
       catch (Exception e)
       {
-        throw new IOException(message: "Failed to dispatch notice.", e);
+        throw new NoticeSerializationException(message: "Failed to serialize notice.", e);
+      }
+    }
+
+    async Task<IoNoticeDispatchResult> Dispatch(IoRequestNotice requestNotice)
+    {
+      try
+      {
+        return await IoDispatcherProvider().DispatchAsync(requestNotice, cancellationToken);
+      }
+      catch (Exception exception)
+      {
+        return new IoNoticeDispatchResult(
+          streamId,
+          requestNotice.Notice,
+          requestNotice.Metadata,
+          requestNotice.ContentType,
+          exception
+        );
       }
     }
   }
@@ -78,16 +135,23 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
   ///   Create an instance with <see cref="Validators.DataAnnotationsValidator" />
   ///   to use standard data annotation validation.
   /// </param>
+  /// <param name="metadataProvider">
+  ///   Optional. A notice metadata provider.
+  ///   Defaults to <see cref="Jds.NiceNotice.TypedNotices.Metadata.MetadataProviders.DefaultMetadataProvider" />.
+  /// </param>
   /// <returns></returns>
   public static TypedNoticeDispatcher Create(
     INoticeIo ioDispatcher,
     NoticeSerializer? noticeSerializer = null,
-    NoticeValidator? noticeValidator = null)
+    NoticeValidator? noticeValidator = null,
+    NoticeMetadataProvider? metadataProvider = null
+  )
   {
     return new DefaultTypedNoticeDispatcher(
       () => ioDispatcher,
-      noticeSerializer ?? new JsonNoticeSerializer(),
-      noticeValidator ?? new NoOpNoticeValidator()
+      noticeSerializer ?? Serializers.Json(),
+      noticeValidator ?? Validators.NoOpValidator(),
+      metadataProvider ?? MetadataProviders.DefaultMetadataProvider()
     );
   }
 
@@ -105,18 +169,45 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
   ///   Create an instance with <see cref="Validators.DataAnnotationsValidator" />
   ///   to use standard data annotation validation.
   /// </param>
+  /// <param name="metadataProvider">
+  ///   Optional. A notice metadata provider.
+  ///   Defaults to <see cref="Jds.NiceNotice.TypedNotices.Metadata.MetadataProviders.DefaultMetadataProvider" />.
+  /// </param>
   /// <returns></returns>
   public static TypedNoticeDispatcher Create(
     Func<INoticeIo> ioDispatcherProvider,
     NoticeSerializer? noticeSerializer = null,
-    NoticeValidator? noticeValidator = null)
+    NoticeValidator? noticeValidator = null,
+    NoticeMetadataProvider? metadataProvider = null
+  )
   {
     return new DefaultTypedNoticeDispatcher(
       ioDispatcherProvider,
-      noticeSerializer ?? new JsonNoticeSerializer(),
-      noticeValidator ?? new NoOpNoticeValidator()
+      noticeSerializer ?? Serializers.Json(),
+      noticeValidator ?? Validators.NoOpValidator(),
+      metadataProvider ?? MetadataProviders.DefaultMetadataProvider()
     );
   }
+
+  /// <summary>
+  ///   Gets the content type to which <see cref="SerializeNotice{TEventType}(TEventType)" /> will serialize the notice,
+  ///   e.g., <c>application/json</c>.
+  /// </summary>
+  /// <param name="notice"></param>
+  /// <typeparam name="TEventType"></typeparam>
+  /// <returns></returns>
+  protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(TEventType notice)
+    where TEventType : notnull
+  {
+    return null;
+  }
+
+  /// <summary>
+  ///   Gets the content type to which <see cref="SerializeNotice{TEventType}" /> will serialize the notice,
+  ///   e.g., <c>application/json</c>
+  /// </summary>
+  /// <returns>Returns the content type.</returns>
+  protected abstract string? GetSerializerContentType();
 
   /// <summary>
   ///   Serializes the specified enterprise event notice to a string representation.
@@ -144,25 +235,6 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
     return null;
   }
 
-  private RoutedTypedNotice RouteAndValidate(object notice, EventStreamId streamId)
-  {
-    string serialized = Serialize(notice);
-
-    return new RoutedTypedNotice(streamId, notice, Validate(notice, serialized));
-
-    string Serialize(object toSerialize)
-    {
-      try
-      {
-        return SerializeNotice(toSerialize);
-      }
-      catch (Exception e)
-      {
-        throw new NoticeSerializationException(message: "Failed to serialize notice.", e);
-      }
-    }
-  }
-
   private Either<Exception, string> TrySerialize(object toSerialize)
   {
     return Eithers
@@ -170,36 +242,75 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       .MapLeft<Exception>(e => new NoticeSerializationException(message: "Failed to serialize notice.", e));
   }
 
-  private Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> TrySerializeAndValidate(
+  private BatchRoutedTypedNoticeResponse TrySerializeAndValidate(
     string batchedNoticeId,
-    BatchRoutedTypedNoticeRequest batchRoutedTypedNoticeRequest)
+    BatchRoutedTypedNoticeRequest batchRoutedTypedNoticeRequest
+  )
   {
-    Either<Exception, string> serialized = TrySerialize(batchRoutedTypedNoticeRequest.Notice);
-    Either<Exception, string> validated =
-      serialized.Map(serializedNotice => Validate(batchRoutedTypedNoticeRequest.Notice, serializedNotice));
-    Either<Exception, BatchRoutedTypedNoticeResponse> rtn =
-      validated.Map(validatedNotice => new BatchRoutedTypedNoticeResponse(
-          batchedNoticeId,
-          batchRoutedTypedNoticeRequest.Stream,
-          batchRoutedTypedNoticeRequest.Notice,
-          validatedNotice
-        )
-      );
+    Either<Exception, string> possiblySerialized = TrySerialize(batchRoutedTypedNoticeRequest.Notice);
 
-    if (rtn.IsRight)
+    if (possiblySerialized.IsLeft)
     {
-      return Eithers
-        .Right<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(rtn.RightUnsafe);
+      return new BatchRoutedTypedNoticeResponse(
+        batchedNoticeId,
+        batchRoutedTypedNoticeRequest.Stream,
+        batchRoutedTypedNoticeRequest.Notice,
+        string.Empty,
+        string.Empty,
+        metadata: null,
+        possiblySerialized.LeftUnsafe
+      );
     }
 
-    // We failed some portion
-    Exception failure = rtn.LeftUnsafe;
-    string serializedOrEmpty = serialized.FoldRight(_ => string.Empty);
+    string serialized = possiblySerialized.IfLeftThrow();
 
-    return Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
-      (new BatchRoutedTypedNoticeResponse(batchedNoticeId, batchRoutedTypedNoticeRequest.Stream, batchRoutedTypedNoticeRequest.Notice, serializedOrEmpty),
-        failure)
+    string? serializedContentType = Eithers.Try(GetSerializerContentType).FoldRight(_ => string.Empty);
+
+    Either<Exception, string> possiblyValidated =
+      Eithers.Try(() => Validate(batchRoutedTypedNoticeRequest.Notice, serialized));
+    if (possiblyValidated.IsLeft)
+    {
+      return new BatchRoutedTypedNoticeResponse(
+        batchedNoticeId,
+        batchRoutedTypedNoticeRequest.Stream,
+        batchRoutedTypedNoticeRequest.Notice,
+        serialized,
+        serializedContentType,
+        metadata: null,
+        possiblyValidated.LeftUnsafe
+      );
+    }
+
+    string validated = possiblyValidated.IfLeftThrow();
+
+    Either<Exception, IReadOnlyDictionary<string, string>?> possiblyMetadata =
+      Eithers.Try(() => GetMetadata(batchRoutedTypedNoticeRequest.Notice));
+    if (possiblyMetadata.IsLeft)
+    {
+      return new BatchRoutedTypedNoticeResponse(
+        batchedNoticeId,
+        batchRoutedTypedNoticeRequest.Stream,
+        batchRoutedTypedNoticeRequest.Notice,
+        validated,
+        serializedContentType,
+        metadata: null,
+        possiblyMetadata.LeftUnsafe
+      );
+    }
+
+    IReadOnlyDictionary<string, string>? metadata = possiblyMetadata.IfLeftThrow();
+
+    BatchRoutedTypedNoticeResponse response = new(
+      batchedNoticeId,
+      batchRoutedTypedNoticeRequest.Stream,
+      batchRoutedTypedNoticeRequest.Notice,
+      validated,
+      serializedContentType,
+      metadata,
+      exception: null
     );
+
+    return response;
   }
 
   private string Validate<TEvent>(TEvent notice, string noticeJson)
@@ -261,44 +372,106 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
   /// <param name="notice">The enterprise event to be validated, serialized, and dispatched.</param>
   /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
   /// <typeparam name="TEventType">
-  ///   The specific type of the enterprise event being dispatched, constrained to the base event
-  ///   type.
+  ///   The specific type of the enterprise event being dispatched,
+  ///   constrained to the base event type.
   /// </typeparam>
-  /// <returns>The dispatched enterprise event.</returns>
-  /// <exception cref="NoticeValidationException">Thrown if the event fails validation.</exception>
-  /// <exception cref="NoticeSerializationException">Thrown if the event fails serialization.</exception>
-  /// <exception cref="NoticeRoutingException">Thrown if the event stream ID cannot be determined.</exception>
-  /// <exception cref="IOException">Thrown if an I/O error occurs during dispatch.</exception>
+  /// <returns>
+  ///   Returns the dispatch result.
+  ///   Failures are captured and returned within <see cref="TypedNoticeDispatchResult{TEventType}.Exception" />.
+  /// </returns>
   public virtual async Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventType>(
     TEventType notice,
     CancellationToken cancellationToken = default
   )
     where TEventType : TEnterpriseEventBaseType
   {
-    EventStreamId streamId = TryGetStream(notice).IfLeftThrow();
+    Either<Exception, EventStreamId> possibleStream = TryGetStream(notice);
 
-    string noticeJson = TrySerialize(notice)
-      .Bind(serialized => TryValidate(notice, serialized))
-      .IfLeftThrow();
-    string response = await Dispatch(streamId, noticeJson);
+    if (possibleStream.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleStream.LeftUnsafe,
+        IoRequest = new IoRequestNotice(
+          EventStreamId.From(string.Empty),
+          string.Empty,
+          metadata: null,
+          contentType: null
+        )
+      };
+    }
+
+    EventStreamId streamId = possibleStream.IfLeftThrow();
+
+    Either<Exception, string> possibleSerialized = TrySerialize(notice);
+    if (possibleSerialized.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleSerialized.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, string.Empty, metadata: null, contentType: null)
+      };
+    }
+
+    string serializedContentType = Eithers.Try(GetSerializedContentType).FoldRight(_ => string.Empty);
+    string serialized = possibleSerialized.IfLeftThrow();
+
+    Either<Exception, string> possibleValidated = TryValidate(notice, serialized);
+    if (possibleValidated.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleValidated.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, serialized, contentType: serializedContentType, metadata: null)
+      };
+    }
+
+    string validated = possibleValidated.IfLeftThrow();
+
+    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = TryGetMetadata(notice);
+    if (possibleMetadata.IsLeft)
+    {
+      return new TypedNoticeDispatchResult<TEventType>
+      {
+        Notice = notice,
+        Exception = possibleMetadata.LeftUnsafe,
+        IoRequest = new IoRequestNotice(streamId, validated, contentType: serializedContentType, metadata: null)
+      };
+    }
+
+    IoRequestNotice ioRequest = new(
+      streamId,
+      validated,
+      contentType: serializedContentType,
+      metadata: GetMetadata(notice)
+    );
+    IoNoticeDispatchResult response = await Dispatch(ioRequest);
 
     return new TypedNoticeDispatchResult<TEventType>
     {
       Notice = notice,
-      Serialized = noticeJson,
-      IoResponse = response,
-      Stream = streamId
+      Exception = response.Exception,
+      IoRequest = ioRequest
     };
 
-    async Task<string> Dispatch(EventStreamId stream, string serializedMessage)
+    async Task<IoNoticeDispatchResult> Dispatch(IoRequestNotice noticeDto)
     {
       try
       {
-        return await IoDispatcherProvider().DispatchAsync(stream, serializedMessage, cancellationToken);
+        return await IoDispatcherProvider().DispatchAsync(noticeDto, cancellationToken);
       }
-      catch (Exception e)
+      catch (Exception exception)
       {
-        throw new IOException(message: "Failed to dispatch enterprise event.", e);
+        return new IoNoticeDispatchResult(
+          noticeDto.Stream,
+          noticeDto.Notice,
+          noticeDto.Metadata,
+          noticeDto.ContentType,
+          new IOException(message: "Failed to dispatch enterprise event.", exception)
+        );
       }
     }
   }
@@ -323,7 +496,15 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
                   )
                 )
                 .MapLeft(failure => (
-                  new BatchRoutedTypedNoticeResponse(kvp.Key, EventStreamId.From(string.Empty), notice, string.Empty),
+                  new BatchRoutedTypedNoticeResponse(
+                    kvp.Key,
+                    EventStreamId.From(string.Empty),
+                    notice,
+                    string.Empty,
+                    string.Empty,
+                    metadata: null,
+                    failure
+                  ),
                   failure)
                 );
 
@@ -333,27 +514,78 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
         .ToList()
         .Partition();
 
+    string serializedContentType = Eithers.Try(GetSerializedContentType).FoldRight(_ => string.Empty);
+
     BatchTypedNoticeDispatchResult results = await BatchDispatchingWorkflow.DispatchBatchAsync(
       IoDispatcherProvider,
-      Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> (id, notice) =>
-        TrySerialize((TEnterpriseEventBaseType)notice.Notice)
-          .BiBind(
-            serialized => TryValidate((TEnterpriseEventBaseType)notice.Notice, serialized)
-              .Map(validated => new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, validated))
-              .MapLeft(exception => (new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, serialized),
-                exception)
-              ),
-            exception =>
-              Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception exception), BatchRoutedTypedNoticeResponse>(
-                (new BatchRoutedTypedNoticeResponse(id, notice.Stream, notice.Notice, string.Empty), exception)
-              )
-          ),
+      TrySerializeAndValidate,
       routed.rights.ToDictionary(),
       request.BatchDispatchOptions,
       cancellationToken
     );
 
     return results;
+
+    BatchRoutedTypedNoticeResponse TrySerializeAndValidate(string id, BatchRoutedTypedNoticeRequest notice)
+    {
+      Either<Exception, string> possiblySerialized = TrySerialize((TEnterpriseEventBaseType)notice.Notice);
+      if (possiblySerialized.IsLeft)
+      {
+        return new BatchRoutedTypedNoticeResponse(
+          id,
+          notice.Stream,
+          notice.Notice,
+          string.Empty,
+          string.Empty,
+          metadata: null,
+          possiblySerialized.LeftUnsafe
+        );
+      }
+
+      string serialized = possiblySerialized.IfLeftThrow();
+      Either<Exception, string> possiblyValidated = TryValidate((TEnterpriseEventBaseType)notice.Notice, serialized);
+      if (possiblyValidated.IsLeft)
+      {
+        return new BatchRoutedTypedNoticeResponse(
+          id,
+          notice.Stream,
+          notice.Notice,
+          serialized,
+          serializedContentType,
+          metadata: null,
+          possiblyValidated.LeftUnsafe
+        );
+      }
+
+      string validated = possiblyValidated.IfLeftThrow();
+
+      Either<Exception, IReadOnlyDictionary<string, string>?> possiblyMetadata =
+        TryGetMetadata((TEnterpriseEventBaseType)notice.Notice);
+      if (possiblyMetadata.IsLeft)
+      {
+        return new BatchRoutedTypedNoticeResponse(
+          id,
+          notice.Stream,
+          notice.Notice,
+          validated,
+          serializedContentType,
+          metadata: null,
+          possiblyMetadata.LeftUnsafe
+        );
+      }
+
+      IReadOnlyDictionary<string, string>? metadata = possiblyMetadata.IfLeftThrow();
+
+      return new BatchRoutedTypedNoticeResponse(
+        id,
+        notice.Stream,
+        notice.Notice,
+        validated,
+        serializedContentType,
+        metadata,
+        exception: null
+      );
+    }
   }
 
   /// <summary>
@@ -364,19 +596,22 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
   /// <param name="streamSelector">A function to determine the <see cref="EventStreamId" /> for a given enterprise event.</param>
   /// <param name="noticeSerializer">A function to serialize the enterprise event into a string.</param>
   /// <param name="validateNotice">A function to identify any reasons the notice should not be dispatched.</param>
+  /// <param name="metadataProvider">Optional. A metadata provider for notices.</param>
   /// <returns>A new instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />.</returns>
   public static TypedNoticeDispatcher<TEnterpriseEventBaseType> Create(
     INoticeIo ioDispatcher,
     NoticeRouter<TEnterpriseEventBaseType>? streamSelector = null,
     NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null,
-    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null
+    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null,
+    NoticeMetadataProvider<TEnterpriseEventBaseType>? metadataProvider = null
   )
   {
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
       () => ioDispatcher,
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
       noticeSerializer ?? Serializers.Json<TEnterpriseEventBaseType>(),
-      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>()
+      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>(),
+      metadataProvider ?? MetadataProviders.DefaultMetadataProvider<TEnterpriseEventBaseType>()
     );
   }
 
@@ -391,21 +626,42 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
   /// <param name="streamSelector">A function to determine the <see cref="EventStreamId" /> for a given enterprise event.</param>
   /// <param name="noticeSerializer">A function to serialize the enterprise event into a string.</param>
   /// <param name="validateNotice">A function to identify any reasons the notice should not be dispatched.</param>
+  /// <param name="metadataProvider">Optional. A metadata provider for notices.</param>
   /// <returns>A new instance of <see cref="TypedNoticeDispatcher{TEnterpriseEventBaseType}" />.</returns>
   public static TypedNoticeDispatcher<TEnterpriseEventBaseType> Create(
     Func<INoticeIo> ioDispatcherProvider,
     NoticeRouter<TEnterpriseEventBaseType>? streamSelector = null,
     NoticeSerializer<TEnterpriseEventBaseType>? noticeSerializer = null,
-    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null
+    NoticeValidator<TEnterpriseEventBaseType>? validateNotice = null,
+    NoticeMetadataProvider<TEnterpriseEventBaseType>? metadataProvider = null
   )
   {
     return new DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
       ioDispatcherProvider,
       streamSelector ?? Routers.TypeNameStreams<TEnterpriseEventBaseType>(),
       noticeSerializer ?? Serializers.Json<TEnterpriseEventBaseType>(),
-      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>()
+      validateNotice ?? Validators.NoOpValidator<TEnterpriseEventBaseType>(),
+      metadataProvider ?? MetadataProviders.DefaultMetadataProvider<TEnterpriseEventBaseType>()
     );
   }
+
+  /// <summary>
+  ///   Gets the metadata to be attached to the notice when dispatching to I/O.
+  /// </summary>
+  /// <param name="notice">The enterprise event notice which is being dispatched.</param>
+  /// <returns>Returns the metadata dictionary.</returns>
+  protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEnterpriseEvent>(TEnterpriseEvent notice)
+    where TEnterpriseEvent : TEnterpriseEventBaseType
+  {
+    return null;
+  }
+
+  /// <summary>
+  ///   Gets the content type to which <see cref="SerializeNotice{TEventType}(TEventType)" /> will serialize the notice,
+  ///   e.g., <c>application/json</c>
+  /// </summary>
+  /// <returns>Returns the content type.</returns>
+  protected abstract string GetSerializedContentType();
 
   /// <summary>
   ///   Gets the event stream ID for the specified enterprise event.
@@ -444,6 +700,19 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
     where TEventType : TEnterpriseEventBaseType
   {
     return null;
+  }
+
+  private Either<Exception, IReadOnlyDictionary<string, string>?> TryGetMetadata<TEventType>(TEventType notice)
+    where TEventType : TEnterpriseEventBaseType
+  {
+    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
+
+    Either<Exception, IReadOnlyDictionary<string, string>?> mappedLeft =
+      possibleMetadata.MapLeft(Exception (exception) =>
+        new IOException(message: "Failed to get notice metadata.", exception)
+      );
+
+    return mappedLeft;
   }
 
   private Either<Exception, EventStreamId> TryGetStream<TEventType>(TEventType notice)

@@ -10,8 +10,10 @@ public class BatchIoNoticeDispatchResult
 
 | name | description |
 | --- | --- |
-| [Failures](BatchIoNoticeDispatchResult/Failures.md) { get; set; } | Gets the notices that failed to dispatch. |
-| [Successes](BatchIoNoticeDispatchResult/Successes.md) { get; set; } | Gets the notices that were successfully dispatched. |
+| [BatchIoNoticeDispatchResult](BatchIoNoticeDispatchResult/BatchIoNoticeDispatchResult.md)(…) | Constructs a new instance of [`BatchIoNoticeDispatchResult`](./BatchIoNoticeDispatchResult.md). |
+| [Failures](BatchIoNoticeDispatchResult/Failures.md) { get; } | Gets the notices that failed to dispatch ([`IsSuccessful`](../Jds.NiceNotice/IoNoticeDispatchResult/IsSuccessful.md) is `false`). |
+| [Results](BatchIoNoticeDispatchResult/Results.md) { get; } | Gets the notice dispatch results, both successes and failures. |
+| [Successes](BatchIoNoticeDispatchResult/Successes.md) { get; } | Gets the notices that were successfully dispatched ([`IsSuccessful`](../Jds.NiceNotice/IoNoticeDispatchResult/IsSuccessful.md) is `true`). |
 
 ## See Also
 

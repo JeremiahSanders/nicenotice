@@ -5,13 +5,30 @@ namespace Jds.NiceNotice.Dispatching;
 /// </summary>
 public class BatchIoNoticeDispatchResult
 {
-  /// <summary>
-  ///   Gets the notices that failed to dispatch.
-  /// </summary>
-  public required IReadOnlyList<(BatchedIoResponseNotice, Exception)> Failures { get; init; }
+  private readonly List<BatchedIoResponseNotice> _results;
 
   /// <summary>
-  ///   Gets the notices that were successfully dispatched.
+  ///   Constructs a new instance of <see cref="BatchIoNoticeDispatchResult" />.
   /// </summary>
-  public required IReadOnlyList<BatchedIoResponseNotice> Successes { get; init; }
+  /// <param name="dispatchResults">The notice dispatch results, both successes and failures.</param>
+  public BatchIoNoticeDispatchResult(IEnumerable<BatchedIoResponseNotice> dispatchResults)
+  {
+    _results = dispatchResults.ToList();
+  }
+
+  /// <summary>
+  ///   Gets the notices that failed to dispatch (<see cref="IoNoticeDispatchResult.IsSuccessful" /> is <c>false</c>).
+  /// </summary>
+  public IEnumerable<BatchedIoResponseNotice> Failures => _results.Where(static r => !r.IsSuccessful);
+
+  /// <summary>
+  ///   Gets the notice dispatch results, both successes and failures.
+  /// </summary>
+  public IReadOnlyList<BatchedIoResponseNotice> Results => _results;
+
+  /// <summary>
+  ///   Gets the notices that were successfully dispatched
+  ///   (<see cref="IoNoticeDispatchResult.IsSuccessful" /> is <c>true</c>).
+  /// </summary>
+  public IEnumerable<BatchedIoResponseNotice> Successes => _results.Where(static r => r.IsSuccessful);
 }

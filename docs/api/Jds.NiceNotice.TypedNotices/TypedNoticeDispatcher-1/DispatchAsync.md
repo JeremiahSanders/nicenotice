@@ -16,16 +16,7 @@ public virtual Task<TypedNoticeDispatchResult<TEventType>> DispatchAsync<TEventT
 
 ## Return Value
 
-The dispatched enterprise event.
-
-## Exceptions
-
-| exception | condition |
-| --- | --- |
-| [NoticeValidationException](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidationException.md) | Thrown if the event fails validation. |
-| [NoticeSerializationException](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializationException.md) | Thrown if the event fails serialization. |
-| [NoticeRoutingException](../../Jds.NiceNotice.TypedNotices.Routing/NoticeRoutingException.md) | Thrown if the event stream ID cannot be determined. |
-| IOException | Thrown if an I/O error occurs during dispatch. |
+Returns the dispatch result. Failures are captured and returned within [`Exception`](../TypedNoticeDispatchResult-1/Exception.md).
 
 ## See Also
 

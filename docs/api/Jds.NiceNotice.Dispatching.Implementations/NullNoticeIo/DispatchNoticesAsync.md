@@ -1,9 +1,7 @@
 # NullNoticeIo.DispatchNoticesAsync method
 
 ```csharp
-public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices, 
-    BatchDispatchOptions? batchDispatchOptions = null, 
+public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(BatchIoRequest request, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -14,8 +12,7 @@ This implementation provides a no-operation mechanism, returning given notices a
 ## See Also
 
 * class [BatchIoNoticeDispatchResult](../../Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md)
-* class [BatchedIoRequestNotice](../../Jds.NiceNotice.Dispatching/BatchedIoRequestNotice.md)
-* record [BatchDispatchOptions](../../Jds.NiceNotice.Dispatching/BatchDispatchOptions.md)
+* class [BatchIoRequest](../../Jds.NiceNotice/BatchIoRequest.md)
 * class [NullNoticeIo](../NullNoticeIo.md)
 * namespace [Jds.NiceNotice.Dispatching.Implementations](../../NiceNotice.md)
 

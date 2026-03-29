@@ -10,6 +10,7 @@ public abstract class NoticeSerializer
 
 | name | description |
 | --- | --- |
+| abstract [ContentType](NoticeSerializer/ContentType.md) { get; } | Gets the content type of the serialized notices which this implementation serializes, e.g., `application/json`. |
 | abstract [Serialize&lt;TEventType&gt;](NoticeSerializer/Serialize.md)(…) | Serialize the given notice to a string. |
 
 ## Protected Members

@@ -3,7 +3,7 @@
 Gets the serialized notice.
 
 ```csharp
-public string Serialized { get; set; }
+public string Serialized { get; }
 ```
 
 ## Remarks

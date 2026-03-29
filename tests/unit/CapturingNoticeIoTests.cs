@@ -17,7 +17,7 @@ public class CapturingNoticeIoTests
 
     for (int i = 0; i < toSend; i++)
     {
-      string _ = await noticeIo.DispatchAsync(streamId, i.ToString());
+      IoNoticeDispatchResult _ = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, i.ToString()));
     }
 
     // Assert
@@ -26,7 +26,8 @@ public class CapturingNoticeIoTests
       .ShouldBe(toKeep);
     for (int i = 0; i < toKeep; i++)
     {
-      noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == (toSend - 1 - i).ToString()
+      noticeIo.CapturedNotices.ShouldContain(item =>
+        item.Stream == streamId && item.Notice == (toSend - 1 - i).ToString()
       );
     }
   }
@@ -39,10 +40,10 @@ public class CapturingNoticeIoTests
       Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
     CapturingNoticeIo noticeIo = new();
 
-    string response = await noticeIo.DispatchAsync(streamId, notice);
+    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, notice));
 
-    response.ShouldBe(notice);
-    noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == notice);
+    response.Notice.ShouldBe(notice);
+    noticeIo.CapturedNotices.ShouldContain(item => item.Stream == streamId && item.Notice == notice);
   }
 
   [Fact]
@@ -54,11 +55,11 @@ public class CapturingNoticeIoTests
       Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
     CapturingNoticeIo noticeIo = new();
 
-    string response = await noticeIo.DispatchAsync(streamId, notice);
+    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, notice));
 
     // Sanity
-    response.ShouldBe(notice);
-    noticeIo.CapturedNotices.ShouldContain(item => item.Item1 == streamId && item.Item2 == notice);
+    response.Notice.ShouldBe(notice);
+    noticeIo.CapturedNotices.ShouldContain(item => item.Stream == streamId && item.Notice == notice);
 
     // Act
     noticeIo.PurgeNotices();

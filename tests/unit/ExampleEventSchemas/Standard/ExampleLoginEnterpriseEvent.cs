@@ -10,4 +10,14 @@ public record ExampleLoginEnterpriseEvent : EnterpriseEvent
   public required string Username { get; init; } = string.Empty;
 
   protected override string SchemaTitle => "Login";
+
+  public override IReadOnlyDictionary<string, string>? GetMetadata()
+  {
+    return new Dictionary<string, string>
+    {
+      {
+        "schema", SchemaTitle
+      }
+    };
+  }
 }

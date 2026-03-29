@@ -20,8 +20,10 @@ internal class Either<TLeft, TRight>
   public bool IsBottom => !IsLeft && !IsRight;
   public bool IsLeft { get; }
   public bool IsRight { get; }
-  public TLeft LeftUnsafe => _left ?? throw new InvalidOperationException(message: "Either is not left.");
-  public TRight RightUnsafe => _right ?? throw new InvalidOperationException(message: "Either is not right.");
+  public TLeft LeftUnsafe => !IsLeft ? throw new InvalidOperationException(message: "Either is not left.") : _left!;
+
+  public TRight RightUnsafe =>
+    !IsRight ? throw new InvalidOperationException(message: "Either is not right.") : _right!;
 
   public Either<TLeft2, TRight2> BiBind<TLeft2, TRight2>(
     Func<TRight, Either<TLeft2, TRight2>> rightBinder,
@@ -33,6 +35,11 @@ internal class Either<TLeft, TRight>
   public Either<TLeft, TRight2> Bind<TRight2>(Func<TRight, Either<TLeft, TRight2>> binder)
   {
     return IsLeft ? Eithers.Left<TLeft, TRight2>(LeftUnsafe) : binder(RightUnsafe);
+  }
+
+  public async Task<Either<TLeft, TRight2>> BindAsync<TRight2>(Func<TRight, Task<Either<TLeft, TRight2>>> binder)
+  {
+    return IsLeft ? Eithers.Left<TLeft, TRight2>(LeftUnsafe) : await binder(RightUnsafe);
   }
 
   public TRight FoldRight(Func<TLeft, TRight> leftMapper)
@@ -47,7 +54,9 @@ internal class Either<TLeft, TRight>
 
   public Either<TLeft2, TRight> MapLeft<TLeft2>(Func<TLeft, TLeft2> mapper)
   {
-    return IsLeft ? Eithers.Left<TLeft2, TRight>(mapper(LeftUnsafe)) : Eithers.Right<TLeft2, TRight>(RightUnsafe);
+    return IsLeft
+      ? Eithers.Left<TLeft2, TRight>(mapper(LeftUnsafe))
+      : Eithers.Right<TLeft2, TRight>(RightUnsafe);
   }
 
   public TResult Match<TResult>(Func<TLeft, TResult> leftMapper, Func<TRight, TResult> rightMapper)
@@ -55,6 +64,26 @@ internal class Either<TLeft, TRight>
     RequireNotBottom();
 
     return IsLeft ? leftMapper(LeftUnsafe) : rightMapper(RightUnsafe);
+  }
+
+  public Either<TLeft, TRight> TapLeft(Action<TLeft> action)
+  {
+    if (IsLeft)
+    {
+      action(LeftUnsafe);
+    }
+
+    return this;
+  }
+
+  public Either<TLeft, TRight> TapRight(Action<TRight> action)
+  {
+    if (IsRight)
+    {
+      action(RightUnsafe);
+    }
+
+    return this;
   }
 
   private void RequireNotBottom()

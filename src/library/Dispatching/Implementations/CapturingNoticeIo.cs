@@ -13,8 +13,6 @@ namespace Jds.NiceNotice.Dispatching.Implementations;
 /// </summary>
 public class CapturingNoticeIo : INoticeBatchIo
 {
-  private readonly int _maximumNoticesToRetain;
-
   /// <summary>
   ///   Initializes a new instance of the <see cref="CapturingNoticeIo" /> class.
   /// </summary>
@@ -31,72 +29,83 @@ public class CapturingNoticeIo : INoticeBatchIo
 
   private CapturingNoticeIo(int maximumNoticesToRetain)
   {
-    _maximumNoticesToRetain = maximumNoticesToRetain;
+    RequestNotices = new BoundedConcurrentQueue<IoRequestNotice>(maximumNoticesToRetain);
   }
 
   /// <summary>
-  ///   Gets an enumerator for the captured notices.
+  ///   Gets an enumerator for the captured request notices.
   /// </summary>
-  public IEnumerable<(EventStreamId, string)> CapturedNotices => Notices;
+  public IEnumerable<IoRequestNotice> CapturedNotices => RequestNotices.Items;
 
   /// <summary>
-  ///   Gets the captured notices.
+  ///   Gets the captured request notices.
   /// </summary>
-  private ConcurrentQueue<(EventStreamId, string)> Notices { get; } = [];
+  private BoundedConcurrentQueue<IoRequestNotice> RequestNotices { get; }
 
   /// <inheritdoc />
-  public Task<string> DispatchAsync(EventStreamId stream, string notice, CancellationToken cancellationToken = default)
+  public Task<IoNoticeDispatchResult> DispatchAsync(
+    IoRequestNotice notice,
+    CancellationToken cancellationToken = default)
   {
-    Notices.Enqueue((stream, notice));
+    RequestNotices.Enqueue(notice);
 
-    if (_maximumNoticesToRetain > -1)
-    {
-      while (Notices.Count > _maximumNoticesToRetain)
-      {
-        Notices.TryDequeue(out _);
-      }
-    }
-
-    return Task.FromResult(notice);
+    return Task.FromResult(
+      new IoNoticeDispatchResult(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType, exception: null)
+    );
   }
 
   /// <inheritdoc
-  ///   cref="INoticeBatchIo.DispatchNoticesAsync(IReadOnlyDictionary{string, BatchedIoRequestNotice}, BatchDispatchOptions, CancellationToken)" />
+  ///   cref="INoticeBatchIo.DispatchNoticesAsync" />
   public async Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices,
-    BatchDispatchOptions? batchDispatchOptions = null,
+    BatchIoRequest request,
     CancellationToken cancellationToken = default)
   {
     ParallelOptions parallelOptions = new()
     {
-      MaxDegreeOfParallelism = batchDispatchOptions?.MaxDegreeOfParallelism ?? 1,
+      MaxDegreeOfParallelism = request.BatchDispatchOptions?.MaxDegreeOfParallelism ?? 1,
       CancellationToken = cancellationToken
     };
     ConcurrentBag<BatchedIoResponseNotice> successes = [];
-    ConcurrentBag<(BatchedIoResponseNotice, Exception)> failures = [];
+    ConcurrentBag<BatchedIoResponseNotice> failures = [];
     await Parallel.ForEachAsync(
-      notices
-        .Select(static notice => new BatchedIoResponseNotice(notice.Key, notice.Value.Stream, notice.Value.Notice)),
+      request.Notices
+        .Select(static notice => new BatchedIoResponseNotice(
+            notice.Key,
+            notice.Value.Stream,
+            notice.Value.Notice,
+            notice.Value.Metadata,
+            notice.Value.ContentType,
+            exception: null
+          )
+        ),
       parallelOptions,
       async (notice, token) =>
       {
         try
         {
-          await DispatchAsync(notice.Stream, notice.Notice, token);
+          await DispatchAsync(
+            new IoRequestNotice(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType),
+            token
+          );
           successes.Add(notice);
         }
         catch (Exception e)
         {
-          failures.Add((notice, e));
+          failures.Add(
+            new BatchedIoResponseNotice(
+              notice.BatchNoticeId,
+              notice.Stream,
+              notice.Notice,
+              notice.Metadata,
+              notice.ContentType,
+              e
+            )
+          );
         }
       }
     );
 
-    return new BatchIoNoticeDispatchResult
-    {
-      Failures = failures.ToList(),
-      Successes = successes.ToList()
-    };
+    return new BatchIoNoticeDispatchResult(failures.Concat(successes));
   }
 
   /// <summary>
@@ -115,8 +124,66 @@ public class CapturingNoticeIo : INoticeBatchIo
   /// <returns>Returns this instance.</returns>
   public CapturingNoticeIo PurgeNotices()
   {
-    Notices.Clear();
+    RequestNotices.Clear();
 
     return this;
+  }
+
+  /// <summary>
+  ///   A wrapper around a <see cref="ConcurrentQueue{T}" /> which enforces a maximum number of items.
+  /// </summary>
+  /// <param name="maximumItemsToRetain">A maximum number of items to retain.</param>
+  /// <typeparam name="T">A queue item type.</typeparam>
+  private sealed class BoundedConcurrentQueue<T>(int maximumItemsToRetain)
+  {
+    private readonly ConcurrentQueue<T> _queue = [];
+    private int _count;
+
+    /// <summary>
+    ///   Gets an enumerator for the items in the queue.
+    /// </summary>
+    public IEnumerable<T> Items => _queue;
+
+    /// <summary>
+    ///   Removes all items from the queue.
+    /// </summary>
+    public void Clear()
+    {
+      while (_queue.TryDequeue(out _))
+      {
+        Interlocked.Decrement(ref _count);
+      }
+    }
+
+    /// <summary>
+    ///   Enqueue the item.
+    /// </summary>
+    /// <param name="item">The item to be enqueued.</param>
+    public void Enqueue(T item)
+    {
+      // No work needed if we want no items retained.
+      if (maximumItemsToRetain == 0)
+      {
+        return;
+      }
+
+      // Enqueue the item.
+      _queue.Enqueue(item);
+
+      // If the maximum is negative, we're treating that as "no limit".
+      if (maximumItemsToRetain < 0)
+      {
+        return;
+      }
+
+      // Once we get here, we know we have to enforce a maximum number of items (so we have to track the count
+      //   and remove any excess items).
+      int currentCount = Interlocked.Increment(ref _count);
+
+      while (currentCount > maximumItemsToRetain && _queue.TryDequeue(out _))
+      {
+        currentCount = Interlocked.Decrement(ref _count);
+      }
+    }
   }
 }

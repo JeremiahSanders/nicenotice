@@ -10,7 +10,7 @@ public interface INoticeIo
 
 | name | description |
 | --- | --- |
-| [DispatchAsync](INoticeIo/DispatchAsync.md)(…) | Dispatches an asynchronous event to the specified event stream with the given notice. |
+| [DispatchAsync](INoticeIo/DispatchAsync.md)(…) | Asynchronously dispatches a notice to an I/O destination. |
 
 ## Remarks
 

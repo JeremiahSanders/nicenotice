@@ -15,4 +15,17 @@ public record ExampleLogoutEnterpriseEvent : EnterpriseEvent
 
   protected override int? SchemaRevision { get; init; } = 1;
   protected override string SchemaTitle => "Logout";
+
+  public override IReadOnlyDictionary<string, string>? GetMetadata()
+  {
+    return new Dictionary<string, string>
+    {
+      {
+        "schema", SchemaTitle
+      },
+      {
+        "duration", SessionDuration?.ToString() ?? string.Empty
+      }
+    };
+  }
 }

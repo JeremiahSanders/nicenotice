@@ -16,6 +16,8 @@ namespace Jds.NiceNotice.Tests.Unit;
 
 public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
 {
+  public ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
+
   [Fact]
   public void WithCustomBaseEvent_CanRegisterAndResolveServices()
   {
@@ -74,6 +76,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
 
   public abstract class BaseServiceArrangementTests(ITestOutputHelper testOutputHelper)
   {
+    public ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
+
     [Fact]
     public void CanRegisterAndResolve_INoticeIo()
     {
@@ -130,8 +134,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
 
       BatchRoutedTypedNoticeResponse result = nonGenericExplicitTypeResult.Successes.ShouldHaveSingleItem();
       ((string)result.Stream).ShouldBe(nameof(EnterpriseEvent));
-      result.Notice.ShouldBe(notice);
-      result.SerializedNotice.ShouldNotBeNullOrWhiteSpace();
+      result.TypedNotice.ShouldBe(notice);
+      result.Notice.ShouldNotBeNullOrWhiteSpace();
       result.BatchNoticeId.ShouldNotBeNullOrWhiteSpace();
     }
 
@@ -156,8 +160,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
 
       BatchRoutedTypedNoticeResponse result = genericExplicitTypeResult.Successes.ShouldHaveSingleItem();
       ((string)result.Stream).ShouldBe(nameof(EnterpriseEvent));
-      result.Notice.ShouldBe(notice);
-      result.SerializedNotice.ShouldNotBeNullOrWhiteSpace();
+      result.TypedNotice.ShouldBe(notice);
+      result.Notice.ShouldNotBeNullOrWhiteSpace();
       result.BatchNoticeId.ShouldNotBeNullOrWhiteSpace();
     }
 
@@ -178,8 +182,9 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       // Assert
 
       INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
-      string baseDispatcherResult = await baseDispatcher.DispatchAsync(testStreamId, notice.ToString());
-      baseDispatcherResult.ShouldBe(notice.ToString());
+      IoNoticeDispatchResult baseDispatcherResult =
+        await baseDispatcher.DispatchAsync(IoRequestNotice.Create(testStreamId, notice.ToString()));
+      baseDispatcherResult.Notice.ShouldBe(notice.ToString());
     }
 
     /// <summary>
@@ -201,8 +206,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
         provider.GetRequiredService<ITypedNoticeDispatcher>();
       TypedNoticeDispatchResult<EnterpriseEvent> nonGenericExplicitTypeResult =
         await nonGenericExplicitType.DispatchAsync(notice, testStreamId);
-      nonGenericExplicitTypeResult.Serialized.ShouldNotBeNullOrWhiteSpace();
-      nonGenericExplicitTypeResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
+      nonGenericExplicitTypeResult.IoRequest.Notice.ShouldNotBeNullOrWhiteSpace();
+      nonGenericExplicitTypeResult.IsSuccessful.ShouldBeTrue();
     }
 
     /// <summary>
@@ -224,8 +229,8 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
         provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
       TypedNoticeDispatchResult<EnterpriseEvent> fromExplicitTypeResult =
         await fromExplicitType.DispatchAsync(notice);
-      fromExplicitTypeResult.Serialized.ShouldNotBeNullOrWhiteSpace();
-      fromExplicitTypeResult.IoResponse.ShouldNotBeNullOrWhiteSpace();
+      fromExplicitTypeResult.IoRequest.Notice.ShouldNotBeNullOrWhiteSpace();
+      fromExplicitTypeResult.IsSuccessful.ShouldBeTrue();
     }
 
     protected abstract IServiceProvider ArrangeServices(IServiceCollection services);
@@ -291,16 +296,16 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
       // Assert
       // Check the body of the response
       response.ShouldNotBeNull();
-      ((string)response.Stream).ShouldBe(
+      ((string)response.IoRequest.Stream).ShouldBe(
         typeof(ExampleLoginEnterpriseEvent).FullName,
         customMessage: "This arrangement should be using type name streams."
       );
-      response.IoResponse.ShouldNotBeNullOrWhiteSpace();
+      response.IsSuccessful.ShouldBeTrue();
       ExampleLoginEnterpriseEvent deserialized = response.DeserializeIoResponseAsJson();
       deserialized.ShouldBeEquivalentTo(customLoginEvent);
       // Now check our I/O captures
       destination.CapturedNotices.ShouldContain(tuple =>
-        tuple.Item1 == response.Stream && tuple.Item2 == response.IoResponse
+        tuple.Stream == response.IoRequest.Stream && tuple.Notice == response.IoRequest.Notice
       );
     }
 

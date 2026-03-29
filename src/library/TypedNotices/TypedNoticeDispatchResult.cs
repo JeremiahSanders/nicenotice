@@ -7,10 +7,19 @@ namespace Jds.NiceNotice.TypedNotices;
 public record TypedNoticeDispatchResult<TEventType> where TEventType : notnull
 {
   /// <summary>
-  ///   Gets the response from the I/O dispatcher.
+  ///   Gets any exception that occurred during the dispatch.
   /// </summary>
-  /// <remarks>This value was returned from <see cref="INoticeIo.DispatchAsync" />.</remarks>
-  public required string IoResponse { get; init; }
+  public Exception? Exception { get; init; }
+
+  /// <summary>
+  ///   Gets the I/O notice request which was sent to the I/O dispatcher.
+  /// </summary>
+  public required IoRequestNotice IoRequest { get; init; }
+
+  /// <summary>
+  ///   Gets a value indicating whether the dispatch was successful, based on the absence of an exception.
+  /// </summary>
+  public bool IsSuccessful => Exception == null;
 
   /// <summary>
   ///   Gets the typed notice.
@@ -18,13 +27,14 @@ public record TypedNoticeDispatchResult<TEventType> where TEventType : notnull
   public required TEventType Notice { get; init; }
 
   /// <summary>
-  ///   Gets the serialized notice.
+  ///   Requires that the dispatch was successful
+  ///   (as indicated by <see cref="IsSuccessful" /> and absence of an <see cref="Exception" />),
+  ///   throwing <see cref="Exception" /> if not.
   /// </summary>
-  /// <remarks>This value was sent to I/O <see cref="INoticeIo.DispatchAsync" />.</remarks>
-  public required string Serialized { get; init; }
-
-  /// <summary>
-  ///   Gets the stream to which the notice was dispatched.
-  /// </summary>
-  public required EventStreamId Stream { get; init; }
+  /// <returns>Returns this instance.</returns>
+  /// <exception cref="Exception">Thrown if <see cref="Exception" /> is not <c>null</c>.</exception>
+  public TypedNoticeDispatchResult<TEventType> RequireSuccess()
+  {
+    return Exception != null ? throw Exception : this;
+  }
 }

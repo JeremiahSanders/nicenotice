@@ -1,29 +1,25 @@
 # INoticeIo.DispatchAsync method
 
-Dispatches an asynchronous event to the specified event stream with the given notice.
+Asynchronously dispatches a notice to an I/O destination.
 
 ```csharp
-public Task<string> DispatchAsync(EventStreamId stream, string notice, 
+public Task<IoNoticeDispatchResult> DispatchAsync(IoRequestNotice notice, 
     CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
-| stream | The event stream ID where the notice will be dispatched. |
-| notice | The content of the notice to be dispatched. |
+| notice | An I/O request wrapper for a notice to be dispatched. |
 | cancellationToken | An asynchronous operation cancellation token. |
 
 ## Return Value
 
 A task representing the asynchronous operation, containing *notice* after successful completion.
 
-## Remarks
-
-This is the core
-
 ## See Also
 
-* struct [EventStreamId](../EventStreamId.md)
+* class [IoNoticeDispatchResult](../IoNoticeDispatchResult.md)
+* class [IoRequestNotice](../IoRequestNotice.md)
 * interface [INoticeIo](../INoticeIo.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

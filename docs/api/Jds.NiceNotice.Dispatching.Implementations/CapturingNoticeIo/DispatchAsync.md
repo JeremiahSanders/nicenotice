@@ -1,13 +1,14 @@
 # CapturingNoticeIo.DispatchAsync method
 
 ```csharp
-public Task<string> DispatchAsync(EventStreamId stream, string notice, 
+public Task<IoNoticeDispatchResult> DispatchAsync(IoRequestNotice notice, 
     CancellationToken cancellationToken = default)
 ```
 
 ## See Also
 
-* struct [EventStreamId](../../Jds.NiceNotice/EventStreamId.md)
+* class [IoNoticeDispatchResult](../../Jds.NiceNotice/IoNoticeDispatchResult.md)
+* class [IoRequestNotice](../../Jds.NiceNotice/IoRequestNotice.md)
 * class [CapturingNoticeIo](../CapturingNoticeIo.md)
 * namespace [Jds.NiceNotice.Dispatching.Implementations](../../NiceNotice.md)
 

@@ -1,3 +1,5 @@
+using System.Net.Mime;
+
 using Jds.NiceNotice.Dispatching;
 using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.TypedNotices;
@@ -40,7 +42,7 @@ public class BatchDispatchingWorkflowTests
     result.IsRight.ShouldBeTrue();
     BatchTypedNoticeDispatchResult actual = result.RightUnsafe.ShouldNotBeNull();
     actual.Failures.ShouldContain(tuple =>
-      ReferenceEquals(tuple.Item1.Notice, notice) && tuple.Item1.Stream == eventStream
+      ReferenceEquals(tuple.TypedNotice, notice) && tuple.Stream == eventStream
     );
   }
 
@@ -60,22 +62,25 @@ public class BatchDispatchingWorkflowTests
 
     return result;
 
-    Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse> TrySerializeAndValidate(
+    BatchRoutedTypedNoticeResponse TrySerializeAndValidate(
       string arg1,
       BatchRoutedTypedNoticeRequest arg2)
     {
       string serialized = JsonSerializer.Serialize(arg2.Notice);
       IReadOnlyList<string>? validationResult = NoticeValidator.Validate(arg2.Notice, serialized);
 
-      BatchRoutedTypedNoticeResponse response = new(arg1, arg2.Stream, arg2.Notice, serialized);
-      if (validationResult?.Count > 0)
-      {
-        return Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
-          (response, new Exception(message: "Validation failed"))
-        );
-      }
+      Exception? exception = validationResult?.Count > 0 ? new Exception(message: "Validation failed") : null;
+      BatchRoutedTypedNoticeResponse response = new(
+        arg1,
+        arg2.Stream,
+        arg2.Notice,
+        serialized,
+        MediaTypeNames.Application.Json,
+        metadata: null,
+        exception
+      );
 
-      return Eithers.Right<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(response);
+      return response;
     }
   }
 }

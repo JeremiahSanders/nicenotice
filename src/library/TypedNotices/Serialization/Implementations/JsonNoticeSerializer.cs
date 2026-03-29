@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using System.Text.Json;
 
 namespace Jds.NiceNotice.TypedNotices.Serialization.Implementations;
@@ -9,9 +11,13 @@ namespace Jds.NiceNotice.TypedNotices.Serialization.Implementations;
 ///   Optional. JSON serialization options.
 ///   Defaults to <see cref="JsonDefaults.DefaultJsonSerializerOptions" />.
 /// </param>
+[SuppressMessage(category: "ReSharper", checkId: "ReturnTypeCanBeNotNullable")]
 internal class JsonNoticeSerializer(JsonSerializerOptions? options = null) : NoticeSerializer
 {
   private readonly JsonSerializerOptions _options = options ?? JsonDefaults.DefaultJsonSerializerOptions;
+
+  /// <inheritdoc />
+  public override string ContentType => MediaTypeNames.Application.Json;
 
   /// <inheritdoc />
   public override string Serialize<TEventType>(TEventType notice)
@@ -37,6 +43,9 @@ internal class JsonNoticeSerializer(JsonSerializerOptions? options = null) : Not
 internal class JsonNoticeSerializer<TEnterpriseEventBaseType>(JsonSerializerOptions? options = null)
   : NoticeSerializer<TEnterpriseEventBaseType>
 {
+  /// <inheritdoc />
+  public override string ContentType => MediaTypeNames.Application.Json;
+
   /// <inheritdoc />
   public override string Serialize<TEventType>(TEventType notice)
   {

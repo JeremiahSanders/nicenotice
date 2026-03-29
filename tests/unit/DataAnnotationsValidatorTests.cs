@@ -36,10 +36,17 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
     );
 
     // Assert
-    exception.ShouldNotBeNull();
-    NoticeValidationException validatorException = exception
+    NoticeValidationException validationException = result
+      .ShouldNotBeNull()
+      .Exception.ShouldNotBeNull()
       .ShouldBeOfType<NoticeValidationException>();
-    validatorException.ValidationFailures.ShouldNotBeEmpty();
+    validationException.ValidationFailures.ShouldNotBeEmpty();
+
+    exception.ShouldNotBeNull();
+
+    result.IsSuccessful.ShouldBeFalse();
+
+    result.Exception.ShouldBe(exception);
 
     return;
 
@@ -74,10 +81,14 @@ public class DataAnnotationsValidatorTests(ITestOutputHelper testOutputHelper)
     );
 
     // Assert
-    exception.ShouldNotBeNull();
-    NoticeValidationException validatorException = exception
+    NoticeValidationException validationException = result
+      .ShouldNotBeNull()
+      .Exception.ShouldNotBeNull()
       .ShouldBeOfType<NoticeValidationException>();
-    validatorException.ValidationFailures.ShouldNotBeEmpty();
+    validationException.ValidationFailures.ShouldNotBeEmpty();
+    exception.ShouldNotBeNull();
+    result.IsSuccessful.ShouldBeFalse();
+    result.Exception.ShouldBe(exception);
 
     return;
 

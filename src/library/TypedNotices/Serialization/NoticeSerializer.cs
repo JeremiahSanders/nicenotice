@@ -6,6 +6,12 @@ namespace Jds.NiceNotice.TypedNotices.Serialization;
 public abstract class NoticeSerializer
 {
   /// <summary>
+  ///   Gets the content type of the serialized notices which this implementation serializes,
+  ///   e.g., <c>application/json</c>.
+  /// </summary>
+  public abstract string ContentType { get; }
+
+  /// <summary>
   ///   Serialize the given notice to a string.
   /// </summary>
   /// <param name="notice">A notice to serialize.</param>
@@ -20,6 +26,12 @@ public abstract class NoticeSerializer
 /// <typeparam name="TEnterpriseEventBaseType">A base notification object type.</typeparam>
 public abstract class NoticeSerializer<TEnterpriseEventBaseType>
 {
+  /// <summary>
+  ///   Gets the content type of the serialized notices which this implementation serializes,
+  ///   e.g., <c>application/json</c>.
+  /// </summary>
+  public abstract string ContentType { get; }
+
   /// <summary>
   ///   Serializes the given notice to a string.
   ///   Values are restricted to subtypes of <typeparamref name="TEnterpriseEventBaseType" />.

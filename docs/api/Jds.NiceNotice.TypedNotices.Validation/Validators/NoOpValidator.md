@@ -1,4 +1,24 @@
-# Validators.NoOpValidator&lt;TEnterpriseEventBaseType&gt; method
+# Validators.NoOpValidator method (1 of 2)
+
+Creates a validator that performs no validation; all enterprise events are considered valid.
+
+```csharp
+public static NoticeValidator NoOpValidator()
+```
+
+## Return Value
+
+Returns the created validator.
+
+## See Also
+
+* class [NoticeValidator](../NoticeValidator.md)
+* class [Validators](../Validators.md)
+* namespace [Jds.NiceNotice.TypedNotices.Validation](../../NiceNotice.md)
+
+---
+
+# Validators.NoOpValidator&lt;TEnterpriseEventBaseType&gt; method (2 of 2)
 
 Creates a validator that performs no validation; all enterprise events are considered valid.
 

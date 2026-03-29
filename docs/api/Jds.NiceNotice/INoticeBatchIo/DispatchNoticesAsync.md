@@ -3,16 +3,13 @@
 Dispatch a batch of event notices.
 
 ```csharp
-public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices, 
-    BatchDispatchOptions? batchDispatchOptions = null, 
+public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(BatchIoRequest batchIoRequest, 
     CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
-| notices | A collection of routed notices to dispatch. |
-| batchDispatchOptions | Optional. Options configuring batch dispatch. |
+| batchIoRequest | A dispatch request. |
 | cancellationToken | Optional. An asynchronous operation cancellation token. |
 
 ## Return Value
@@ -26,8 +23,7 @@ Due to the inherent complexities to batched and/or parallel work and aggregating
 ## See Also
 
 * class [BatchIoNoticeDispatchResult](../../Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md)
-* class [BatchedIoRequestNotice](../../Jds.NiceNotice.Dispatching/BatchedIoRequestNotice.md)
-* record [BatchDispatchOptions](../../Jds.NiceNotice.Dispatching/BatchDispatchOptions.md)
+* class [BatchIoRequest](../BatchIoRequest.md)
 * interface [INoticeBatchIo](../INoticeBatchIo.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

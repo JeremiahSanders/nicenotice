@@ -13,71 +13,83 @@ internal static class BatchDispatchingWorkflow
 {
   public static async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
     Func<INoticeIo> ioDispatcherProvider,
-    Func<string, BatchRoutedTypedNoticeRequest,
-      Either<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>> trySerializeAndValidate,
+    Func<string, BatchRoutedTypedNoticeRequest, BatchRoutedTypedNoticeResponse> trySerializeAndValidate,
     IReadOnlyDictionary<string, BatchRoutedTypedNoticeRequest> notices,
     BatchDispatchOptions? batchDispatchOptions = null,
     CancellationToken cancellationToken = default)
   {
-    ConcurrentBag<(BatchRoutedTypedNoticeResponse, Exception)> failures = [];
+    ConcurrentBag<BatchRoutedTypedNoticeResponse> failures = [];
     ConcurrentBag<BatchRoutedTypedNoticeResponse> successes = [];
 
 
-    (List<(BatchRoutedTypedNoticeResponse, Exception)> lefts, List<BatchRoutedTypedNoticeResponse> rights) routed =
-      notices
-        .Select(notice =>
-          Eithers
-            .Try(() =>
-              trySerializeAndValidate(notice.Key, notice.Value)
-            )
-            .Match(
-              exception => Eithers.Left<(BatchRoutedTypedNoticeResponse, Exception), BatchRoutedTypedNoticeResponse>(
-                (new BatchRoutedTypedNoticeResponse(notice.Key, notice.Value.Stream, notice.Value.Notice, string.Empty),
-                  exception)
-              ),
-              static success => success
-            )
-        )
-        .ToList()
-        .Partition();
-    routed.lefts.ForEach(failure => failures.Add(failure));
+    List<BatchRoutedTypedNoticeResponse> serializedValidatedAndRouted = notices
+      .Select(notice =>
+        Eithers
+          .Try(() => trySerializeAndValidate(notice.Key, notice.Value))
+          .Match(
+            exception => new BatchRoutedTypedNoticeResponse(
+              notice.Key,
+              notice.Value.Stream,
+              notice.Value.Notice,
+              string.Empty,
+              contentType: null,
+              metadata: null,
+              exception
+            ),
+            static success => success
+          )
+      )
+      .ToList();
 
-    if (routed.rights.Count > 0)
+    foreach (BatchRoutedTypedNoticeResponse failedNotice in serializedValidatedAndRouted.Where(r => !r.IsSuccessful))
+    {
+      failures.Add(failedNotice);
+    }
+
+    List<BatchRoutedTypedNoticeResponse> validatedAndRouted =
+      serializedValidatedAndRouted.Where(r => r.IsSuccessful).ToList();
+
+    if (validatedAndRouted.Count > 0)
     {
       if (ioDispatcherProvider() is INoticeBatchIo batchIo)
       {
         BatchIoNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () =>
             await batchIo.DispatchNoticesAsync(
-              routed
-                .rights
-                .ToDictionary(
-                  static rtn => rtn.BatchNoticeId,
-                  static rtn => new BatchedIoRequestNotice(rtn.Stream, rtn.SerializedNotice)
-                ),
-              batchDispatchOptions,
+              new BatchIoRequest(
+                validatedAndRouted
+                  .ToDictionary(
+                    static rtn => rtn.BatchNoticeId,
+                    static rtn => new IoRequestNotice(rtn.Stream, rtn.Notice, rtn.Metadata, rtn.ContentType)
+                  ),
+                batchDispatchOptions
+              ),
               cancellationToken
             )
           ))
-          .MapLeft(exception => new BatchIoNoticeDispatchResult
-            {
-              Failures = routed
-                .rights.Select(n =>
-                  (new BatchedIoResponseNotice(n.BatchNoticeId, n.Stream, n.SerializedNotice), exception)
+          .MapLeft(exception => new BatchIoNoticeDispatchResult(
+              validatedAndRouted
+                .Select(n =>
+                  new BatchedIoResponseNotice(n.BatchNoticeId, n.Stream, n.Notice, n.Metadata, n.ContentType, exception)
                 )
-                .ToList(),
-              Successes = []
-            }
+            )
           )
           .Match(i => i, i => i);
 
-        IEnumerable<(BatchRoutedTypedNoticeResponse, Exception)> mappedFailures =
+        IEnumerable<BatchRoutedTypedNoticeResponse> mappedFailures =
           from bf in batchIoResult.Failures
           join requestKvp in notices
-            on bf.Item1.BatchNoticeId equals requestKvp.Key
+            on bf.BatchNoticeId equals requestKvp.Key
           select
-            (new BatchRoutedTypedNoticeResponse(requestKvp.Key, requestKvp.Value.Stream, requestKvp.Value.Notice, bf.Item1.Notice),
-              bf.Item2);
-        foreach ((BatchRoutedTypedNoticeResponse, Exception) failure in mappedFailures)
+            new BatchRoutedTypedNoticeResponse(
+              requestKvp.Key,
+              requestKvp.Value.Stream,
+              requestKvp.Value.Notice,
+              bf.Notice,
+              bf.ContentType,
+              bf.Metadata,
+              bf.Exception
+            );
+        foreach (BatchRoutedTypedNoticeResponse failure in mappedFailures)
         {
           failures.Add(failure);
         }
@@ -89,7 +101,10 @@ internal static class BatchDispatchingWorkflow
             requestKvp.Key,
             requestKvp.Value.Stream,
             requestKvp.Value.Notice,
-            bs.Notice
+            bs.Notice,
+            contentType: null,
+            metadata: null,
+            exception: null
           );
         foreach (BatchRoutedTypedNoticeResponse batchRoutedTypedNotice in mappedSuccesses)
         {
@@ -102,7 +117,7 @@ internal static class BatchDispatchingWorkflow
         {
           // We don't have a batch io, so we have to invoke multiple single-notice dispatches.
           await Parallel.ForEachAsync(
-            routed.rights,
+            validatedAndRouted,
             new ParallelOptions
             {
               MaxDegreeOfParallelism = batchDispatchOptions?.MaxDegreeOfParallelism ?? 1,
@@ -116,44 +131,61 @@ internal static class BatchDispatchingWorkflow
                 // NOTE: We're invoking the dispatcher provider here (within the parallel invocation) so that we
                 //   have the opportunity to use distinct instances of the dispatcher for each parallel invocation.
                 //   This can be useful if the dispatcher is not thread-safe.
-                string response = await ioDispatcherProvider()
+                IoNoticeDispatchResult response = await ioDispatcherProvider()
                   .DispatchAsync(
-                    batchRoutedTypedNotice.Stream,
-                    batchRoutedTypedNotice.SerializedNotice,
+                    new IoRequestNotice(
+                      batchRoutedTypedNotice.Stream,
+                      batchRoutedTypedNotice.Notice,
+                      batchRoutedTypedNotice.Metadata,
+                      batchRoutedTypedNotice.ContentType
+                    ),
                     token
                   );
                 successes.Add(
-                  batchRoutedTypedNotice with
-                  {
-                    SerializedNotice = response
-                  }
+                  batchRoutedTypedNotice
                 );
               }
               catch (Exception exception)
               {
-                failures.Add((batchRoutedTypedNotice, exception));
+                failures.Add(
+                  new BatchRoutedTypedNoticeResponse(
+                    batchRoutedTypedNotice.BatchNoticeId,
+                    batchRoutedTypedNotice.Stream,
+                    batchRoutedTypedNotice.TypedNotice,
+                    batchRoutedTypedNotice.Notice,
+                    batchRoutedTypedNotice.ContentType,
+                    batchRoutedTypedNotice.Metadata,
+                    exception
+                  )
+                );
               }
             }
           );
         }
         catch (Exception exception)
         {
-          IEnumerable<BatchRoutedTypedNoticeResponse> notHandled = routed.rights.Where(kvp =>
-            failures.All(failure => failure.Item1.BatchNoticeId != kvp.BatchNoticeId) &&
+          IEnumerable<BatchRoutedTypedNoticeResponse> notHandled = validatedAndRouted.Where(kvp =>
+            failures.All(failure => failure.BatchNoticeId != kvp.BatchNoticeId) &&
             successes.All(success => success.BatchNoticeId != kvp.BatchNoticeId)
           );
           foreach (BatchRoutedTypedNoticeResponse batchRoutedTypedNotice in notHandled)
           {
-            failures.Add(new ValueTuple<BatchRoutedTypedNoticeResponse, Exception>(batchRoutedTypedNotice, exception));
+            failures.Add(
+              new BatchRoutedTypedNoticeResponse(
+                batchRoutedTypedNotice.BatchNoticeId,
+                batchRoutedTypedNotice.Stream,
+                batchRoutedTypedNotice.TypedNotice,
+                batchRoutedTypedNotice.Notice,
+                batchRoutedTypedNotice.ContentType,
+                batchRoutedTypedNotice.Metadata,
+                exception
+              )
+            );
           }
         }
       }
     }
 
-    return new BatchTypedNoticeDispatchResult
-    {
-      Failures = failures.ToList(),
-      Successes = successes.ToList()
-    };
+    return new BatchTypedNoticeDispatchResult(failures.Concat(successes));
   }
 }

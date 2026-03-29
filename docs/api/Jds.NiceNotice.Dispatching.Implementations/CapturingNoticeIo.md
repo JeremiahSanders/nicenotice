@@ -14,7 +14,7 @@ public class CapturingNoticeIo : INoticeBatchIo
 | --- | --- |
 | [CapturingNoticeIo](CapturingNoticeIo/CapturingNoticeIo.md)() | Initializes a new instance of the [`CapturingNoticeIo`](./CapturingNoticeIo.md) class. |
 | static [Create](CapturingNoticeIo/Create.md)(…) | Creates a capturing dispatcher which limits the notices it retains. |
-| [CapturedNotices](CapturingNoticeIo/CapturedNotices.md) { get; } | Gets an enumerator for the captured notices. |
+| [CapturedNotices](CapturingNoticeIo/CapturedNotices.md) { get; } | Gets an enumerator for the captured request notices. |
 | [DispatchAsync](CapturingNoticeIo/DispatchAsync.md)(…) |  |
 | [DispatchNoticesAsync](CapturingNoticeIo/DispatchNoticesAsync.md)(…) |  |
 | [PurgeNotices](CapturingNoticeIo/PurgeNotices.md)() | Purges the notices captured by this instance. |

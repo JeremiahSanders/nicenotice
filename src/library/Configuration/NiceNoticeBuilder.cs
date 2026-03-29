@@ -1,5 +1,6 @@
 using Jds.NiceNotice.Dispatching.Implementations;
 using Jds.NiceNotice.TypedNotices;
+using Jds.NiceNotice.TypedNotices.Metadata;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
 using Jds.NiceNotice.TypedNotices.Validation;
@@ -170,12 +171,13 @@ public class NiceNoticeBuilder(IServiceCollection services)
 
     static object DispatcherFactory(IServiceProvider provider)
     {
-      return new DefaultTypedNoticeDispatcher<TNoticeBaseType>(
+      return TypedNoticeDispatcher<TNoticeBaseType>.Create(
         // Passing as a method group. It is NOT invoked during construction.
         provider.GetServiceOrThrowMissingDependency<INoticeIo>,
         provider.GetServiceOrThrowMissingDependency<NoticeRouter<TNoticeBaseType>>(),
         provider.GetServiceOrThrowMissingDependency<NoticeSerializer<TNoticeBaseType>>(),
-        provider.GetServiceOrThrowMissingDependency<NoticeValidator<TNoticeBaseType>>()
+        provider.GetServiceOrThrowMissingDependency<NoticeValidator<TNoticeBaseType>>(),
+        provider.GetServiceOrThrowMissingDependency<NoticeMetadataProvider<TNoticeBaseType>>()
       );
     }
   }
@@ -194,11 +196,12 @@ public class NiceNoticeBuilder(IServiceCollection services)
 
     static object DispatcherFactory(IServiceProvider provider)
     {
-      return new DefaultTypedNoticeDispatcher(
+      return TypedNoticeDispatcher.Create(
         // Passing as a method group. It is NOT invoked during construction.
         provider.GetServiceOrThrowMissingDependency<INoticeIo>,
         provider.GetServiceOrThrowMissingDependency<NoticeSerializer>(),
-        provider.GetService<NoticeValidator>()
+        provider.GetService<NoticeValidator>(),
+        provider.GetService<NoticeMetadataProvider>()
       );
     }
   }

@@ -3,12 +3,12 @@
 Gets the notices that were successfully dispatched.
 
 ```csharp
-public IReadOnlyList<BatchRoutedTypedNoticeResponse> Successes { get; set; }
+public IEnumerable<BatchRoutedTypedNoticeResponse> Successes { get; }
 ```
 
 ## See Also
 
-* record [BatchRoutedTypedNoticeResponse](../BatchRoutedTypedNoticeResponse.md)
+* class [BatchRoutedTypedNoticeResponse](../BatchRoutedTypedNoticeResponse.md)
 * class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

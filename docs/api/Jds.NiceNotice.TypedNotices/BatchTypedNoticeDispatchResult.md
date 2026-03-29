@@ -10,8 +10,11 @@ public class BatchTypedNoticeDispatchResult
 
 | name | description |
 | --- | --- |
-| [Failures](BatchTypedNoticeDispatchResult/Failures.md) { get; set; } | Gets the notices that failed to dispatch. |
-| [Successes](BatchTypedNoticeDispatchResult/Successes.md) { get; set; } | Gets the notices that were successfully dispatched. |
+| [BatchTypedNoticeDispatchResult](BatchTypedNoticeDispatchResult/BatchTypedNoticeDispatchResult.md)(…) | The result of dispatching a batch of typed notices. |
+| [Failures](BatchTypedNoticeDispatchResult/Failures.md) { get; } | Gets the notices that failed to dispatch. |
+| [Results](BatchTypedNoticeDispatchResult/Results.md) { get; } | Gets the notices that were dispatched. |
+| [Successes](BatchTypedNoticeDispatchResult/Successes.md) { get; } | Gets the notices that were successfully dispatched. |
+| [RequireSuccess](BatchTypedNoticeDispatchResult/RequireSuccess.md)() | Ensures that all notices were dispatched successfully, throwing an IOException if not. |
 
 ## See Also
 

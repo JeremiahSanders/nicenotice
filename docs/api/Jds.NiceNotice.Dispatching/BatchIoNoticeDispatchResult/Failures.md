@@ -1,14 +1,14 @@
 # BatchIoNoticeDispatchResult.Failures property
 
-Gets the notices that failed to dispatch.
+Gets the notices that failed to dispatch ([`IsSuccessful`](../../Jds.NiceNotice/IoNoticeDispatchResult/IsSuccessful.md) is `false`).
 
 ```csharp
-public IReadOnlyList<(BatchedIoResponseNotice, Exception)> Failures { get; set; }
+public IEnumerable<BatchedIoResponseNotice> Failures { get; }
 ```
 
 ## See Also
 
-* record [BatchedIoResponseNotice](../BatchedIoResponseNotice.md)
+* class [BatchedIoResponseNotice](../BatchedIoResponseNotice.md)
 * class [BatchIoNoticeDispatchResult](../BatchIoNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice.Dispatching](../../NiceNotice.md)
 

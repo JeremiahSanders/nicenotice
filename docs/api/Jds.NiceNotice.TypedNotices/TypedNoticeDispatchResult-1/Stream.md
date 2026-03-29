@@ -3,7 +3,7 @@
 Gets the stream to which the notice was dispatched.
 
 ```csharp
-public EventStreamId Stream { get; set; }
+public EventStreamId Stream { get; }
 ```
 
 ## See Also

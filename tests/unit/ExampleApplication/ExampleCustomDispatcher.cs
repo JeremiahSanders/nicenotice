@@ -12,6 +12,20 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 /// <param name="testOutputHelper"></param>
 public class ExampleCustomDispatcher(ITestOutputHelper testOutputHelper) : INoticeIo
 {
+  public Task<IoNoticeDispatchResult> DispatchAsync(
+    IoRequestNotice notice,
+    CancellationToken cancellationToken = default
+  )
+  {
+    // In this example we're writing to xUnit's test output.
+    // In a real application you'd be sending this to a cloud/enterprise message bus, or maybe a document database. 
+    testOutputHelper.WriteLine(notice.Notice);
+
+    return Task.FromResult(
+      new IoNoticeDispatchResult(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType, exception: null)
+    );
+  }
+
   public Task<string> DispatchAsync(EventStreamId stream, string notice, CancellationToken cancellationToken = default)
   {
     // In this example we're writing to xUnit's test output.

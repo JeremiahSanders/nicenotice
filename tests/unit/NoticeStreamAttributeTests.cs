@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Jds.NiceNotice.Configuration;
 using Jds.NiceNotice.TypedNotices;
 using Jds.NiceNotice.TypedNotices.Routing;
@@ -11,6 +13,7 @@ namespace Jds.NiceNotice.Tests.Unit;
 /// <summary>
 ///   Tests verifying whether the <see cref="NoticeStreamAttribute" /> is properly considered when routing typed notices.
 /// </summary>
+[SuppressMessage(category: "Usage", checkId: "xUnit1026:Theory methods should use all of their parameters")]
 public class NoticeStreamAttributeTests
 {
   public static IEnumerable<object?[]> CreateBaseTypeNoAttributeTestCases()
@@ -269,7 +272,7 @@ public class NoticeStreamAttributeTests
       TypedNoticeDispatchResult<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> result =
         await dispatcher.DispatchAsync(notice);
 
-      result.Stream.ShouldBe(EventStreamId.From(expected));
+      result.IoRequest.Stream.ShouldBe(EventStreamId.From(expected));
     }
 
     [Theory]
@@ -288,7 +291,7 @@ public class NoticeStreamAttributeTests
       TypedNoticeDispatchResult<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> result =
         await dispatcher.DispatchAsync(notice);
 
-      result.Stream.ShouldBe(EventStreamId.From(expected));
+      result.IoRequest.Stream.ShouldBe(EventStreamId.From(expected));
     }
 
     [Theory]
@@ -373,7 +376,7 @@ public class NoticeStreamAttributeTests
       TypedNoticeDispatchResult<NoticeStreamEvents.NoAttribute.BaseTypeNoAttribute> result =
         await dispatcher.DispatchAsync(notice, defaultToFullName);
 
-      result.Stream.ShouldBe(EventStreamId.From(expected));
+      result.IoRequest.Stream.ShouldBe(EventStreamId.From(expected));
     }
 
     [Theory]
@@ -392,7 +395,7 @@ public class NoticeStreamAttributeTests
       TypedNoticeDispatchResult<NoticeStreamEvents.WithAttribute.BaseTypeWithAttribute> result =
         await dispatcher.DispatchAsync(notice, defaultToFullName);
 
-      result.Stream.ShouldBe(EventStreamId.From(expected));
+      result.IoRequest.Stream.ShouldBe(EventStreamId.From(expected));
     }
 
     [Theory]

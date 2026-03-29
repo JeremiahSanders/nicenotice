@@ -14,10 +14,11 @@ public record TypedNoticeDispatchResult<TEventType>
 
 | name | description |
 | --- | --- |
-| [IoResponse](TypedNoticeDispatchResult-1/IoResponse.md) { get; set; } | Gets the response from the I/O dispatcher. |
+| [Exception](TypedNoticeDispatchResult-1/Exception.md) { get; set; } | Gets any exception that occurred during the dispatch. |
+| [IoRequest](TypedNoticeDispatchResult-1/IoRequest.md) { get; set; } | Gets the I/O notice request which was sent to the I/O dispatcher. |
+| [IsSuccessful](TypedNoticeDispatchResult-1/IsSuccessful.md) { get; } | Gets a value indicating whether the dispatch was successful, based on the absence of an exception. |
 | [Notice](TypedNoticeDispatchResult-1/Notice.md) { get; set; } | Gets the typed notice. |
-| [Serialized](TypedNoticeDispatchResult-1/Serialized.md) { get; set; } | Gets the serialized notice. |
-| [Stream](TypedNoticeDispatchResult-1/Stream.md) { get; set; } | Gets the stream to which the notice was dispatched. |
+| [RequireSuccess](TypedNoticeDispatchResult-1/RequireSuccess.md)() | Requires that the dispatch was successful (as indicated by [`IsSuccessful`](./TypedNoticeDispatchResult-1/IsSuccessful.md) and absence of an [`Exception`](./TypedNoticeDispatchResult-1/Exception.md)), throwing [`Exception`](./TypedNoticeDispatchResult-1/Exception.md) if not. |
 
 ## See Also
 
