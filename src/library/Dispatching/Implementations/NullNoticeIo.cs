@@ -7,35 +7,41 @@ namespace Jds.NiceNotice.Dispatching.Implementations;
 public class NullNoticeIo : INoticeIo, INoticeBatchIo
 {
   /// <inheritdoc
-  ///   cref="INoticeBatchIo.DispatchNoticesAsync(IReadOnlyDictionary{string, BatchedIoRequestNotice}, BatchDispatchOptions, CancellationToken)" />
+  ///   cref="INoticeBatchIo.DispatchNoticesAsync" />
   /// <remarks>
   ///   This implementation provides a no-operation mechanism, returning given notices as successes without processing.
   /// </remarks>
   public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices,
-    BatchDispatchOptions? batchDispatchOptions = null,
+    BatchIoRequest request,
     CancellationToken cancellationToken = default)
   {
     return Task.FromResult(
-      new BatchIoNoticeDispatchResult
-      {
-        Successes = notices
-          .Select(static kvp => new BatchedIoResponseNotice(kvp.Key, kvp.Value.Stream, kvp.Value.Notice))
-          .ToList(),
-        Failures = []
-      }
+      new BatchIoNoticeDispatchResult(
+        request
+          .Notices
+          .Select(static kvp => new BatchedIoResponseNotice(
+              kvp.Key,
+              kvp.Value.Stream,
+              kvp.Value.Notice,
+              kvp.Value.Metadata,
+              kvp.Value.ContentType,
+              exception: null
+            )
+          )
+      )
     );
   }
 
-  /// <inheritdoc cref="INoticeIo.DispatchAsync(EventStreamId, string, CancellationToken)" />
+  /// <inheritdoc cref="INoticeIo.DispatchAsync(IoRequestNotice, CancellationToken)" />
   /// <remarks>
   ///   This implementation provides a no-operation mechanism, returning the given notice without processing.
   /// </remarks>
-  public Task<string> DispatchAsync(
-    EventStreamId stream,
-    string notice,
+  public Task<IoNoticeDispatchResult> DispatchAsync(
+    IoRequestNotice notice,
     CancellationToken cancellationToken = default)
   {
-    return Task.FromResult(notice);
+    return Task.FromResult(
+      new IoNoticeDispatchResult(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType, exception: null)
+    );
   }
 }

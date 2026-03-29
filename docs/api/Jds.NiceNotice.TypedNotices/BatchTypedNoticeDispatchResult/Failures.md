@@ -3,12 +3,12 @@
 Gets the notices that failed to dispatch.
 
 ```csharp
-public IReadOnlyList<(BatchRoutedTypedNoticeResponse, Exception)> Failures { get; set; }
+public IEnumerable<BatchRoutedTypedNoticeResponse> Failures { get; }
 ```
 
 ## See Also
 
-* record [BatchRoutedTypedNoticeResponse](../BatchRoutedTypedNoticeResponse.md)
+* class [BatchRoutedTypedNoticeResponse](../BatchRoutedTypedNoticeResponse.md)
 * class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

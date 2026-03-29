@@ -33,10 +33,11 @@ public class ValidationTests
     const string expectedExceptionMessage =
       $"{nameof(ExampleLoginEnterpriseEvent)} validation failed. " + expectedFailureMessage;
 
+    TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent> result = await dispatcher.DispatchAsync(shouldFail);
 
-    Func<Task<TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent>>> act = () => dispatcher.DispatchAsync(shouldFail);
-
-    NoticeValidationException validationException = await act.ShouldThrowAsync<NoticeValidationException>();
+    result.IsSuccessful.ShouldBeFalse();
+    NoticeValidationException validationException =
+      result.ShouldNotBeNull().Exception.ShouldNotBeNull().ShouldBeOfType<NoticeValidationException>();
     validationException.ValidationFailures.ShouldContain(expectedFailureMessage);
     validationException.Message.ShouldBe(expectedExceptionMessage);
   }
@@ -63,10 +64,15 @@ public class ValidationTests
       $"{nameof(ExampleLoginEnterpriseEvent)} validation failed. " + expectedFailureMessage;
 
 
-    Func<Task<TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent>>> act = () =>
-      dispatcher.DispatchAsync(shouldFail, eventStreamId);
+    TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent> result = await dispatcher.DispatchAsync(
+      shouldFail,
+      eventStreamId
+    );
 
-    NoticeValidationException validationException = await act.ShouldThrowAsync<NoticeValidationException>();
+
+    result.IsSuccessful.ShouldBeFalse();
+    NoticeValidationException validationException =
+      result.ShouldNotBeNull().Exception.ShouldNotBeNull().ShouldBeOfType<NoticeValidationException>();
     validationException.ValidationFailures.ShouldContain(expectedFailureMessage);
     validationException.Message.ShouldBe(expectedExceptionMessage);
   }

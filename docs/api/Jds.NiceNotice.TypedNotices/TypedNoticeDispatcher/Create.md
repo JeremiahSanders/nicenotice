@@ -4,7 +4,8 @@ Creates a typed notice dispatcher using the specified I/O dispatcher, notice ser
 
 ```csharp
 public static TypedNoticeDispatcher Create(Func<INoticeIo> ioDispatcherProvider, 
-    NoticeSerializer? noticeSerializer = null, NoticeValidator? noticeValidator = null)
+    NoticeSerializer? noticeSerializer = null, NoticeValidator? noticeValidator = null, 
+    NoticeMetadataProvider? metadataProvider = null)
 ```
 
 | parameter | description |
@@ -12,12 +13,14 @@ public static TypedNoticeDispatcher Create(Func<INoticeIo> ioDispatcherProvider,
 | ioDispatcherProvider | A function that returns an I/O dispatcher which is responsible for sending enterprise events to specific event streams. |
 | noticeSerializer | Optional. A notice serializer. Defaults to `json` serialization. |
 | noticeValidator | Optional. A notice serializer. Defaults to NoOpNoticeValidator (i.e., no validation is performed). Create an instance with [`DataAnnotationsValidator`](../../Jds.NiceNotice.TypedNotices.Validation/Validators/DataAnnotationsValidator.md) to use standard data annotation validation. |
+| metadataProvider | Optional. A notice metadata provider. Defaults to [`DefaultMetadataProvider`](../../Jds.NiceNotice.TypedNotices.Metadata/MetadataProviders/DefaultMetadataProvider.md). |
 
 ## See Also
 
 * interface [INoticeIo](../../Jds.NiceNotice/INoticeIo.md)
 * class [NoticeSerializer](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer.md)
 * class [NoticeValidator](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator.md)
+* class [NoticeMetadataProvider](../../Jds.NiceNotice.TypedNotices.Metadata/NoticeMetadataProvider.md)
 * class [TypedNoticeDispatcher](../TypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 
@@ -29,7 +32,8 @@ Creates a typed notice dispatcher using the specified I/O dispatcher, notice ser
 
 ```csharp
 public static TypedNoticeDispatcher Create(INoticeIo ioDispatcher, 
-    NoticeSerializer? noticeSerializer = null, NoticeValidator? noticeValidator = null)
+    NoticeSerializer? noticeSerializer = null, NoticeValidator? noticeValidator = null, 
+    NoticeMetadataProvider? metadataProvider = null)
 ```
 
 | parameter | description |
@@ -37,12 +41,14 @@ public static TypedNoticeDispatcher Create(INoticeIo ioDispatcher,
 | ioDispatcher | A notice I/O implementation. |
 | noticeSerializer | Optional. A notice serializer. Defaults to `json` serialization. |
 | noticeValidator | Optional. A notice serializer. Defaults to NoOpNoticeValidator (i.e., no validation is performed). Create an instance with [`DataAnnotationsValidator`](../../Jds.NiceNotice.TypedNotices.Validation/Validators/DataAnnotationsValidator.md) to use standard data annotation validation. |
+| metadataProvider | Optional. A notice metadata provider. Defaults to [`DefaultMetadataProvider`](../../Jds.NiceNotice.TypedNotices.Metadata/MetadataProviders/DefaultMetadataProvider.md). |
 
 ## See Also
 
 * interface [INoticeIo](../../Jds.NiceNotice/INoticeIo.md)
 * class [NoticeSerializer](../../Jds.NiceNotice.TypedNotices.Serialization/NoticeSerializer.md)
 * class [NoticeValidator](../../Jds.NiceNotice.TypedNotices.Validation/NoticeValidator.md)
+* class [NoticeMetadataProvider](../../Jds.NiceNotice.TypedNotices.Metadata/NoticeMetadataProvider.md)
 * class [TypedNoticeDispatcher](../TypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

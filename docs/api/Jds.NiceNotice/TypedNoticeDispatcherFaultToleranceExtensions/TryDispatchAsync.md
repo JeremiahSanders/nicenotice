@@ -78,7 +78,7 @@ Invokes [`DispatchAsync`](../TypedNoticeDispatcherRoutingExtensions/DispatchAsyn
 Asynchronously sends a notification to the configured I/O dispatcher, catching exceptions.
 
 ```csharp
-public static Task<TypedNoticeDispatchResult<TNotice>?> TryDispatchAsync<TBaseNotice, TNotice>(
+public static Task<TypedNoticeDispatchResult<TNotice>> TryDispatchAsync<TBaseNotice, TNotice>(
     this ITypedNoticeDispatcher<TBaseNotice> dispatcher, TNotice notice, 
     Action<TNotice, Exception>? exceptionHandler = null, 
     CancellationToken cancellationToken = default)

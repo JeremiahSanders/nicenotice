@@ -1,3 +1,4 @@
+using Jds.NiceNotice.TypedNotices.Metadata;
 using Jds.NiceNotice.TypedNotices.Routing;
 using Jds.NiceNotice.TypedNotices.Serialization;
 using Jds.NiceNotice.TypedNotices.Serialization.Implementations;
@@ -255,6 +256,20 @@ public class TypedNoticesBuilder<TEnterpriseEventBaseType>(IServiceCollection se
         routingServiceLifetime
       );
     services.TryAdd(typeNameRouter);
+
+    // Configure metadata provider
+    ServiceDescriptor metadataProviderGeneric = new(
+      typeof(NoticeMetadataProvider<TEnterpriseEventBaseType>),
+      static _ => MetadataProviders.DefaultMetadataProvider<TEnterpriseEventBaseType>(),
+      ServiceLifetime.Singleton
+    );
+    services.TryAdd(metadataProviderGeneric);
+    ServiceDescriptor metadataProviderNonGeneric = new(
+      typeof(NoticeMetadataProvider),
+      static _ => MetadataProviders.DefaultMetadataProvider(),
+      ServiceLifetime.Singleton
+    );
+    services.TryAdd(metadataProviderNonGeneric);
 
     return services;
   }

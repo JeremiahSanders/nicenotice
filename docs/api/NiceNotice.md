@@ -4,14 +4,17 @@
 
 | public type | description |
 | --- | --- |
+| class [BatchIoRequest](./Jds.NiceNotice/BatchIoRequest.md) | A request to dispatch a batch of notices to I/O. |
 | record [EnterpriseEvent](./Jds.NiceNotice/EnterpriseEvent.md) | A base enterprise event (data transfer object), suitable for extending with application-specific properties. |
 | struct [EventStreamId](./Jds.NiceNotice/EventStreamId.md) | Represents a unique identifier for an event stream. This type is used to uniquely identify and manage event streams, ensuring type safety when working with specific streams in the application's event notification system. |
 | interface [INoticeBatchIo](./Jds.NiceNotice/INoticeBatchIo.md) | A [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) that can dispatch batches of notices. |
 | interface [INoticeIo](./Jds.NiceNotice/INoticeIo.md) | Represents a dispatcher responsible for sending enterprise event notices to specific event streams. |
+| interface [INoticeMetadata](./Jds.NiceNotice/INoticeMetadata.md) | Interface which can be applied to typed notices to generate custom metadata which can be included when being dispatched to I/O. |
+| class [IoNoticeDispatchResult](./Jds.NiceNotice/IoNoticeDispatchResult.md) | A result of dispatching a notice to I/O. |
+| class [IoRequestNotice](./Jds.NiceNotice/IoRequestNotice.md) | A notice I/O request, which may be part of a batch. |
 | interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) | Defines an interface for dispatching enterprise events of specified base types to logical event streams. The default implementation applies (in order): (1) logical routing, (2) serialization, (3) validation, and (4) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | interface [ITypedNoticeDispatcher](./Jds.NiceNotice/ITypedNoticeDispatcher.md) | Defines an interface for dispatching enterprise events to logical event streams. The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | static class [JsonDefaults](./Jds.NiceNotice/JsonDefaults.md) | Provides default JSON serialization settings for the library. |
-| static class [NoticeIoFaultToleranceExtensions](./Jds.NiceNotice/NoticeIoFaultToleranceExtensions.md) | Methods extending [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) supporting fault tolerance. |
 | static class [NoticeIoJsonExtensions](./Jds.NiceNotice/NoticeIoJsonExtensions.md) | Provides extension methods for the [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) interface to dispatch notifications serialized as JSON. |
 | static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
 | static class [TypedNoticeDispatcherBatchExtensions](./Jds.NiceNotice/TypedNoticeDispatcherBatchExtensions.md) | Extensions to typed notice dispatchers supporting batch notice dispatch. |
@@ -32,8 +35,7 @@
 | public type | description |
 | --- | --- |
 | record [BatchDispatchOptions](./Jds.NiceNotice.Dispatching/BatchDispatchOptions.md) | Options configuring the behavior of batch dispatch. |
-| class [BatchedIoRequestNotice](./Jds.NiceNotice.Dispatching/BatchedIoRequestNotice.md) | A notice that is part of a batch I/O request. |
-| record [BatchedIoResponseNotice](./Jds.NiceNotice.Dispatching/BatchedIoResponseNotice.md) | A routed notice that is part of a batch I/O response. |
+| class [BatchedIoResponseNotice](./Jds.NiceNotice.Dispatching/BatchedIoResponseNotice.md) | A routed notice that is part of a batch I/O response. |
 | class [BatchIoNoticeDispatchResult](./Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md) | The result of dispatching a batch of notices. |
 
 ## Jds.NiceNotice.Dispatching.Implementations namespace
@@ -48,7 +50,7 @@
 | public type | description |
 | --- | --- |
 | class [BatchRoutedTypedNoticeRequest](./Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeRequest.md) | A routed notice that is part of a batch. |
-| record [BatchRoutedTypedNoticeResponse](./Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeResponse.md) | A routed typed notice which is part of a batch. |
+| class [BatchRoutedTypedNoticeResponse](./Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeResponse.md) | A routed typed notice which is part of a batch. |
 | class [BatchTypedNoticeDispatchResult](./Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md) | The result of dispatching a batch of typed notices. |
 | class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) | A request to dispatch a batch of notices. |
 | class [DispatchBatchRequest](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) | A request to dispatch a batch of notices. |
@@ -56,6 +58,14 @@
 | abstract class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher-1.md) | Represents an abstract base class for dispatching notifications of a specified type. |
 | abstract class [TypedNoticeDispatcher](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher.md) | A base class implementation of [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
 | record [TypedNoticeDispatchResult&lt;TEventType&gt;](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md) | The result of dispatching a typed notice. |
+
+## Jds.NiceNotice.TypedNotices.Metadata namespace
+
+| public type | description |
+| --- | --- |
+| static class [MetadataProviders](./Jds.NiceNotice.TypedNotices.Metadata/MetadataProviders.md) | Implementation of [`NoticeMetadataProvider`](./Jds.NiceNotice.TypedNotices.Metadata/NoticeMetadataProvider.md). |
+| abstract class [NoticeMetadataProvider&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.TypedNotices.Metadata/NoticeMetadataProvider-1.md) | An abstraction representing the algorithm used for extracting metadata from a notice. |
+| abstract class [NoticeMetadataProvider](./Jds.NiceNotice.TypedNotices.Metadata/NoticeMetadataProvider.md) | An abstraction representing the algorithm used for extracting metadata from a notice. |
 
 ## Jds.NiceNotice.TypedNotices.Routing namespace
 

@@ -36,9 +36,9 @@ public class DelegateRouterTests
 
     TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent> response = await dispatcher.DispatchAsync(notice);
 
-    response.Stream.ShouldBe(EventStreamId.From(notice.Schema.ToUpperInvariant()));
+    response.IoRequest.Stream.ShouldBe(EventStreamId.From(notice.Schema.ToUpperInvariant()));
     capturingNoticeIo.CapturedNotices.ShouldContain(tuple =>
-      tuple.Item1 == EventStreamId.From(notice.Schema.ToUpperInvariant())
+      tuple.Stream == EventStreamId.From(notice.Schema.ToUpperInvariant())
     );
   }
 }

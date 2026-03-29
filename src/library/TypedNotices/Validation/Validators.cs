@@ -103,6 +103,15 @@ public static class Validators
   }
 
   /// <summary>
+  ///   Creates a validator that performs no validation; all enterprise events are considered valid.
+  /// </summary>
+  /// <returns>Returns the created validator.</returns>
+  public static NoticeValidator NoOpValidator()
+  {
+    return new NoOpNoticeValidator();
+  }
+
+  /// <summary>
   ///   Configures this typed notice builder to use a validator that performs no validation;
   ///   all enterprise events are considered valid.
   /// </summary>

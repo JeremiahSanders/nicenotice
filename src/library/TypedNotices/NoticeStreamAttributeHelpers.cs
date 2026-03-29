@@ -63,7 +63,7 @@ internal static class NoticeStreamAttributeHelpers
         .GetCustomAttribute<NoticeStreamAttribute>(inherit: true)
         ?.StreamName;
     }
-    catch (Exception _)
+    catch (Exception)
     {
       return null;
     }

@@ -1,27 +1,44 @@
-# BatchRoutedTypedNoticeResponse record
+# BatchRoutedTypedNoticeResponse class
 
 A routed typed notice which is part of a batch.
 
 ```csharp
-public record BatchRoutedTypedNoticeResponse
+public class BatchRoutedTypedNoticeResponse : IoNoticeDispatchResult
 ```
+
+| parameter | description |
+| --- | --- |
+| batchNoticeId | The unique identifier for this notice within its batch. |
+| stream | The logical stream to which the notice is dispatched. |
+| notice | The typed notice (Object) which is dispatched. |
+| serializedNotice | The serialized representation of the notice, as returned by the [`INoticeIo`](../Jds.NiceNotice/INoticeIo.md). |
+| contentType | The content type of the *serializedNotice*, e.g., `application/json`. |
+| metadata | Optional metadata associated with the notice. |
+| exception | The exception that occurred during processing, if any. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
 | [BatchRoutedTypedNoticeResponse](BatchRoutedTypedNoticeResponse/BatchRoutedTypedNoticeResponse.md)(…) | A routed typed notice which is part of a batch. |
-| [BatchNoticeId](BatchRoutedTypedNoticeResponse/BatchNoticeId.md) { get; set; } | The unique identifier for this notice within its batch. |
-| [Notice](BatchRoutedTypedNoticeResponse/Notice.md) { get; set; } | The typed notice (Object) which is dispatched. |
-| [SerializedNotice](BatchRoutedTypedNoticeResponse/SerializedNotice.md) { get; set; } | The serialized representation of the notice, as returned by the [`INoticeIo`](../Jds.NiceNotice/INoticeIo.md). |
-| [Stream](BatchRoutedTypedNoticeResponse/Stream.md) { get; set; } | The logical stream to which the notice is dispatched. |
+| [BatchNoticeId](BatchRoutedTypedNoticeResponse/BatchNoticeId.md) { get; } | Gets the unique identifier for this notice within its batch. |
+| [TypedNotice](BatchRoutedTypedNoticeResponse/TypedNotice.md) { get; } | Gets the typed notice (Object) which was dispatched. |
+| override [Equals](BatchRoutedTypedNoticeResponse/Equals.md)(…) |  |
+| override [GetHashCode](BatchRoutedTypedNoticeResponse/GetHashCode.md)() |  |
+
+## Protected Members
+
+| name | description |
+| --- | --- |
+| [Equals](BatchRoutedTypedNoticeResponse/Equals.md)(…) | Determines whether the specified object is equal to the current object. |
 
 ## Remarks
 
-This type is intended to be a response type after batch processing. This type is not used in request parameters as a design decision, preferring to reinforce uniqueness requirements of *BatchNoticeId* within the batch by use of dictionaries.
+This type is intended to be a response type after batch processing. This type is not used in request parameters as a design decision, preferring to reinforce uniqueness requirements of *batchNoticeId* within the batch by use of dictionaries.
 
 ## See Also
 
+* class [IoNoticeDispatchResult](../Jds.NiceNotice/IoNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice.TypedNotices](../NiceNotice.md)
 * [BatchRoutedTypedNoticeResponse.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/TypedNotices/BatchRoutedTypedNoticeResponse.cs)
 

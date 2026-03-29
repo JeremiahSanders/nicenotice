@@ -37,7 +37,7 @@ namespace Jds.NiceNotice;
 ///     conveying when the application started and a unique identifier for the occurrence (to support deduplication).
 ///   </para>
 /// </remarks>
-public record EnterpriseEvent
+public record EnterpriseEvent : INoticeMetadata
 {
   private readonly string _schemaTitle;
   private string? _schema;
@@ -134,6 +134,15 @@ public record EnterpriseEvent
   {
     get => _schemaTitle;
     init => _schemaTitle = value;
+  }
+
+  /// <inheritdoc />
+  /// <remarks>
+  ///   <para>Override this method to provide metadata for the event when it is dispatched to I/O.</para>
+  /// </remarks>
+  public virtual IReadOnlyDictionary<string, string>? GetMetadata()
+  {
+    return null;
   }
 
   /// <summary>

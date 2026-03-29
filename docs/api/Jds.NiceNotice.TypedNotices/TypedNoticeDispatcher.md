@@ -24,6 +24,8 @@ public abstract class TypedNoticeDispatcher : ITypedNoticeDispatcher
 | --- | --- |
 | [TypedNoticeDispatcher](TypedNoticeDispatcher/TypedNoticeDispatcher.md)(…) | A base class implementation of [`ITypedNoticeDispatcher`](../Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |
 | [IoDispatcherProvider](TypedNoticeDispatcher/IoDispatcherProvider.md) { get; } | Gets the function that provides a notification dispatcher, which is responsible for sending serialized enterprise events to specific event streams. |
+| virtual [GetMetadata&lt;TEventType&gt;](TypedNoticeDispatcher/GetMetadata.md)(…) | Gets the content type to which [`SerializeNotice`](./TypedNoticeDispatcher/SerializeNotice.md) will serialize the notice, e.g., `application/json`. |
+| abstract [GetSerializerContentType](TypedNoticeDispatcher/GetSerializerContentType.md)() | Gets the content type to which [`SerializeNotice`](./TypedNoticeDispatcher/SerializeNotice.md) will serialize the notice, e.g., `application/json` |
 | abstract [SerializeNotice&lt;TEventType&gt;](TypedNoticeDispatcher/SerializeNotice.md)(…) | Serializes the specified enterprise event notice to a string representation. |
 | virtual [ValidateNotice&lt;TEventType&gt;](TypedNoticeDispatcher/ValidateNotice.md)(…) | Validates the specified enterprise event notice. |
 

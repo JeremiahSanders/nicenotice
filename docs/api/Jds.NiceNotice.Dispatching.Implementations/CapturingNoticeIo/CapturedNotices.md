@@ -1,14 +1,14 @@
 # CapturingNoticeIo.CapturedNotices property
 
-Gets an enumerator for the captured notices.
+Gets an enumerator for the captured request notices.
 
 ```csharp
-public IEnumerable<(EventStreamId, string)> CapturedNotices { get; }
+public IEnumerable<IoRequestNotice> CapturedNotices { get; }
 ```
 
 ## See Also
 
-* struct [EventStreamId](../../Jds.NiceNotice/EventStreamId.md)
+* class [IoRequestNotice](../../Jds.NiceNotice/IoRequestNotice.md)
 * class [CapturingNoticeIo](../CapturingNoticeIo.md)
 * namespace [Jds.NiceNotice.Dispatching.Implementations](../../NiceNotice.md)
 

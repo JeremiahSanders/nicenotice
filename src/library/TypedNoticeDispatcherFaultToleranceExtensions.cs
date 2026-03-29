@@ -28,7 +28,7 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
   /// <typeparam name="TBaseNotice">A base notice type of <typeparamref name="TNotice" />.</typeparam>
   /// <typeparam name="TNotice">A notice type which is being dispatched.</typeparam>
   /// <returns>Returns the result of the asynchronous operation, when successful, or null upon failure.</returns>
-  public static async Task<TypedNoticeDispatchResult<TNotice>?> TryDispatchAsync<TBaseNotice, TNotice>(
+  public static async Task<TypedNoticeDispatchResult<TNotice>> TryDispatchAsync<TBaseNotice, TNotice>(
     this ITypedNoticeDispatcher<TBaseNotice> dispatcher,
     TNotice notice,
     Action<TNotice, Exception>? exceptionHandler = null,
@@ -36,16 +36,28 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
   ) where TBaseNotice : notnull
     where TNotice : TBaseNotice
   {
-    try
-    {
-      return await dispatcher.DispatchAsync(notice, cancellationToken);
-    }
-    catch (Exception ex)
-    {
-      exceptionHandler?.Invoke(notice, ex);
-
-      return null;
-    }
+    return (await Eithers.TryAsync(() => dispatcher.DispatchAsync(notice, cancellationToken)))
+      .TapRight(result =>
+        {
+          if (result.Exception != null && exceptionHandler != null)
+          {
+            exceptionHandler(notice, result.Exception);
+          }
+        }
+      )
+      .TapLeft(exception => exceptionHandler?.Invoke(notice, exception))
+      .FoldRight(exception => new TypedNoticeDispatchResult<TNotice>
+        {
+          Exception = exception,
+          Notice = notice,
+          IoRequest = new IoRequestNotice(
+            EventStreamId.From(notice.GetType().Name),
+            string.Empty,
+            metadata: null,
+            contentType: null
+          )
+        }
+      );
   }
 
   #endregion
@@ -79,16 +91,28 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
     CancellationToken cancellationToken = default
   ) where TNotice : notnull
   {
-    try
-    {
-      return await dispatcher.DispatchAsync(notice, eventStreamId, cancellationToken);
-    }
-    catch (Exception ex)
-    {
-      exceptionHandler?.Invoke(notice, ex);
-
-      return null;
-    }
+    return (await Eithers.TryAsync(() => dispatcher.DispatchAsync(notice, eventStreamId, cancellationToken)))
+      .TapRight(result =>
+        {
+          if (result.Exception != null && exceptionHandler != null)
+          {
+            exceptionHandler(notice, result.Exception);
+          }
+        }
+      )
+      .TapLeft(exception => exceptionHandler?.Invoke(notice, exception))
+      .FoldRight(exception => new TypedNoticeDispatchResult<TNotice>
+        {
+          Exception = exception,
+          Notice = notice,
+          IoRequest = new IoRequestNotice(
+            eventStreamId,
+            string.Empty,
+            metadata: null,
+            contentType: null
+          )
+        }
+      );
   }
 
   /// <summary>
@@ -121,16 +145,30 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
     CancellationToken cancellationToken = default
   ) where TNotice : notnull
   {
-    try
-    {
-      return await dispatcher.DispatchAsync(notice, dispatchToFullNameStream, cancellationToken);
-    }
-    catch (Exception ex)
-    {
-      exceptionHandler?.Invoke(notice, ex);
-
-      return null;
-    }
+    return (await Eithers.TryAsync(() => dispatcher.DispatchAsync(notice, dispatchToFullNameStream, cancellationToken)))
+      .TapRight(result =>
+        {
+          if (result.Exception != null && exceptionHandler != null)
+          {
+            exceptionHandler(notice, result.Exception);
+          }
+        }
+      )
+      .TapLeft(exception => exceptionHandler?.Invoke(notice, exception))
+      .FoldRight(exception => new TypedNoticeDispatchResult<TNotice>
+        {
+          Exception = exception,
+          Notice = notice,
+          IoRequest = new IoRequestNotice(
+            EventStreamId.From(
+              dispatchToFullNameStream ? notice.GetType().FullName ?? notice.GetType().Name : notice.GetType().Name
+            ),
+            string.Empty,
+            metadata: null,
+            contentType: null
+          )
+        }
+      );
   }
 
   #endregion

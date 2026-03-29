@@ -16,15 +16,13 @@ public interface INoticeBatchIo : INoticeIo
   ///     implementations of this interface may vary in their logic.
   ///   </para>
   /// </remarks>
-  /// <param name="notices">A collection of routed notices to dispatch.</param>
-  /// <param name="batchDispatchOptions">Optional. Options configuring batch dispatch.</param>
+  /// <param name="batchIoRequest">A dispatch request.</param>
   /// <param name="cancellationToken">Optional. An asynchronous operation cancellation token.</param>
   /// <returns>
   ///   A task representing the asynchronous operation,
   ///   containing the result of the batch dispatch operation.
   /// </returns>
   Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    IReadOnlyDictionary<string, BatchedIoRequestNotice> notices,
-    BatchDispatchOptions? batchDispatchOptions = null,
+    BatchIoRequest batchIoRequest,
     CancellationToken cancellationToken = default);
 }

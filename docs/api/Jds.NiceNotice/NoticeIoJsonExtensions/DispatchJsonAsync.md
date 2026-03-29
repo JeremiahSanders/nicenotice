@@ -3,8 +3,9 @@
 Dispatches a serialized JSON notification to the specified event stream asynchronously.
 
 ```csharp
-public static Task<(TNotification, string)> DispatchJsonAsync<TNotification>(
+public static Task<TypedNoticeDispatchResult<TNotification>> DispatchJsonAsync<TNotification>(
     this INoticeIo dispatcher, EventStreamId stream, TNotification notice, 
+    IReadOnlyDictionary<string, string>? metadata = null, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -14,6 +15,7 @@ public static Task<(TNotification, string)> DispatchJsonAsync<TNotification>(
 | dispatcher | The event dispatcher responsible for sending the notification. |
 | stream | The event stream ID where the serialized JSON notification will be dispatched. |
 | notice | The notification object to be serialized and dispatched. |
+| metadata | Optional metadata to pass into the event I/O. |
 | cancellationToken | An asynchronous operation cancellation token. |
 
 ## Return Value
@@ -26,6 +28,7 @@ This overload uses [`DefaultJsonSerializerOptions`](../JsonDefaults/DefaultJsonS
 
 ## See Also
 
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [INoticeIo](../INoticeIo.md)
 * struct [EventStreamId](../EventStreamId.md)
 * class [NoticeIoJsonExtensions](../NoticeIoJsonExtensions.md)
@@ -38,9 +41,10 @@ This overload uses [`DefaultJsonSerializerOptions`](../JsonDefaults/DefaultJsonS
 Dispatches a serialized JSON notification to the specified event stream asynchronously.
 
 ```csharp
-public static Task<(TNotification, string)> DispatchJsonAsync<TNotification>(
+public static Task<TypedNoticeDispatchResult<TNotification>> DispatchJsonAsync<TNotification>(
     this INoticeIo dispatcher, EventStreamId stream, TNotification notice, 
-    JsonSerializerOptions? options, CancellationToken cancellationToken = default)
+    JsonSerializerOptions? options, IReadOnlyDictionary<string, string>? metadata, 
+    CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -50,6 +54,7 @@ public static Task<(TNotification, string)> DispatchJsonAsync<TNotification>(
 | stream | The event stream ID where the serialized JSON notification will be dispatched. |
 | notice | The notification object to be serialized and dispatched. |
 | options | JSON serializer settings used during the serialization of the notification. |
+| metadata | Optional metadata to pass into the event I/O. |
 | cancellationToken | An asynchronous operation cancellation token. |
 
 ## Return Value
@@ -58,6 +63,7 @@ A task representing the asynchronous operation, containing a tuple with the orig
 
 ## See Also
 
+* record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [INoticeIo](../INoticeIo.md)
 * struct [EventStreamId](../EventStreamId.md)
 * class [NoticeIoJsonExtensions](../NoticeIoJsonExtensions.md)

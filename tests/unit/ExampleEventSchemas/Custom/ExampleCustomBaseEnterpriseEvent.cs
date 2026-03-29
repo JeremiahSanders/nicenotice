@@ -26,7 +26,7 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
 ///     Implementers should consider strongly the required/shared properties on a typed notice.
 ///   </para>
 /// </remarks>
-public record ExampleCustomBaseEnterpriseEvent
+public record ExampleCustomBaseEnterpriseEvent : INoticeMetadata
 {
   /// <summary>
   ///   Gets the name of this schema/type of enterprise event.
@@ -42,4 +42,17 @@ public record ExampleCustomBaseEnterpriseEvent
   /// </summary>
   [JsonPropertyName(name: "ts")]
   public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
+
+  IReadOnlyDictionary<string, string>? INoticeMetadata.GetMetadata()
+  {
+    return new Dictionary<string, string>
+    {
+      {
+        "name", Name
+      },
+      {
+        "ts", Timestamp.ToString(format: "o")
+      }
+    };
+  }
 }

@@ -1,22 +1,38 @@
-# BatchedIoResponseNotice record
+# BatchedIoResponseNotice class
 
 A routed notice that is part of a batch I/O response.
 
 ```csharp
-public record BatchedIoResponseNotice
+public class BatchedIoResponseNotice : IoNoticeDispatchResult
 ```
+
+| parameter | description |
+| --- | --- |
+| batchNoticeId | An identifier for this notice within the batch. |
+| stream | A logical notification stream identifier. |
+| notice | The content of the notification message. |
+| metadata | Optional metadata associated with the notice. |
+| contentType | The content type of the notice, e.g., `text/plain`. |
+| exception | Any exception that occurred during the dispatch. If null, the dispatch is considered successful. |
 
 ## Public Members
 
 | name | description |
 | --- | --- |
 | [BatchedIoResponseNotice](BatchedIoResponseNotice/BatchedIoResponseNotice.md)(…) | A routed notice that is part of a batch I/O response. |
-| [BatchNoticeId](BatchedIoResponseNotice/BatchNoticeId.md) { get; set; } | An identifier for this notice within the batch. |
-| [Notice](BatchedIoResponseNotice/Notice.md) { get; set; } | The content of the notification message. |
-| [Stream](BatchedIoResponseNotice/Stream.md) { get; set; } | A logical notification stream identifier. |
+| [BatchNoticeId](BatchedIoResponseNotice/BatchNoticeId.md) { get; } | Gets the identifier for this notice within its batch. |
+| override [Equals](BatchedIoResponseNotice/Equals.md)(…) |  |
+| override [GetHashCode](BatchedIoResponseNotice/GetHashCode.md)() |  |
+
+## Protected Members
+
+| name | description |
+| --- | --- |
+| [Equals](BatchedIoResponseNotice/Equals.md)(…) | Determines whether the specified [`BatchedIoResponseNotice`](./BatchedIoResponseNotice.md) is equal to the current [`BatchedIoResponseNotice`](./BatchedIoResponseNotice.md). |
 
 ## See Also
 
+* class [IoNoticeDispatchResult](../Jds.NiceNotice/IoNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice.Dispatching](../NiceNotice.md)
 * [BatchedIoResponseNotice.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/Dispatching/BatchedIoResponseNotice.cs)
 
