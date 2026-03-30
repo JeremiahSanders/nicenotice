@@ -3,7 +3,7 @@
 A result of dispatching a notice to I/O.
 
 ```csharp
-public class IoNoticeDispatchResult : IoRequestNotice
+public class IoNoticeDispatchResult : IoNoticeDispatchRequest
 ```
 
 | parameter | description |
@@ -33,7 +33,7 @@ public class IoNoticeDispatchResult : IoRequestNotice
 
 ## See Also
 
-* class [IoRequestNotice](./IoRequestNotice.md)
+* class [IoNoticeDispatchRequest](./IoNoticeDispatchRequest.md)
 * namespace [Jds.NiceNotice](../NiceNotice.md)
 * [IoNoticeDispatchResult.cs](https://github.com/JeremiahSanders/nicenotice/tree/main/src/library/IoNoticeDispatchResult.cs)
 

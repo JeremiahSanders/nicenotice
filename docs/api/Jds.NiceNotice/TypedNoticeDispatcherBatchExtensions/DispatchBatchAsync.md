@@ -1,6 +1,6 @@
 # TypedNoticeDispatcherBatchExtensions.DispatchBatchAsync&lt;TEnterpriseEventBaseType&gt; method
 
-Creates a [`DispatchBatchRequest`](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher-1/DispatchBatchAsync.md).
+Creates a [`BatchDispatchRequest`](../../Jds.NiceNotice.TypedNotices/BatchDispatchRequest-1.md) from *notices* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher-1/DispatchBatchAsync.md).
 
 ```csharp
 public static Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEnterpriseEventBaseType>(

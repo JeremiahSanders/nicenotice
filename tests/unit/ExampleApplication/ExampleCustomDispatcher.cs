@@ -13,7 +13,7 @@ namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
 public class ExampleCustomDispatcher(ITestOutputHelper testOutputHelper) : INoticeIo
 {
   public Task<IoNoticeDispatchResult> DispatchAsync(
-    IoRequestNotice notice,
+    IoNoticeDispatchRequest notice,
     CancellationToken cancellationToken = default
   )
   {

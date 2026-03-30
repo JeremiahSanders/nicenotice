@@ -70,8 +70,9 @@ public interface ITypedNoticeDispatcher<in TEnterpriseEventBaseType>
   /// </typeparam>
   /// <returns>Returns the result of dispatching the batch of notices.</returns>
   Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEventType>(
-    DispatchBatchRequest<TEventType> request,
-    CancellationToken cancellationToken = default)
+    BatchDispatchRequest<TEventType> request,
+    CancellationToken cancellationToken = default
+  )
     where TEventType : TEnterpriseEventBaseType;
 }
 
@@ -122,7 +123,7 @@ public interface ITypedNoticeDispatcher
   /// <param name="cancellationToken">An asynchronous operation cancellation token.</param>
   /// <returns>Returns the result of dispatching the batch of notices.</returns>
   Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
-    DispatchBatchRequest request,
+    BatchDispatchRequest request,
     CancellationToken cancellationToken = default
   );
 }

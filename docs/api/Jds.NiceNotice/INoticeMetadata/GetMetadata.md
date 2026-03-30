@@ -12,7 +12,7 @@ Gets the metadata for this notice.
 
 ## Remarks
 
-This method supports generating values which will be passed to the configured notice I/O via [`Metadata`](../IoRequestNotice/Metadata.md).
+This method supports generating values which will be passed to the configured notice I/O via [`Metadata`](../IoNoticeDispatchRequest/Metadata.md).
 
 ## See Also
 

@@ -35,7 +35,7 @@ public class GenericDispatcher_DirectConstruction_DispatchAsync_Assertions
   [Fact]
   public void Verification_IoReceivedJson()
   {
-    IoRequestNotice captured = CaseArrangement.noticeIo.CapturedNotices.Single(item =>
+    IoNoticeDispatchRequest captured = CaseArrangement.noticeIo.CapturedNotices.Single(item =>
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(CaseArrangement.toDispatch.Username)
     );

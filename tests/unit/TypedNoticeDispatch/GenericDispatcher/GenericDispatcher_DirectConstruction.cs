@@ -78,8 +78,8 @@ public class GenericDispatcher_DirectConstruction(ITestOutputHelper testOutputHe
       Username = "test2"
     };
 
-    DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> request =
-      DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+    BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> request =
+      BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
         [login1, login2],
         new BatchDispatchOptions
         {
@@ -118,8 +118,8 @@ public class GenericDispatcher_DirectConstruction(ITestOutputHelper testOutputHe
       Username = "test2"
     };
 
-    DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> request =
-      DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+    BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> request =
+      BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
         [login1, login2],
         new BatchDispatchOptions
         {
@@ -165,8 +165,8 @@ public class GenericDispatcher_DirectConstruction(ITestOutputHelper testOutputHe
     {
       Username = "test4"
     };
-    DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> request =
-      DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+    BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> request =
+      BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
         [login1, login2, logout3, logout4],
         new BatchDispatchOptions
         {
@@ -206,7 +206,7 @@ public class GenericDispatcher_DirectConstruction(ITestOutputHelper testOutputHe
       );
 
       // The notice should have been serialized to JSON as expected.
-      IoRequestNotice actual = noticeIo.CapturedNotices.First(item =>
+      IoNoticeDispatchRequest actual = noticeIo.CapturedNotices.First(item =>
         item.Stream == (EventStreamId)defaultStream &&
         item.Notice.Contains(valueToFind)
       );
@@ -291,7 +291,7 @@ public class GenericDispatcher_DirectConstruction(ITestOutputHelper testOutputHe
       );
 
       // The notice should have been serialized to JSON as expected.
-      IoRequestNotice actual = noticeIo.CapturedNotices.First(item =>
+      IoNoticeDispatchRequest actual = noticeIo.CapturedNotices.First(item =>
         item.Stream == (EventStreamId)defaultStream &&
         item.Notice.Contains(valueToFind)
       );

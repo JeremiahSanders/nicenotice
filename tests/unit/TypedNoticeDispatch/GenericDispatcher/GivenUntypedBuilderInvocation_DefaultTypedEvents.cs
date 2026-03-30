@@ -61,7 +61,7 @@ public class GivenUntypedBuilderInvocation_DefaultTypedEvents(ITestOutputHelper 
       item.Stream == (EventStreamId)defaultStream && item.Notice.Contains(baseNotice.Id.ToString())
     );
 
-    IoRequestNotice capturedBaseNotice = dispatchStore.CapturedNotices
+    IoNoticeDispatchRequest capturedBaseNotice = dispatchStore.CapturedNotices
       .Single(item =>
         item.Stream == (EventStreamId)defaultStream && item.Notice.Contains(baseNotice.Id.ToString())
       );
@@ -107,7 +107,7 @@ public class GivenUntypedBuilderInvocation_DefaultTypedEvents(ITestOutputHelper 
       item.Stream == (EventStreamId)defaultStream && item.Notice.Contains(messageNotice.Id.ToString())
     );
 
-    IoRequestNotice capturedBaseNotice = dispatchStore.CapturedNotices
+    IoNoticeDispatchRequest capturedBaseNotice = dispatchStore.CapturedNotices
       .Single(item =>
         item.Stream == (EventStreamId)defaultStream && item.Notice.Contains(messageNotice.Id.ToString())
       );

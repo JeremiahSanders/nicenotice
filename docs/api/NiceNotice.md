@@ -4,14 +4,14 @@
 
 | public type | description |
 | --- | --- |
-| class [BatchIoRequest](./Jds.NiceNotice/BatchIoRequest.md) | A request to dispatch a batch of notices to I/O. |
 | record [EnterpriseEvent](./Jds.NiceNotice/EnterpriseEvent.md) | A base enterprise event (data transfer object), suitable for extending with application-specific properties. |
 | struct [EventStreamId](./Jds.NiceNotice/EventStreamId.md) | Represents a unique identifier for an event stream. This type is used to uniquely identify and manage event streams, ensuring type safety when working with specific streams in the application's event notification system. |
 | interface [INoticeBatchIo](./Jds.NiceNotice/INoticeBatchIo.md) | A [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) that can dispatch batches of notices. |
 | interface [INoticeIo](./Jds.NiceNotice/INoticeIo.md) | Represents a dispatcher responsible for sending enterprise event notices to specific event streams. |
 | interface [INoticeMetadata](./Jds.NiceNotice/INoticeMetadata.md) | Interface which can be applied to typed notices to generate custom metadata which can be included when being dispatched to I/O. |
+| class [IoBatchNoticeDispatchRequest](./Jds.NiceNotice/IoBatchNoticeDispatchRequest.md) | A request to dispatch a batch of notices to I/O. |
+| class [IoNoticeDispatchRequest](./Jds.NiceNotice/IoNoticeDispatchRequest.md) | A notice I/O request, which may be part of a batch. |
 | class [IoNoticeDispatchResult](./Jds.NiceNotice/IoNoticeDispatchResult.md) | A result of dispatching a notice to I/O. |
-| class [IoRequestNotice](./Jds.NiceNotice/IoRequestNotice.md) | A notice I/O request, which may be part of a batch. |
 | interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) | Defines an interface for dispatching enterprise events of specified base types to logical event streams. The default implementation applies (in order): (1) logical routing, (2) serialization, (3) validation, and (4) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | interface [ITypedNoticeDispatcher](./Jds.NiceNotice/ITypedNoticeDispatcher.md) | Defines an interface for dispatching enterprise events to logical event streams. The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | static class [JsonDefaults](./Jds.NiceNotice/JsonDefaults.md) | Provides default JSON serialization settings for the library. |
@@ -35,8 +35,8 @@
 | public type | description |
 | --- | --- |
 | record [BatchDispatchOptions](./Jds.NiceNotice.Dispatching/BatchDispatchOptions.md) | Options configuring the behavior of batch dispatch. |
-| class [BatchedIoResponseNotice](./Jds.NiceNotice.Dispatching/BatchedIoResponseNotice.md) | A routed notice that is part of a batch I/O response. |
-| class [BatchIoNoticeDispatchResult](./Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md) | The result of dispatching a batch of notices. |
+| class [IoBatchNoticeDispatchResult](./Jds.NiceNotice.Dispatching/IoBatchNoticeDispatchResult.md) | The result of dispatching a batch of notices. |
+| class [IoBatchNoticeDispatchResultItem](./Jds.NiceNotice.Dispatching/IoBatchNoticeDispatchResultItem.md) | A routed notice that is part of a batch I/O response. |
 
 ## Jds.NiceNotice.Dispatching.Implementations namespace
 
@@ -49,11 +49,11 @@
 
 | public type | description |
 | --- | --- |
+| class [BatchDispatchRequest&lt;TBaseEnterpriseEvent&gt;](./Jds.NiceNotice.TypedNotices/BatchDispatchRequest-1.md) | A request to dispatch a batch of notices. |
+| class [BatchDispatchRequest](./Jds.NiceNotice.TypedNotices/BatchDispatchRequest.md) | A request to dispatch a batch of notices. |
 | class [BatchRoutedTypedNoticeRequest](./Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeRequest.md) | A routed notice that is part of a batch. |
 | class [BatchRoutedTypedNoticeResponse](./Jds.NiceNotice.TypedNotices/BatchRoutedTypedNoticeResponse.md) | A routed typed notice which is part of a batch. |
 | class [BatchTypedNoticeDispatchResult](./Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md) | The result of dispatching a batch of typed notices. |
-| class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md) | A request to dispatch a batch of notices. |
-| class [DispatchBatchRequest](./Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) | A request to dispatch a batch of notices. |
 | class [NoticeStreamAttribute](./Jds.NiceNotice.TypedNotices/NoticeStreamAttribute.md) | An attribute indicating the logical identifier of the notice stream to which a notice type should be sent. I.e., the [`EventStreamId`](./Jds.NiceNotice/EventStreamId.md) value. |
 | abstract class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher-1.md) | Represents an abstract base class for dispatching notifications of a specified type. |
 | abstract class [TypedNoticeDispatcher](./Jds.NiceNotice.TypedNotices/TypedNoticeDispatcher.md) | A base class implementation of [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md). Provides `abstract` and `virtual` methods for customizing its behavior. |

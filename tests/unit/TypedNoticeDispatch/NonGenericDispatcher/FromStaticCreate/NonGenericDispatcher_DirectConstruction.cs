@@ -68,7 +68,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
       Username = "test2"
     };
 
-    DispatchBatchRequest request = DispatchBatchRequest.CreateForSingleStream(
+    BatchDispatchRequest request = BatchDispatchRequest.CreateForSingleStream(
       defaultStreamId,
       [login1, login2],
       options: new BatchDispatchOptions
@@ -104,7 +104,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
       Username = "test2"
     };
 
-    DispatchBatchRequest request = DispatchBatchRequest.CreateForSingleStream(
+    BatchDispatchRequest request = BatchDispatchRequest.CreateForSingleStream(
       defaultStreamId,
       [login1, login2],
       options: new BatchDispatchOptions
@@ -147,7 +147,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
     {
       Username = "test4"
     };
-    DispatchBatchRequest request = DispatchBatchRequest.CreateForSingleStream(
+    BatchDispatchRequest request = BatchDispatchRequest.CreateForSingleStream(
       defaultStreamId,
       [
         login1, login2, logout3, logout4
@@ -189,7 +189,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
       );
 
       // The notice should have been serialized to JSON as expected.
-      IoRequestNotice actual = noticeIo.CapturedNotices.First(item =>
+      IoNoticeDispatchRequest actual = noticeIo.CapturedNotices.First(item =>
         item.Stream == (EventStreamId)defaultStream &&
         item.Notice.Contains(valueToFind)
       );
@@ -281,7 +281,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
       );
 
       // The notice should have been serialized to JSON as expected.
-      IoRequestNotice actual = noticeIo.CapturedNotices.First(item =>
+      IoNoticeDispatchRequest actual = noticeIo.CapturedNotices.First(item =>
         item.Stream == (EventStreamId)defaultStream &&
         item.Notice.Contains(valueToFind)
       );
@@ -372,7 +372,7 @@ public class NonGenericDispatcher_DirectConstruction(ITestOutputHelper testOutpu
       );
 
       // The notice should have been serialized to JSON as expected.
-      IoRequestNotice actual = noticeIo.CapturedNotices.First(item =>
+      IoNoticeDispatchRequest actual = noticeIo.CapturedNotices.First(item =>
         item.Stream == (EventStreamId)defaultStream &&
         item.Notice.Contains(valueToFind)
       );

@@ -29,22 +29,22 @@ public class CapturingNoticeIo : INoticeBatchIo
 
   private CapturingNoticeIo(int maximumNoticesToRetain)
   {
-    RequestNotices = new BoundedConcurrentQueue<IoRequestNotice>(maximumNoticesToRetain);
+    RequestNotices = new BoundedConcurrentQueue<IoNoticeDispatchRequest>(maximumNoticesToRetain);
   }
 
   /// <summary>
   ///   Gets an enumerator for the captured request notices.
   /// </summary>
-  public IEnumerable<IoRequestNotice> CapturedNotices => RequestNotices.Items;
+  public IEnumerable<IoNoticeDispatchRequest> CapturedNotices => RequestNotices.Items;
 
   /// <summary>
   ///   Gets the captured request notices.
   /// </summary>
-  private BoundedConcurrentQueue<IoRequestNotice> RequestNotices { get; }
+  private BoundedConcurrentQueue<IoNoticeDispatchRequest> RequestNotices { get; }
 
   /// <inheritdoc />
   public Task<IoNoticeDispatchResult> DispatchAsync(
-    IoRequestNotice notice,
+    IoNoticeDispatchRequest notice,
     CancellationToken cancellationToken = default)
   {
     RequestNotices.Enqueue(notice);
@@ -56,8 +56,8 @@ public class CapturingNoticeIo : INoticeBatchIo
 
   /// <inheritdoc
   ///   cref="INoticeBatchIo.DispatchNoticesAsync" />
-  public async Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    BatchIoRequest request,
+  public async Task<IoBatchNoticeDispatchResult> DispatchNoticesAsync(
+    IoBatchNoticeDispatchRequest request,
     CancellationToken cancellationToken = default)
   {
     ParallelOptions parallelOptions = new()
@@ -65,11 +65,11 @@ public class CapturingNoticeIo : INoticeBatchIo
       MaxDegreeOfParallelism = request.BatchDispatchOptions?.MaxDegreeOfParallelism ?? 1,
       CancellationToken = cancellationToken
     };
-    ConcurrentBag<BatchedIoResponseNotice> successes = [];
-    ConcurrentBag<BatchedIoResponseNotice> failures = [];
+    ConcurrentBag<IoBatchNoticeDispatchResultItem> successes = [];
+    ConcurrentBag<IoBatchNoticeDispatchResultItem> failures = [];
     await Parallel.ForEachAsync(
       request.Notices
-        .Select(static notice => new BatchedIoResponseNotice(
+        .Select(static notice => new IoBatchNoticeDispatchResultItem(
             notice.Key,
             notice.Value.Stream,
             notice.Value.Notice,
@@ -84,7 +84,7 @@ public class CapturingNoticeIo : INoticeBatchIo
         try
         {
           await DispatchAsync(
-            new IoRequestNotice(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType),
+            new IoNoticeDispatchRequest(notice.Stream, notice.Notice, notice.Metadata, notice.ContentType),
             token
           );
           successes.Add(notice);
@@ -92,7 +92,7 @@ public class CapturingNoticeIo : INoticeBatchIo
         catch (Exception e)
         {
           failures.Add(
-            new BatchedIoResponseNotice(
+            new IoBatchNoticeDispatchResultItem(
               notice.BatchNoticeId,
               notice.Stream,
               notice.Notice,
@@ -105,7 +105,7 @@ public class CapturingNoticeIo : INoticeBatchIo
       }
     );
 
-    return new BatchIoNoticeDispatchResult(failures.Concat(successes));
+    return new IoBatchNoticeDispatchResult(failures.Concat(successes));
   }
 
   /// <summary>

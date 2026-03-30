@@ -4,7 +4,7 @@ Dispatches a batch of enterprise event notices to logical event streams using th
 
 ```csharp
 public Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEventType>(
-    DispatchBatchRequest<TEventType> request, CancellationToken cancellationToken = default)
+    BatchDispatchRequest<TEventType> request, CancellationToken cancellationToken = default)
     where TEventType : TEnterpriseEventBaseType
 ```
 
@@ -25,7 +25,7 @@ The default implementation applies (in order): (1) logical routing, (2) serializ
 ## See Also
 
 * class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest-1.md)
+* class [BatchDispatchRequest&lt;TBaseEnterpriseEvent&gt;](../../Jds.NiceNotice.TypedNotices/BatchDispatchRequest-1.md)
 * interface [ITypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../ITypedNoticeDispatcher-1.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

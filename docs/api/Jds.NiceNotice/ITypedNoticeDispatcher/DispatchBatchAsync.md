@@ -3,7 +3,7 @@
 Dispatches a batch of enterprise event notices to logical event streams.
 
 ```csharp
-public Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(DispatchBatchRequest request, 
+public Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(BatchDispatchRequest request, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -23,7 +23,7 @@ The default implementation applies (in order): (1) serialization, (2) validation
 ## See Also
 
 * class [BatchTypedNoticeDispatchResult](../../Jds.NiceNotice.TypedNotices/BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md)
+* class [BatchDispatchRequest](../../Jds.NiceNotice.TypedNotices/BatchDispatchRequest.md)
 * interface [ITypedNoticeDispatcher](../ITypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

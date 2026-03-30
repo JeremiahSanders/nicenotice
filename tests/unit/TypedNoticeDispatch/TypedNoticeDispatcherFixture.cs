@@ -6,7 +6,7 @@ namespace Jds.NiceNotice.Tests.Unit.TypedNoticeDispatch;
 
 public abstract class TypedNoticeDispatcherFixture(ITestOutputHelper outputHelper) : BaseCaseFixture
 {
-  protected void OutputNotices(IEnumerable<IoRequestNotice> capturedNotices)
+  protected void OutputNotices(IEnumerable<IoNoticeDispatchRequest> capturedNotices)
   {
     outputHelper.OutputNotices(capturedNotices);
   }

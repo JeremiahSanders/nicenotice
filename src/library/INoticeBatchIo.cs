@@ -22,7 +22,7 @@ public interface INoticeBatchIo : INoticeIo
   ///   A task representing the asynchronous operation,
   ///   containing the result of the batch dispatch operation.
   /// </returns>
-  Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(
-    BatchIoRequest batchIoRequest,
+  Task<IoBatchNoticeDispatchResult> DispatchNoticesAsync(
+    IoBatchNoticeDispatchRequest batchIoRequest,
     CancellationToken cancellationToken = default);
 }

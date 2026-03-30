@@ -1,6 +1,6 @@
 # TypedNoticeDispatcherBatchExtensions.DispatchBatchToSingleStreamAsync method
 
-Creates a [`DispatchBatchRequest`](../../Jds.NiceNotice.TypedNotices/DispatchBatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher/DispatchBatchAsync.md).
+Creates a [`BatchDispatchRequest`](../../Jds.NiceNotice.TypedNotices/BatchDispatchRequest.md) which sends all the provided *notices* to the provided *stream* and sends the result using [`DispatchBatchAsync`](../ITypedNoticeDispatcher/DispatchBatchAsync.md).
 
 ```csharp
 public static Task<BatchTypedNoticeDispatchResult> DispatchBatchToSingleStreamAsync(

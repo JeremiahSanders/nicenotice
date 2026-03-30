@@ -2,13 +2,13 @@
 
 ```csharp
 public virtual Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
-    DispatchBatchRequest request, CancellationToken cancellationToken = default)
+    BatchDispatchRequest request, CancellationToken cancellationToken = default)
 ```
 
 ## See Also
 
 * class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest](../DispatchBatchRequest.md)
+* class [BatchDispatchRequest](../BatchDispatchRequest.md)
 * class [TypedNoticeDispatcher](../TypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

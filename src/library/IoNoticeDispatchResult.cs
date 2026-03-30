@@ -18,7 +18,7 @@ public class IoNoticeDispatchResult(
   string? contentType,
   Exception? exception
 )
-  : IoRequestNotice(stream, notice, metadata, contentType)
+  : IoNoticeDispatchRequest(stream, notice, metadata, contentType)
 {
   /// <summary>
   ///   Gets any exception that occurred during the dispatch.

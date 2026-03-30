@@ -12,7 +12,7 @@ public interface INoticeMetadata
   /// <remarks>
   ///   <para>
   ///     This method supports generating values which will be passed to the configured notice I/O
-  ///     via <see cref="IoRequestNotice.Metadata" />.
+  ///     via <see cref="IoNoticeDispatchRequest.Metadata" />.
   ///   </para>
   /// </remarks>
   /// <returns>Gets the metadata for this notice.</returns>

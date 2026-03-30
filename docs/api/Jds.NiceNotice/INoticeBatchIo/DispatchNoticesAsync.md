@@ -3,8 +3,8 @@
 Dispatch a batch of event notices.
 
 ```csharp
-public Task<BatchIoNoticeDispatchResult> DispatchNoticesAsync(BatchIoRequest batchIoRequest, 
-    CancellationToken cancellationToken = default)
+public Task<IoBatchNoticeDispatchResult> DispatchNoticesAsync(
+    IoBatchNoticeDispatchRequest batchIoRequest, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -22,8 +22,8 @@ Due to the inherent complexities to batched and/or parallel work and aggregating
 
 ## See Also
 
-* class [BatchIoNoticeDispatchResult](../../Jds.NiceNotice.Dispatching/BatchIoNoticeDispatchResult.md)
-* class [BatchIoRequest](../BatchIoRequest.md)
+* class [IoBatchNoticeDispatchResult](../../Jds.NiceNotice.Dispatching/IoBatchNoticeDispatchResult.md)
+* class [IoBatchNoticeDispatchRequest](../IoBatchNoticeDispatchRequest.md)
 * interface [INoticeBatchIo](../INoticeBatchIo.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

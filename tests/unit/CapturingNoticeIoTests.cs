@@ -17,7 +17,7 @@ public class CapturingNoticeIoTests
 
     for (int i = 0; i < toSend; i++)
     {
-      IoNoticeDispatchResult _ = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, i.ToString()));
+      IoNoticeDispatchResult _ = await noticeIo.DispatchAsync(IoNoticeDispatchRequest.Create(streamId, i.ToString()));
     }
 
     // Assert
@@ -40,7 +40,7 @@ public class CapturingNoticeIoTests
       Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
     CapturingNoticeIo noticeIo = new();
 
-    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, notice));
+    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoNoticeDispatchRequest.Create(streamId, notice));
 
     response.Notice.ShouldBe(notice);
     noticeIo.CapturedNotices.ShouldContain(item => item.Stream == streamId && item.Notice == notice);
@@ -55,7 +55,7 @@ public class CapturingNoticeIoTests
       Randomizer.Shared.RandomStringLatin(Randomizer.Shared.IntInRange(minInclusive: 12, maxExclusive: 49));
     CapturingNoticeIo noticeIo = new();
 
-    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoRequestNotice.Create(streamId, notice));
+    IoNoticeDispatchResult response = await noticeIo.DispatchAsync(IoNoticeDispatchRequest.Create(streamId, notice));
 
     // Sanity
     response.Notice.ShouldBe(notice);
