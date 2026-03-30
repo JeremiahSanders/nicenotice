@@ -20,5 +20,5 @@ public interface INoticeIo
   ///   A task representing the asynchronous operation,
   ///   containing <paramref name="notice" /> after successful completion.
   /// </returns>
-  Task<IoNoticeDispatchResult> DispatchAsync(IoRequestNotice notice, CancellationToken cancellationToken = default);
+  Task<IoNoticeDispatchResult> DispatchAsync(IoNoticeDispatchRequest notice, CancellationToken cancellationToken = default);
 }

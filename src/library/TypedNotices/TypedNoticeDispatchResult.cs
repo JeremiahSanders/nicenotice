@@ -14,7 +14,7 @@ public record TypedNoticeDispatchResult<TEventType> where TEventType : notnull
   /// <summary>
   ///   Gets the I/O notice request which was sent to the I/O dispatcher.
   /// </summary>
-  public required IoRequestNotice IoRequest { get; init; }
+  public required IoNoticeDispatchRequest IoRequest { get; init; }
 
   /// <summary>
   ///   Gets a value indicating whether the dispatch was successful, based on the absence of an exception.

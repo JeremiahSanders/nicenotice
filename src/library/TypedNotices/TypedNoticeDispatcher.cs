@@ -36,7 +36,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       {
         Notice = notice,
         Exception = possibleSerialized.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, string.Empty, metadata: null, contentType: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, string.Empty, metadata: null, contentType: null)
       };
     }
 
@@ -50,7 +50,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       {
         Notice = notice,
         Exception = possibleValidated.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, serialized, contentType: serializedContentType, metadata: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, serialized, contentType: serializedContentType, metadata: null)
       };
     }
 
@@ -63,13 +63,13 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       {
         Notice = notice,
         Exception = possibleMetadata.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, validated, contentType: serializedContentType, metadata: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, validated, contentType: serializedContentType, metadata: null)
       };
     }
 
     IReadOnlyDictionary<string, string>? metadata = possibleMetadata.IfLeftThrow();
 
-    IoRequestNotice ioRequest = new(streamId, validated, metadata, serializedContentType);
+    IoNoticeDispatchRequest ioRequest = new(streamId, validated, metadata, serializedContentType);
     IoNoticeDispatchResult response = await Dispatch(ioRequest);
 
     return new TypedNoticeDispatchResult<TEventType>
@@ -91,7 +91,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       }
     }
 
-    async Task<IoNoticeDispatchResult> Dispatch(IoRequestNotice requestNotice)
+    async Task<IoNoticeDispatchResult> Dispatch(IoNoticeDispatchRequest requestNotice)
     {
       try
       {
@@ -112,7 +112,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
 
   /// <inheritdoc />
   public virtual async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync(
-    DispatchBatchRequest request,
+    BatchDispatchRequest request,
     CancellationToken cancellationToken = default)
   {
     return await BatchDispatchingWorkflow.DispatchBatchAsync(
@@ -393,7 +393,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       {
         Notice = notice,
         Exception = possibleStream.LeftUnsafe,
-        IoRequest = new IoRequestNotice(
+        IoRequest = new IoNoticeDispatchRequest(
           EventStreamId.From(string.Empty),
           string.Empty,
           metadata: null,
@@ -411,7 +411,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       {
         Notice = notice,
         Exception = possibleSerialized.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, string.Empty, metadata: null, contentType: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, string.Empty, metadata: null, contentType: null)
       };
     }
 
@@ -425,7 +425,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       {
         Notice = notice,
         Exception = possibleValidated.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, serialized, contentType: serializedContentType, metadata: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, serialized, contentType: serializedContentType, metadata: null)
       };
     }
 
@@ -438,11 +438,11 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       {
         Notice = notice,
         Exception = possibleMetadata.LeftUnsafe,
-        IoRequest = new IoRequestNotice(streamId, validated, contentType: serializedContentType, metadata: null)
+        IoRequest = new IoNoticeDispatchRequest(streamId, validated, contentType: serializedContentType, metadata: null)
       };
     }
 
-    IoRequestNotice ioRequest = new(
+    IoNoticeDispatchRequest ioRequest = new(
       streamId,
       validated,
       contentType: serializedContentType,
@@ -457,7 +457,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
       IoRequest = ioRequest
     };
 
-    async Task<IoNoticeDispatchResult> Dispatch(IoRequestNotice noticeDto)
+    async Task<IoNoticeDispatchResult> Dispatch(IoNoticeDispatchRequest noticeDto)
     {
       try
       {
@@ -478,7 +478,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
 
   /// <inheritdoc />
   public async Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEventType>(
-    DispatchBatchRequest<TEventType> request,
+    BatchDispatchRequest<TEventType> request,
     CancellationToken cancellationToken = default) where TEventType : TEnterpriseEventBaseType
   {
     (List<(BatchRoutedTypedNoticeResponse, Exception failure)> lefts,

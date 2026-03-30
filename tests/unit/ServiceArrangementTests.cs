@@ -183,7 +183,7 @@ public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
 
       INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
       IoNoticeDispatchResult baseDispatcherResult =
-        await baseDispatcher.DispatchAsync(IoRequestNotice.Create(testStreamId, notice.ToString()));
+        await baseDispatcher.DispatchAsync(IoNoticeDispatchRequest.Create(testStreamId, notice.ToString()));
       baseDispatcherResult.Notice.ShouldBe(notice.ToString());
     }
 

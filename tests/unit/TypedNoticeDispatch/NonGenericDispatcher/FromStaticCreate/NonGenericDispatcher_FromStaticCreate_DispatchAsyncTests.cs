@@ -76,7 +76,7 @@ public class NonGenericDispatcher_FromStaticCreate_DispatchAsyncTests
       item.Stream == CaseArrangement.ArrangedDefaultStreamId &&
       item.Notice.Contains(CaseArrangement.ArrangedEvent.Username)
     );
-    IoRequestNotice captured = CaseArrangement.ArrangedNoticeIo.CapturedNotices.Single(item =>
+    IoNoticeDispatchRequest captured = CaseArrangement.ArrangedNoticeIo.CapturedNotices.Single(item =>
       item.Stream == CaseArrangement.ArrangedDefaultStreamId &&
       item.Notice.Contains(CaseArrangement.ArrangedEvent.Username)
     );

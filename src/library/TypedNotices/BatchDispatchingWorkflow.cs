@@ -53,23 +53,23 @@ internal static class BatchDispatchingWorkflow
     {
       if (ioDispatcherProvider() is INoticeBatchIo batchIo)
       {
-        BatchIoNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () =>
+        IoBatchNoticeDispatchResult batchIoResult = (await Eithers.TryAsync(async () =>
             await batchIo.DispatchNoticesAsync(
-              new BatchIoRequest(
+              new IoBatchNoticeDispatchRequest(
                 validatedAndRouted
                   .ToDictionary(
                     static rtn => rtn.BatchNoticeId,
-                    static rtn => new IoRequestNotice(rtn.Stream, rtn.Notice, rtn.Metadata, rtn.ContentType)
+                    static rtn => new IoNoticeDispatchRequest(rtn.Stream, rtn.Notice, rtn.Metadata, rtn.ContentType)
                   ),
                 batchDispatchOptions
               ),
               cancellationToken
             )
           ))
-          .MapLeft(exception => new BatchIoNoticeDispatchResult(
+          .MapLeft(exception => new IoBatchNoticeDispatchResult(
               validatedAndRouted
                 .Select(n =>
-                  new BatchedIoResponseNotice(n.BatchNoticeId, n.Stream, n.Notice, n.Metadata, n.ContentType, exception)
+                  new IoBatchNoticeDispatchResultItem(n.BatchNoticeId, n.Stream, n.Notice, n.Metadata, n.ContentType, exception)
                 )
             )
           )
@@ -133,7 +133,7 @@ internal static class BatchDispatchingWorkflow
                 //   This can be useful if the dispatcher is not thread-safe.
                 IoNoticeDispatchResult response = await ioDispatcherProvider()
                   .DispatchAsync(
-                    new IoRequestNotice(
+                    new IoNoticeDispatchRequest(
                       batchRoutedTypedNotice.Stream,
                       batchRoutedTypedNotice.Notice,
                       batchRoutedTypedNotice.Metadata,

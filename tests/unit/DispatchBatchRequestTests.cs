@@ -8,22 +8,22 @@ namespace Jds.NiceNotice.Tests.Unit;
 
 public class DispatchBatchRequestTests
 {
-  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithCustomFunction(
+  public static BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithCustomFunction(
     IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
   )
   {
-    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+    return BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
       notices,
       static customEvent => Randomizer.Shared.RandomStringLatin(length: 64, alphanumeric: true),
       options: null
     );
   }
 
-  public static DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithDefaultFunction(
+  public static BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> CreateWithDefaultFunction(
     IEnumerable<ExampleCustomBaseEnterpriseEvent> notices
   )
   {
-    return DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(notices, options: null);
+    return BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(notices, options: null);
   }
 
   [Fact]
@@ -45,7 +45,7 @@ public class DispatchBatchRequestTests
       }
     ];
 
-    DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> actual = CreateWithCustomFunction(notices);
+    BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> actual = CreateWithCustomFunction(notices);
 
     // We have all these notices.
     notices.ShouldAllBe(expected => actual.Notices.Values.Contains(expected));
@@ -70,7 +70,7 @@ public class DispatchBatchRequestTests
       }
     ];
 
-    DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> actual = CreateWithDefaultFunction(notices);
+    BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> actual = CreateWithDefaultFunction(notices);
 
     // We have all the notices.
     notices.ShouldAllBe(expected => actual.Notices.Values.Contains(expected));

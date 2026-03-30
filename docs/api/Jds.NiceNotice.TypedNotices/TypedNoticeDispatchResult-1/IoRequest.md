@@ -3,12 +3,12 @@
 Gets the I/O notice request which was sent to the I/O dispatcher.
 
 ```csharp
-public IoRequestNotice IoRequest { get; set; }
+public IoNoticeDispatchRequest IoRequest { get; set; }
 ```
 
 ## See Also
 
-* class [IoRequestNotice](../../Jds.NiceNotice/IoRequestNotice.md)
+* class [IoNoticeDispatchRequest](../../Jds.NiceNotice/IoNoticeDispatchRequest.md)
 * record [TypedNoticeDispatchResult&lt;TEventType&gt;](../TypedNoticeDispatchResult-1.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

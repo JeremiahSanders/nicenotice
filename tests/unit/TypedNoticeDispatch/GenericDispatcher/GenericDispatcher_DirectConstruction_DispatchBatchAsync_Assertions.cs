@@ -50,7 +50,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Assertions(
     (string valueToFind, object expected) = GetCaseData(caseValue);
 
     // The notice should have been serialized to JSON as expected.
-    IoRequestNotice actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
+    IoNoticeDispatchRequest actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(valueToFind)
     );
@@ -69,7 +69,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Assertions(
   public void Verification_IoReceivedMetadata(int caseValue)
   {
     (string valueToFind, object expected) = GetCaseData(caseValue);
-    IoRequestNotice actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
+    IoNoticeDispatchRequest actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(valueToFind)
     );
@@ -117,7 +117,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Assertions(
         Username = "test4"
       };
       request =
-        DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
+        BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent>.CreateFromTypedNotices(
           [login1, login2, logout3, logout4],
           new BatchDispatchOptions
           {
@@ -127,7 +127,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Assertions(
       result = null!;
     }
 
-    public DispatchBatchRequest<ExampleCustomBaseEnterpriseEvent> request { get; set; }
+    public BatchDispatchRequest<ExampleCustomBaseEnterpriseEvent> request { get; set; }
 
     protected override async Task ActAsync()
     {

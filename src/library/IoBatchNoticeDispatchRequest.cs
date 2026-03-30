@@ -7,8 +7,8 @@ namespace Jds.NiceNotice;
 /// </summary>
 /// <param name="notices">A collection of routed notices to dispatch.</param>
 /// <param name="batchDispatchOptions">Optional. Options configuring batch dispatch.</param>
-public class BatchIoRequest(
-  IReadOnlyDictionary<string, IoRequestNotice> notices,
+public class IoBatchNoticeDispatchRequest(
+  IReadOnlyDictionary<string, IoNoticeDispatchRequest> notices,
   BatchDispatchOptions? batchDispatchOptions = null
 )
 {
@@ -20,7 +20,7 @@ public class BatchIoRequest(
   /// <summary>
   ///   Gets the notices to dispatch, keyed with an identity for it within the batch.
   /// </summary>
-  public IReadOnlyDictionary<string, IoRequestNotice> Notices { get; init; } = notices;
+  public IReadOnlyDictionary<string, IoNoticeDispatchRequest> Notices { get; init; } = notices;
 
   /// <inheritdoc />
   public override bool Equals(object? obj)
@@ -40,7 +40,7 @@ public class BatchIoRequest(
       return false;
     }
 
-    return Equals((BatchIoRequest)obj);
+    return Equals((IoBatchNoticeDispatchRequest)obj);
   }
 
   /// <inheritdoc />
@@ -50,11 +50,11 @@ public class BatchIoRequest(
   }
 
   /// <summary>
-  ///   Determines whether the specified <see cref="BatchIoRequest" /> is equal to the current <see cref="BatchIoRequest" />.
+  ///   Determines whether the specified <see cref="IoBatchNoticeDispatchRequest" /> is equal to the current <see cref="IoBatchNoticeDispatchRequest" />.
   /// </summary>
   /// <param name="other">Another request to compare with this instance.</param>
   /// <returns>Returns <c>true</c> if the specified request is equal to this instance; otherwise, <c>false</c>.</returns>
-  protected bool Equals(BatchIoRequest other)
+  protected bool Equals(IoBatchNoticeDispatchRequest other)
   {
     return Equals(BatchDispatchOptions, other.BatchDispatchOptions)
            && (Notices.Equals(other.Notices) || (

@@ -51,7 +51,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Enumerable_
     (string valueToFind, object expected) = GetCaseData(caseValue);
 
     // The notice should have been serialized to JSON as expected.
-    IoRequestNotice actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
+    IoNoticeDispatchRequest actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(valueToFind)
     );
@@ -70,7 +70,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Enumerable_
   public void Verification_IoReceivedMetadata(int caseValue)
   {
     (string valueToFind, object expected) = GetCaseData(caseValue);
-    IoRequestNotice actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
+    IoNoticeDispatchRequest actual = CaseArrangement.noticeIo.CapturedNotices.First(item =>
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(valueToFind)
     );

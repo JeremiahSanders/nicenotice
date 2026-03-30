@@ -1,7 +1,7 @@
 # NullNoticeIo.DispatchAsync method
 
 ```csharp
-public Task<IoNoticeDispatchResult> DispatchAsync(IoRequestNotice notice, 
+public Task<IoNoticeDispatchResult> DispatchAsync(IoNoticeDispatchRequest notice, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -12,7 +12,7 @@ This implementation provides a no-operation mechanism, returning the given notic
 ## See Also
 
 * class [IoNoticeDispatchResult](../../Jds.NiceNotice/IoNoticeDispatchResult.md)
-* class [IoRequestNotice](../../Jds.NiceNotice/IoRequestNotice.md)
+* class [IoNoticeDispatchRequest](../../Jds.NiceNotice/IoNoticeDispatchRequest.md)
 * class [NullNoticeIo](../NullNoticeIo.md)
 * namespace [Jds.NiceNotice.Dispatching.Implementations](../../NiceNotice.md)
 

@@ -81,12 +81,12 @@ public static class NoticeIoJsonExtensions
           message: "Failed to serialize notice.",
           serializationResult.LeftUnsafe
         ),
-        IoRequest = new IoRequestNotice(stream, string.Empty, metadata, contentType: null)
+        IoRequest = new IoNoticeDispatchRequest(stream, string.Empty, metadata, contentType: null)
       };
     }
 
-    Either<Exception, IoRequestNotice> requestResult = serializationResult.Map(json =>
-      new IoRequestNotice(stream, json, contentType: MediaTypeNames.Application.Json, metadata: metadata)
+    Either<Exception, IoNoticeDispatchRequest> requestResult = serializationResult.Map(json =>
+      new IoNoticeDispatchRequest(stream, json, contentType: MediaTypeNames.Application.Json, metadata: metadata)
     );
     if (requestResult.IsLeft)
     {
@@ -95,7 +95,7 @@ public static class NoticeIoJsonExtensions
       {
         Notice = notice,
         Exception = new IOException(message: "Failed to create I/O request.", requestResult.LeftUnsafe),
-        IoRequest = new IoRequestNotice(
+        IoRequest = new IoNoticeDispatchRequest(
           stream,
           serializationResult.RightUnsafe,
           contentType: MediaTypeNames.Application.Json,
@@ -104,7 +104,7 @@ public static class NoticeIoJsonExtensions
       };
     }
 
-    IoRequestNotice ioRequest = requestResult.IfLeftThrow();
+    IoNoticeDispatchRequest ioRequest = requestResult.IfLeftThrow();
 
     Either<Exception, IoNoticeDispatchResult> dispatchedResult = await requestResult.BindAsync(request =>
       Eithers.TryAsync(() => dispatcher.DispatchAsync(request, cancellationToken))

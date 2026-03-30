@@ -11,7 +11,7 @@ public static class TypedNoticeDispatcherBatchExtensions
   #region GenericTypedDispatcher
 
   /// <summary>
-  ///   Creates a <see cref="DispatchBatchRequest{TBaseEnterpriseEvent}" />
+  ///   Creates a <see cref="BatchDispatchRequest{TBaseEnterpriseEvent}" />
   ///   from <paramref name="notices" /> and sends
   ///   the result using
   ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}.DispatchBatchAsync{TEventType}" />.
@@ -39,7 +39,7 @@ public static class TypedNoticeDispatcherBatchExtensions
     where TEnterpriseEventBaseType : notnull
   {
     return dispatcher.DispatchBatchAsync(
-      DispatchBatchRequest<TEnterpriseEventBaseType>.CreateFromTypedNotices(
+      BatchDispatchRequest<TEnterpriseEventBaseType>.CreateFromTypedNotices(
         notices,
         batchDispatchOptions
       ),
@@ -52,7 +52,7 @@ public static class TypedNoticeDispatcherBatchExtensions
   #region NonGenericTypedDispatcher
 
   /// <summary>
-  ///   Creates a <see cref="DispatchBatchRequest" /> which sends all the provided <paramref name="notices" />
+  ///   Creates a <see cref="BatchDispatchRequest" /> which sends all the provided <paramref name="notices" />
   ///   to streams inferred from their <see cref="NoticeStreamAttribute" /> (if present on the notice type
   ///   or in its type hierarchy) or their type name.
   ///   Sends the result using <see cref="ITypedNoticeDispatcher.DispatchBatchAsync" />.
@@ -80,13 +80,13 @@ public static class TypedNoticeDispatcherBatchExtensions
     CancellationToken cancellationToken = default)
   {
     return dispatcher.DispatchBatchAsync(
-      DispatchBatchRequest.CreateForInferredRoutes(notices, defaultToFullTypeName, batchIdProvider, options),
+      BatchDispatchRequest.CreateForInferredRoutes(notices, defaultToFullTypeName, batchIdProvider, options),
       cancellationToken
     );
   }
 
   /// <summary>
-  ///   Creates a <see cref="DispatchBatchRequest" />
+  ///   Creates a <see cref="BatchDispatchRequest" />
   ///   which sends all the provided <paramref name="notices" />
   ///   to the provided <paramref name="stream" />
   ///   and sends the result using
@@ -113,7 +113,7 @@ public static class TypedNoticeDispatcherBatchExtensions
   )
   {
     return dispatcher.DispatchBatchAsync(
-      DispatchBatchRequest.CreateForSingleStream(
+      BatchDispatchRequest.CreateForSingleStream(
         stream,
         notices,
         batchIdProvider,
@@ -124,7 +124,7 @@ public static class TypedNoticeDispatcherBatchExtensions
   }
 
   /// <summary>
-  ///   Creates a <see cref="DispatchBatchRequest" />
+  ///   Creates a <see cref="BatchDispatchRequest" />
   ///   which sends all the provided routed
   ///   <paramref name="notices" /> using
   ///   <see cref="ITypedNoticeDispatcher.DispatchBatchAsync" />.
@@ -148,7 +148,7 @@ public static class TypedNoticeDispatcherBatchExtensions
   )
   {
     return dispatcher.DispatchBatchAsync(
-      DispatchBatchRequest.CreateFromRoutedNotices(
+      BatchDispatchRequest.CreateFromRoutedNotices(
         notices,
         batchIdProvider,
         options

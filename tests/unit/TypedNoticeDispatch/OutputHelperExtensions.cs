@@ -4,10 +4,10 @@ namespace Jds.NiceNotice.Tests.Unit.TypedNoticeDispatch;
 
 internal static class OutputHelperExtensions
 {
-  public static void OutputNotices(this ITestOutputHelper outputHelper, IEnumerable<IoRequestNotice> capturedNotices)
+  public static void OutputNotices(this ITestOutputHelper outputHelper, IEnumerable<IoNoticeDispatchRequest> capturedNotices)
   {
     outputHelper.WriteLine(message: "Captured notices:");
-    foreach (IoRequestNotice notice in capturedNotices)
+    foreach (IoNoticeDispatchRequest notice in capturedNotices)
     {
       outputHelper.WriteLine($"{notice.Stream}: {notice.Notice}");
     }

@@ -3,12 +3,12 @@
 Gets an enumerator for the captured request notices.
 
 ```csharp
-public IEnumerable<IoRequestNotice> CapturedNotices { get; }
+public IEnumerable<IoNoticeDispatchRequest> CapturedNotices { get; }
 ```
 
 ## See Also
 
-* class [IoRequestNotice](../../Jds.NiceNotice/IoRequestNotice.md)
+* class [IoNoticeDispatchRequest](../../Jds.NiceNotice/IoNoticeDispatchRequest.md)
 * class [CapturingNoticeIo](../CapturingNoticeIo.md)
 * namespace [Jds.NiceNotice.Dispatching.Implementations](../../NiceNotice.md)
 

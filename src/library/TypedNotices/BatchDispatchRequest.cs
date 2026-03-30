@@ -7,10 +7,10 @@ namespace Jds.NiceNotice.TypedNotices;
 ///   A request to dispatch a batch of notices.
 /// </summary>
 /// <remarks>This request is intended for use with <see cref="ITypedNoticeDispatcher.DispatchBatchAsync" />.</remarks>
-public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeRequest>
+public class BatchDispatchRequest : BatchDispatchRequest<BatchRoutedTypedNoticeRequest>
 {
   /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   Creates a new instance of <see cref="BatchDispatchRequest" />.
   ///   Notices are routed to streams inferred from their type metadata.
   ///   Preference is given to the <see cref="NoticeStreamAttribute" /> on the notice type (or in its type hierarchy).
   ///   If no attribute is present, the notices are routed to streams from their type name.
@@ -31,7 +31,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   ///   Thrown if identities provided by <paramref name="batchIdProvider" />
   ///   cannot be used to create a request dictionary.
   /// </exception>
-  public static DispatchBatchRequest CreateForInferredRoutes(
+  public static BatchDispatchRequest CreateForInferredRoutes(
     IEnumerable<object> notices,
     bool defaultToFullTypeName = false,
     Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
@@ -56,7 +56,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   }
 
   /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   Creates a new instance of <see cref="BatchDispatchRequest" />.
   ///   All notices are routed to the same stream, <paramref name="stream" />.
   ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
   /// </summary>
@@ -72,7 +72,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   ///   Thrown if identities provided by <paramref name="batchIdProvider" />
   ///   cannot be used to create a request dictionary.
   /// </exception>
-  public static DispatchBatchRequest CreateForSingleStream(
+  public static BatchDispatchRequest CreateForSingleStream(
     EventStreamId stream,
     IEnumerable<object> notices,
     Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
@@ -86,7 +86,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   }
 
   /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest" />.
+  ///   Creates a new instance of <see cref="BatchDispatchRequest" />.
   ///   Unique identifiers (to identifier elements within the batch) are generated for each notice.
   /// </summary>
   /// <param name="notices">A sequence of notices to dispatch.</param>
@@ -100,13 +100,13 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
   ///   Thrown if identities provided by <paramref name="batchIdProvider" />
   ///   cannot be used to create a request dictionary.
   /// </exception>
-  public static DispatchBatchRequest CreateFromRoutedNotices(
+  public static BatchDispatchRequest CreateFromRoutedNotices(
     IEnumerable<BatchRoutedTypedNoticeRequest> notices,
     Func<BatchRoutedTypedNoticeRequest, string>? batchIdProvider = null,
     BatchDispatchOptions? options = null
   )
   {
-    return new DispatchBatchRequest
+    return new BatchDispatchRequest
     {
       Notices = MakeDictionary(),
       BatchDispatchOptions = options
@@ -139,7 +139,7 @@ public class DispatchBatchRequest : DispatchBatchRequest<BatchRoutedTypedNoticeR
 ///   This request is intended for use with
 ///   <see cref="ITypedNoticeDispatcher{TEnterpriseEventBaseType}.DispatchBatchAsync" />.
 /// </remarks>
-public class DispatchBatchRequest<TBaseEnterpriseEvent>
+public class BatchDispatchRequest<TBaseEnterpriseEvent>
 {
   /// <summary>
   ///   Gets the batch dispatch options.
@@ -154,7 +154,7 @@ public class DispatchBatchRequest<TBaseEnterpriseEvent>
   public required IReadOnlyDictionary<string, TBaseEnterpriseEvent> Notices { get; init; }
 
   /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest{TBaseEnterpriseEvent}" />.
+  ///   Creates a new instance of <see cref="BatchDispatchRequest{TBaseEnterpriseEvent}" />.
   ///   Unique identifiers (to identify elements within the notice batch) are generated for each notice.
   ///   If <typeparamref name="TBaseEnterpriseEvent" /> extends <see cref="EnterpriseEvent" />,
   ///   then <see cref="EnterpriseEvent.Id" /> is used to identify the notice element within the batch.
@@ -163,7 +163,7 @@ public class DispatchBatchRequest<TBaseEnterpriseEvent>
   /// <param name="notices">A sequence of notices to dispatch.</param>
   /// <param name="options">Optional. Batch dispatch configuration options.</param>
   /// <returns>Returns the created request.</returns>
-  public static DispatchBatchRequest<TBaseEnterpriseEvent> CreateFromTypedNotices(
+  public static BatchDispatchRequest<TBaseEnterpriseEvent> CreateFromTypedNotices(
     IEnumerable<TBaseEnterpriseEvent> notices,
     BatchDispatchOptions? options = null
   )
@@ -177,7 +177,7 @@ public class DispatchBatchRequest<TBaseEnterpriseEvent>
   }
 
   /// <summary>
-  ///   Creates a new instance of <see cref="DispatchBatchRequest{TBaseEnterpriseEvent}" />.
+  ///   Creates a new instance of <see cref="BatchDispatchRequest{TBaseEnterpriseEvent}" />.
   ///   Unique identifiers (to uniquely identify the element within the batch) are provided by
   ///   <paramref name="batchIdProvider" />.
   /// </summary>
@@ -189,13 +189,13 @@ public class DispatchBatchRequest<TBaseEnterpriseEvent>
   ///   Thrown if identities provided by <paramref name="batchIdProvider" />
   ///   cannot be used to create a request <typeparamref name="TBaseEnterpriseEvent" /> dictionary.
   /// </exception>
-  public static DispatchBatchRequest<TBaseEnterpriseEvent> CreateFromTypedNotices(
+  public static BatchDispatchRequest<TBaseEnterpriseEvent> CreateFromTypedNotices(
     IEnumerable<TBaseEnterpriseEvent> notices,
     Func<TBaseEnterpriseEvent, string> batchIdProvider,
     BatchDispatchOptions? options
   )
   {
-    return new DispatchBatchRequest<TBaseEnterpriseEvent>
+    return new BatchDispatchRequest<TBaseEnterpriseEvent>
     {
       Notices = MakeDictionary(),
       BatchDispatchOptions = options

@@ -2,14 +2,14 @@
 
 ```csharp
 public Task<BatchTypedNoticeDispatchResult> DispatchBatchAsync<TEventType>(
-    DispatchBatchRequest<TEventType> request, CancellationToken cancellationToken = default)
+    BatchDispatchRequest<TEventType> request, CancellationToken cancellationToken = default)
     where TEventType : TEnterpriseEventBaseType
 ```
 
 ## See Also
 
 * class [BatchTypedNoticeDispatchResult](../BatchTypedNoticeDispatchResult.md)
-* class [DispatchBatchRequest&lt;TBaseEnterpriseEvent&gt;](../DispatchBatchRequest-1.md)
+* class [BatchDispatchRequest&lt;TBaseEnterpriseEvent&gt;](../BatchDispatchRequest-1.md)
 * class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../TypedNoticeDispatcher-1.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

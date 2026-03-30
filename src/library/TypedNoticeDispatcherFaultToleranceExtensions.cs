@@ -50,7 +50,7 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
         {
           Exception = exception,
           Notice = notice,
-          IoRequest = new IoRequestNotice(
+          IoRequest = new IoNoticeDispatchRequest(
             EventStreamId.From(notice.GetType().Name),
             string.Empty,
             metadata: null,
@@ -105,7 +105,7 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
         {
           Exception = exception,
           Notice = notice,
-          IoRequest = new IoRequestNotice(
+          IoRequest = new IoNoticeDispatchRequest(
             eventStreamId,
             string.Empty,
             metadata: null,
@@ -159,7 +159,7 @@ public static class TypedNoticeDispatcherFaultToleranceExtensions
         {
           Exception = exception,
           Notice = notice,
-          IoRequest = new IoRequestNotice(
+          IoRequest = new IoNoticeDispatchRequest(
             EventStreamId.From(
               dispatchToFullNameStream ? notice.GetType().FullName ?? notice.GetType().Name : notice.GetType().Name
             ),

@@ -10,7 +10,7 @@ namespace Jds.NiceNotice;
 ///   Optional. The content type of the notice,
 ///   e.g., <c>application/json</c> or <c>text/plain</c>.
 /// </param>
-public class IoRequestNotice(
+public class IoNoticeDispatchRequest(
   EventStreamId stream,
   string notice,
   IReadOnlyDictionary<string, string>? metadata,
@@ -46,20 +46,20 @@ public class IoRequestNotice(
   public EventStreamId Stream { get; } = stream;
 
   /// <summary>
-  ///   Creates a new instance of <see cref="IoRequestNotice" />.
+  ///   Creates a new instance of <see cref="IoNoticeDispatchRequest" />.
   /// </summary>
   /// <param name="stream">A destination stream.</param>
   /// <param name="notice">A notice (possibly serialized).</param>
   /// <param name="metadata">Metadata related to <paramref name="notice" />.</param>
   /// <param name="contentType">A content type for the <paramref name="notice" />.</param>
-  /// <returns>Returns the created <see cref="IoRequestNotice" />.</returns>
-  public static IoRequestNotice Create(
+  /// <returns>Returns the created <see cref="IoNoticeDispatchRequest" />.</returns>
+  public static IoNoticeDispatchRequest Create(
     EventStreamId stream,
     string notice,
     IReadOnlyDictionary<string, string>? metadata = null,
     string? contentType = null)
   {
-    return new IoRequestNotice(stream, notice, metadata, contentType);
+    return new IoNoticeDispatchRequest(stream, notice, metadata, contentType);
   }
 
   /// <inheritdoc />
@@ -80,7 +80,7 @@ public class IoRequestNotice(
       return false;
     }
 
-    return Equals((IoRequestNotice)obj);
+    return Equals((IoNoticeDispatchRequest)obj);
   }
 
   /// <inheritdoc />
@@ -94,7 +94,7 @@ public class IoRequestNotice(
   /// </summary>
   /// <param name="other">The object to compare with the current object.</param>
   /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
-  protected bool Equals(IoRequestNotice other)
+  protected bool Equals(IoNoticeDispatchRequest other)
   {
     return ContentType == other.ContentType
            && Notice == other.Notice

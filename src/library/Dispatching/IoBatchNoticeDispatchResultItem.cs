@@ -12,7 +12,7 @@ namespace Jds.NiceNotice.Dispatching;
 ///   Any exception that occurred during the dispatch.
 ///   If null, the dispatch is considered successful.
 /// </param>
-public class BatchedIoResponseNotice(
+public class IoBatchNoticeDispatchResultItem(
   string batchNoticeId,
   EventStreamId stream,
   string notice,
@@ -45,7 +45,7 @@ public class BatchedIoResponseNotice(
       return false;
     }
 
-    return Equals((BatchedIoResponseNotice)obj);
+    return Equals((IoBatchNoticeDispatchResultItem)obj);
   }
 
   /// <inheritdoc />
@@ -55,12 +55,12 @@ public class BatchedIoResponseNotice(
   }
 
   /// <summary>
-  ///   Determines whether the specified <see cref="BatchedIoResponseNotice" /> is equal to the current
-  ///   <see cref="BatchedIoResponseNotice" />.
+  ///   Determines whether the specified <see cref="IoBatchNoticeDispatchResultItem" /> is equal to the current
+  ///   <see cref="IoBatchNoticeDispatchResultItem" />.
   /// </summary>
-  /// <param name="other">Another <see cref="BatchedIoResponseNotice" /> to compare with this instance.</param>
+  /// <param name="other">Another <see cref="IoBatchNoticeDispatchResultItem" /> to compare with this instance.</param>
   /// <returns>Returns <c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
-  protected bool Equals(BatchedIoResponseNotice other)
+  protected bool Equals(IoBatchNoticeDispatchResultItem other)
   {
     return base.Equals(other) && BatchNoticeId == other.BatchNoticeId;
   }
