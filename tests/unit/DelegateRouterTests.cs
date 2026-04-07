@@ -18,7 +18,7 @@ public class DelegateRouterTests
       .AddNiceNotice(builder => builder
         .UseTypedNotices(
           typedNoticeBuilder => typedNoticeBuilder.RouteWithDelegate(enterpriseEvent =>
-            EventStreamId.From(enterpriseEvent.Schema.ToUpperInvariant())
+            EventStreamId.From(enterpriseEvent.GetType().Name.ToUpperInvariant())
           ),
           ServiceLifetime.Transient
         )
@@ -36,9 +36,9 @@ public class DelegateRouterTests
 
     TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent> response = await dispatcher.DispatchAsync(notice);
 
-    response.IoRequest.Stream.ShouldBe(EventStreamId.From(notice.Schema.ToUpperInvariant()));
+    response.IoRequest.Stream.ShouldBe(EventStreamId.From(notice.GetType().Name.ToUpperInvariant()));
     capturingNoticeIo.CapturedNotices.ShouldContain(tuple =>
-      tuple.Stream == EventStreamId.From(notice.Schema.ToUpperInvariant())
+      tuple.Stream == EventStreamId.From(notice.GetType().Name.ToUpperInvariant())
     );
   }
 }

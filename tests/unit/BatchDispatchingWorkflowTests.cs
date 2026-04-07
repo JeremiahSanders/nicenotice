@@ -23,10 +23,7 @@ public class BatchDispatchingWorkflowTests
     INoticeIo noticeIo = DelegateNoticeIo.AlwaysFails();
     string batchItemId = Guid.NewGuid().ToString();
     EventStreamId eventStream = EventStreamId.From(Randomizer.Shared.RandomStringLatin(length: 9));
-    EnterpriseEvent notice = new()
-    {
-      Schema = "my-custom-event"
-    };
+    EnterpriseEvent notice = new();
     Dictionary<string, BatchRoutedTypedNoticeRequest> notices = new()
     {
       {

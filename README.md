@@ -41,10 +41,8 @@ In your application, declare a _base_ "enterprise event" type. This is a **value
 
 #### Event Schema Object Quick Start
 
-NiceNotice provides a recommended base `record`: `EnterpriseEvent`. The `EnterpriseEvent` type exposes three important properties: `schema`, `timestamp`, and `id`.
+NiceNotice provides a recommended base `record`: `EnterpriseEvent`. The `EnterpriseEvent` type exposes two important properties: `timestamp`, and `id`.
 
-> The `schema` allows anyone reading the messages to know what properties the message should have. (There are `protected` properties which can be overriden to customize the value.)
->
 > The `timestamp` allows messages to be ordered chronologically.
 >
 > The `id` allows messages to be deduplicated; an essential component in resilient asynchronous workflows.
@@ -57,10 +55,10 @@ Simply add a `record` in your project extending `EnterpriseEvent`.
 public record MyApplicationEvent : EnterpriseEvent;
 ```
 
-The above example _base_ application event, `MyApplicationEvent`, inherits `schema`, `timestamp`, and `id` properties from `EnterpriseEvent`. When serialized using the default NiceNotice serializer, an instance of `MyApplicationEvent` would be emitted like the following:
+The above example _base_ application event, `MyApplicationEvent`, inherits `timestamp` and `id` properties from `EnterpriseEvent`. When serialized using the default NiceNotice serializer, an instance of `MyApplicationEvent` would be emitted like the following:
 
 ```json
-{"$schema":"MyApplicationEvent","timestamp":"2025-10-11T23:17:59.5603648+00:00","id":"9fd368e0-23e2-4ec2-a30a-6ef99c3c2841"}
+{"timestamp":"2025-10-11T23:17:59.5603648+00:00","id":"9fd368e0-23e2-4ec2-a30a-6ef99c3c2841"}
 ```
 
 #### Routing Considerations
@@ -209,7 +207,7 @@ public record CriticalFailureDetected : MyApplicationEvent
 Such an event would serialize like:
 
 ```json
-{"errorId":"321.1","message":"Failed to communicate with the database for more than 90 seconds.","details":"Requests to database failed for configured time period (90 seconds). Considered unrecoverable.","schema":"CriticalFailureDetected","timestamp":"2025-10-11T23:43:05.3421459+00:00","id":"16e15973-1e39-4347-a3dc-3de66af0a8bc"}
+{"errorId":"321.1","message":"Failed to communicate with the database for more than 90 seconds.","details":"Requests to database failed for configured time period (90 seconds). Considered unrecoverable.","timestamp":"2025-10-11T23:43:05.3421459+00:00","id":"16e15973-1e39-4347-a3dc-3de66af0a8bc"}
 ```
 
 [awssdk-sns]: https://www.nuget.org/packages/AWSSDK.SimpleNotificationService

@@ -121,8 +121,8 @@ public class GivenUntypedBuilderInvocation_DefaultTypedEvents(ITestOutputHelper 
       capturedNotice.ContentType == MediaTypeNames.Application.Json
     );
     dispatchStore.CapturedNotices.ShouldAllBe(capturedNotice =>
-      capturedNotice.Metadata != null && capturedNotice.Metadata.ContainsKey("schema") &&
-      capturedNotice.Metadata.ContainsKey("duration")
+      capturedNotice.Metadata != null
+      && capturedNotice.Metadata.ContainsKey("duration")
     );
   }
 }
