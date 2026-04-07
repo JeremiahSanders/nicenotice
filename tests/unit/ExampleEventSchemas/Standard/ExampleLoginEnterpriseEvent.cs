@@ -11,9 +11,9 @@ public record ExampleLoginEnterpriseEvent : EnterpriseEvent
 
   protected override string SchemaTitle => "Login";
 
-  public override IReadOnlyDictionary<string, string>? GetMetadata()
+  public override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata()
   {
-    return new Dictionary<string, string>
+    return new Dictionary<string, NoticeMetadataValue>
     {
       {
         "schema", SchemaTitle

@@ -3,7 +3,7 @@
 Gets the metadata to be attached to the notice when dispatching to I/O.
 
 ```csharp
-protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEnterpriseEvent>(
+protected virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEnterpriseEvent>(
     TEnterpriseEvent notice)
     where TEnterpriseEvent : TEnterpriseEventBaseType
 ```
@@ -18,6 +18,7 @@ Returns the metadata dictionary.
 
 ## See Also
 
+* record [NoticeMetadataValue](../../Jds.NiceNotice/NoticeMetadataValue.md)
 * class [TypedNoticeDispatcher&lt;TEnterpriseEventBaseType&gt;](../TypedNoticeDispatcher-1.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

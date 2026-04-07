@@ -3,8 +3,8 @@
 Gets the metadata for the provided notice.
 
 ```csharp
-public abstract IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(TEventType notice, 
-    string serializedNotice, string? serializedContentType)
+public abstract IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
+    TEventType notice, string serializedNotice, string? serializedContentType)
     where TEventType : TEnterpriseEventBaseType
 ```
 
@@ -21,6 +21,7 @@ Returns the metadata for the provided notice.
 
 ## See Also
 
+* record [NoticeMetadataValue](../../Jds.NiceNotice/NoticeMetadataValue.md)
 * class [NoticeMetadataProvider&lt;TEnterpriseEventBaseType&gt;](../NoticeMetadataProvider-1.md)
 * namespace [Jds.NiceNotice.TypedNotices.Metadata](../../NiceNotice.md)
 

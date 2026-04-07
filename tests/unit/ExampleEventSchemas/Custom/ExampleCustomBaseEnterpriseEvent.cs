@@ -43,9 +43,9 @@ public record ExampleCustomBaseEnterpriseEvent : INoticeMetadata
   [JsonPropertyName(name: "ts")]
   public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
 
-  IReadOnlyDictionary<string, string>? INoticeMetadata.GetMetadata()
+  IReadOnlyDictionary<string, NoticeMetadataValue>? INoticeMetadata.GetMetadata()
   {
-    return new Dictionary<string, string>
+    return new Dictionary<string, NoticeMetadataValue>
     {
       {
         "name", Name

@@ -4,7 +4,7 @@ Creates a new instance of [`IoNoticeDispatchRequest`](../IoNoticeDispatchRequest
 
 ```csharp
 public static IoNoticeDispatchRequest Create(EventStreamId stream, string notice, 
-    IReadOnlyDictionary<string, string>? metadata = null, string? contentType = null)
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = null, string? contentType = null)
 ```
 
 | parameter | description |
@@ -21,6 +21,7 @@ Returns the created [`IoNoticeDispatchRequest`](../IoNoticeDispatchRequest.md).
 ## See Also
 
 * struct [EventStreamId](../EventStreamId.md)
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [IoNoticeDispatchRequest](../IoNoticeDispatchRequest.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

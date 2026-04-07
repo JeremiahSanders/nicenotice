@@ -4,8 +4,8 @@ A routed typed notice which is part of a batch.
 
 ```csharp
 public BatchRoutedTypedNoticeResponse(string batchNoticeId, EventStreamId stream, object notice, 
-    string serializedNotice, string? contentType, IReadOnlyDictionary<string, string>? metadata, 
-    Exception? exception)
+    string serializedNotice, string? contentType, 
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata, Exception? exception)
 ```
 
 | parameter | description |
@@ -25,6 +25,7 @@ This type is intended to be a response type after batch processing. This type is
 ## See Also
 
 * struct [EventStreamId](../../Jds.NiceNotice/EventStreamId.md)
+* record [NoticeMetadataValue](../../Jds.NiceNotice/NoticeMetadataValue.md)
 * class [BatchRoutedTypedNoticeResponse](../BatchRoutedTypedNoticeResponse.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

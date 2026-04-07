@@ -13,7 +13,7 @@ namespace Jds.NiceNotice;
 public class IoNoticeDispatchRequest(
   EventStreamId stream,
   string notice,
-  IReadOnlyDictionary<string, string>? metadata,
+  IReadOnlyDictionary<string, NoticeMetadataValue>? metadata,
   string? contentType
 )
 {
@@ -33,7 +33,7 @@ public class IoNoticeDispatchRequest(
   ///     which can be used to store metadata which enables topic subscription filtering.
   ///   </para>
   /// </remarks>
-  public IReadOnlyDictionary<string, string>? Metadata { get; init; } = metadata;
+  public IReadOnlyDictionary<string, NoticeMetadataValue>? Metadata { get; init; } = metadata;
 
   /// <summary>
   ///   Gets the content of the notice which is being dispatched.
@@ -56,7 +56,7 @@ public class IoNoticeDispatchRequest(
   public static IoNoticeDispatchRequest Create(
     EventStreamId stream,
     string notice,
-    IReadOnlyDictionary<string, string>? metadata = null,
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = null,
     string? contentType = null)
   {
     return new IoNoticeDispatchRequest(stream, notice, metadata, contentType);

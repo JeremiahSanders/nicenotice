@@ -5,7 +5,7 @@ Dispatches a serialized JSON notification to the specified event stream asynchro
 ```csharp
 public static Task<TypedNoticeDispatchResult<TNotification>> DispatchJsonAsync<TNotification>(
     this INoticeIo dispatcher, EventStreamId stream, TNotification notice, 
-    IReadOnlyDictionary<string, string>? metadata = null, 
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = null, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -31,6 +31,7 @@ This overload uses [`DefaultJsonSerializerOptions`](../JsonDefaults/DefaultJsonS
 * record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [INoticeIo](../INoticeIo.md)
 * struct [EventStreamId](../EventStreamId.md)
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [NoticeIoJsonExtensions](../NoticeIoJsonExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 
@@ -43,7 +44,7 @@ Dispatches a serialized JSON notification to the specified event stream asynchro
 ```csharp
 public static Task<TypedNoticeDispatchResult<TNotification>> DispatchJsonAsync<TNotification>(
     this INoticeIo dispatcher, EventStreamId stream, TNotification notice, 
-    JsonSerializerOptions? options, IReadOnlyDictionary<string, string>? metadata, 
+    JsonSerializerOptions? options, IReadOnlyDictionary<string, NoticeMetadataValue>? metadata, 
     CancellationToken cancellationToken = default)
 ```
 
@@ -66,6 +67,7 @@ A task representing the asynchronous operation, containing a tuple with the orig
 * record [TypedNoticeDispatchResult&lt;TEventType&gt;](../../Jds.NiceNotice.TypedNotices/TypedNoticeDispatchResult-1.md)
 * interface [INoticeIo](../INoticeIo.md)
 * struct [EventStreamId](../EventStreamId.md)
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [NoticeIoJsonExtensions](../NoticeIoJsonExtensions.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

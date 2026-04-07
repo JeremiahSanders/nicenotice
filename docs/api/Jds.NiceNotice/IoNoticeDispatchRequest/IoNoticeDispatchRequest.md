@@ -4,7 +4,7 @@ A notice I/O request, which may be part of a batch.
 
 ```csharp
 public IoNoticeDispatchRequest(EventStreamId stream, string notice, 
-    IReadOnlyDictionary<string, string>? metadata, string? contentType)
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata, string? contentType)
 ```
 
 | parameter | description |
@@ -17,6 +17,7 @@ public IoNoticeDispatchRequest(EventStreamId stream, string notice,
 ## See Also
 
 * struct [EventStreamId](../EventStreamId.md)
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [IoNoticeDispatchRequest](../IoNoticeDispatchRequest.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

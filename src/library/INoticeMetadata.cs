@@ -16,5 +16,5 @@ public interface INoticeMetadata
   ///   </para>
   /// </remarks>
   /// <returns>Gets the metadata for this notice.</returns>
-  IReadOnlyDictionary<string, string>? GetMetadata();
+  IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata();
 }

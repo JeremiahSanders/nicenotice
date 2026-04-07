@@ -20,7 +20,7 @@ internal class DefaultTypedNoticeDispatcher(
 ) : TypedNoticeDispatcher(ioDispatcherProvider)
 {
   /// <inheritdoc />
-  protected override IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(TEventType notice)
+  protected override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(TEventType notice)
   {
     return metadataProvider?.GetMetadata(notice, SerializeNotice(notice), GetSerializerContentType());
   }
@@ -63,7 +63,7 @@ internal class DefaultTypedNoticeDispatcher<TEnterpriseEventBaseType>(
   where TEnterpriseEventBaseType : notnull
 {
   /// <inheritdoc />
-  protected override IReadOnlyDictionary<string, string>? GetMetadata<TEnterpriseEvent>(TEnterpriseEvent notice)
+  protected override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEnterpriseEvent>(TEnterpriseEvent notice)
   {
     return metadataProvider.GetMetadata(notice, SerializeNotice(notice), GetSerializedContentType());
   }

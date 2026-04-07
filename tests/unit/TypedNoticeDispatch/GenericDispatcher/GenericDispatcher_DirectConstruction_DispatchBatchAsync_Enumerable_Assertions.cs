@@ -74,7 +74,7 @@ public class GenericDispatcher_DirectConstruction_DispatchBatchAsync_Enumerable_
       item.Stream == (EventStreamId)CaseArrangement.defaultStream &&
       item.Notice.Contains(valueToFind)
     );
-    IReadOnlyDictionary<string, string> meta = actual.Metadata.ShouldNotBeNull();
+    IReadOnlyDictionary<string, NoticeMetadataValue> meta = actual.Metadata.ShouldNotBeNull();
     meta.Keys.ShouldContain(expected: "name");
   }
 

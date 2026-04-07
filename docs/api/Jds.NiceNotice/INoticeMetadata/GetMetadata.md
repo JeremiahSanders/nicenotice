@@ -3,7 +3,7 @@
 Gets metadata for this notice.
 
 ```csharp
-public IReadOnlyDictionary<string, string>? GetMetadata()
+public IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata()
 ```
 
 ## Return Value
@@ -16,6 +16,7 @@ This method supports generating values which will be passed to the configured no
 
 ## See Also
 
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * interface [INoticeMetadata](../INoticeMetadata.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 
