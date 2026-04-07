@@ -5,8 +5,7 @@ A base enterprise event (data transfer object), suitable for extending with appl
 This type supports:
 
 * unique instance identification ([`Id`](./EnterpriseEvent/Id.md), enabling deduplication),
-* a timestamp ([`Timestamp`](./EnterpriseEvent/Timestamp.md)),
-* and schema identification ([`Schema`](./EnterpriseEvent/Schema.md), supporting external filtering/logic).
+* and a timestamp ([`Timestamp`](./EnterpriseEvent/Timestamp.md)).
 
 ```csharp
 public record EnterpriseEvent : INoticeMetadata
@@ -16,19 +15,10 @@ public record EnterpriseEvent : INoticeMetadata
 
 | name | description |
 | --- | --- |
-| [EnterpriseEvent](EnterpriseEvent/EnterpriseEvent.md)() | Initializes a new instance of the [`EnterpriseEvent`](./EnterpriseEvent.md) class. |
+| [EnterpriseEvent](EnterpriseEvent/EnterpriseEvent.md)() | The default constructor. |
 | [Id](EnterpriseEvent/Id.md) { get; set; } | Gets a unique identifier for this enterprise event. |
-| [Schema](EnterpriseEvent/Schema.md) { get; set; } | Gets the schema identifier of this enterprise event. Default: The type name. |
 | [Timestamp](EnterpriseEvent/Timestamp.md) { get; set; } | Gets the timestamp associated with this enterprise event (in general, understood to mean "when" this event occurred). |
 | virtual [GetMetadata](EnterpriseEvent/GetMetadata.md)() |  |
-| static [DefaultSchema](EnterpriseEvent/DefaultSchema.md)(…) | Generates an event schema from the provided event schema title and an optional schema revision index. Pattern: If the schema is provided, `Title@Revision`. Otherwise, *eventTitle* is returned unchanged. |
-
-## Protected Members
-
-| name | description |
-| --- | --- |
-| virtual [SchemaRevision](EnterpriseEvent/SchemaRevision.md) { get; set; } | Gets the revision index of this enterprise event data transfer object schema. |
-| virtual [SchemaTitle](EnterpriseEvent/SchemaTitle.md) { get; set; } | Gets the name of this enterprise event data transfer object schema, defaulting to the type name. |
 
 ## Remarks
 

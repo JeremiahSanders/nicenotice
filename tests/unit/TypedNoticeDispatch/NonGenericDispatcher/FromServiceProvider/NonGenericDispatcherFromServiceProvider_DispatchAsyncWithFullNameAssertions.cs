@@ -18,7 +18,6 @@ public class NonGenericDispatcherFromServiceProvider_DispatchAsyncWithFullNameAs
   public void IoRequestHasMetadata()
   {
     CaseArrangement.ActResponse.IoRequest.Metadata.ShouldNotBeNull();
-    CaseArrangement.ActResponse.IoRequest.Metadata.ContainsKey(key: "schema").ShouldBeTrue();
     CaseArrangement.ActResponse.IoRequest.Metadata.ContainsKey(key: "duration").ShouldBeTrue();
   }
 
@@ -49,8 +48,8 @@ public class NonGenericDispatcherFromServiceProvider_DispatchAsyncWithFullNameAs
   public void SideEffectValidation_DispatchedMessageHasMetadata()
   {
     CaseArrangement.ArrangedDispatcher.CapturedNotices.ShouldAllBe(capturedNotice =>
-      capturedNotice.Metadata != null && capturedNotice.Metadata.ContainsKey("schema") &&
-      capturedNotice.Metadata.ContainsKey("duration")
+      capturedNotice.Metadata != null
+      && capturedNotice.Metadata.ContainsKey("duration")
     );
   }
 

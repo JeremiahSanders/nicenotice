@@ -12,30 +12,6 @@ namespace Jds.NiceNotice.Tests.Unit;
 public class EnterpriseEventTests(ITestOutputHelper outputHelper)
 {
   [Fact]
-  public void CanOverrideEventSchemaDuringConstruction()
-  {
-    JsonSerializerOptions options = JsonDefaults.DefaultJsonSerializerOptions;
-
-    const string customEventSchema = "custom-event-schema";
-    GoalScoredEvent customEvent = GenerateGoalScoredEvent() with
-    {
-      Schema = customEventSchema
-    };
-
-    // Act
-    string serialized = JsonSerializer.Serialize(customEvent, options);
-    outputHelper.WriteLine($"Serialized:{Environment.NewLine}{serialized}");
-    GoalScoredEvent? deserialized = JsonSerializer.Deserialize<GoalScoredEvent>(serialized, options);
-
-    // Assert
-    serialized.ShouldNotBeNullOrWhiteSpace();
-    deserialized
-      .ShouldNotBeNull()
-      .ShouldBeEquivalentTo(customEvent);
-    deserialized.Schema.ShouldBe(customEventSchema);
-  }
-
-  [Fact]
   public void CanSerializeCustomEnterpriseEvents()
   {
     JsonSerializerOptions options = JsonDefaults.DefaultJsonSerializerOptions;
@@ -52,7 +28,6 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
     deserialized
       .ShouldNotBeNull()
       .ShouldBeEquivalentTo(customEvent);
-    deserialized.Schema.ShouldBe(expected: "GoalScored@3");
   }
 
   private static GoalScoredEvent GenerateGoalScoredEvent()
@@ -94,9 +69,6 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
     ///   Gets the name of the team which scored the goal.
     /// </summary>
     public string TeamName { get; init; } = string.Empty;
-
-    protected override int? SchemaRevision => 3;
-    protected override string SchemaTitle => "GoalScored";
   }
 
   /// <summary>
@@ -104,12 +76,6 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
   /// </summary>
   public record GameEvent : EnterpriseEvent
   {
-    // ReSharper disable once MemberCanBeProtected.Global
-    public GameEvent()
-    {
-      base.SchemaRevision = 0;
-    }
-
     /// <summary>
     ///   Gets the name of the away team in the game.
     /// </summary>

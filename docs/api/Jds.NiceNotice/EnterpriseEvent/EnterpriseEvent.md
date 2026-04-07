@@ -1,6 +1,6 @@
 # EnterpriseEvent constructor
 
-Initializes a new instance of the [`EnterpriseEvent`](../EnterpriseEvent.md) class.
+The default constructor.
 
 ```csharp
 public EnterpriseEvent()

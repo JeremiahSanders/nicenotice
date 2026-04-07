@@ -13,16 +13,10 @@ public record ExampleLogoutEnterpriseEvent : EnterpriseEvent
   [JsonPropertyName(name: "username")]
   public required string Username { get; init; } = string.Empty;
 
-  protected override int? SchemaRevision { get; init; } = 1;
-  protected override string SchemaTitle => "Logout";
-
   public override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata()
   {
     return new Dictionary<string, NoticeMetadataValue>
     {
-      {
-        "schema", SchemaTitle
-      },
       {
         "duration", SessionDuration?.ToString() ?? string.Empty
       }

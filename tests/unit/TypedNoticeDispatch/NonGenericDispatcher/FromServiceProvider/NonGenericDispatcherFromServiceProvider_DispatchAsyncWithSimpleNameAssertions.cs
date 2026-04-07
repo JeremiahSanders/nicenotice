@@ -10,13 +10,14 @@ namespace Jds.NiceNotice.Tests.Unit.TypedNoticeDispatch.NonGenericDispatcher.Fro
 public class NonGenericDispatcherFromServiceProvider_DispatchAsyncWithSimpleNameAssertions(
   NonGenericDispatcherFromServiceProvider_DispatchAsyncWithSimpleNameAssertions.Fixture caseArrangementFixture
 )
-  : BaseCaseAssertions<NonGenericDispatcherFromServiceProvider_DispatchAsyncWithSimpleNameAssertions.Fixture>(caseArrangementFixture)
+  : BaseCaseAssertions<NonGenericDispatcherFromServiceProvider_DispatchAsyncWithSimpleNameAssertions.Fixture>(
+    caseArrangementFixture
+  )
 {
   [Fact]
   public void IoRequestHasMetadata()
   {
     CaseArrangement.ActResponse.IoRequest.Metadata.ShouldNotBeNull();
-    CaseArrangement.ActResponse.IoRequest.Metadata.ContainsKey(key: "schema").ShouldBeTrue();
     CaseArrangement.ActResponse.IoRequest.Metadata.ContainsKey(key: "duration").ShouldBeTrue();
   }
 
@@ -45,8 +46,8 @@ public class NonGenericDispatcherFromServiceProvider_DispatchAsyncWithSimpleName
   public void SideEffectValidation_DispatchedMessageHasMetadata()
   {
     CaseArrangement.ArrangedDispatcher.CapturedNotices.ShouldAllBe(capturedNotice =>
-      capturedNotice.Metadata != null && capturedNotice.Metadata.ContainsKey("schema") &&
-      capturedNotice.Metadata.ContainsKey("duration")
+      capturedNotice.Metadata != null
+      && capturedNotice.Metadata.ContainsKey("duration")
     );
   }
 
