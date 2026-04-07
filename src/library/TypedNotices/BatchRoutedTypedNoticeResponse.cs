@@ -24,7 +24,7 @@ public class BatchRoutedTypedNoticeResponse(
   object notice,
   string serializedNotice,
   string? contentType,
-  IReadOnlyDictionary<string, string>? metadata,
+  IReadOnlyDictionary<string, NoticeMetadataValue>? metadata,
   Exception? exception
 ) : IoNoticeDispatchResult(stream, serializedNotice, metadata, contentType, exception)
 {

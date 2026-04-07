@@ -15,7 +15,7 @@ public abstract class NoticeMetadataProvider<TEnterpriseEventBaseType>
   /// <param name="serializedContentType">The content type of the serialized representation of the notice.</param>
   /// <typeparam name="TEventType">The event type, constrained to <typeparamref name="TEnterpriseEventBaseType" />.</typeparam>
   /// <returns>Returns the metadata for the provided notice.</returns>
-  public abstract IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(
+  public abstract IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
     TEventType notice,
     string serializedNotice,
     string? serializedContentType
@@ -36,7 +36,7 @@ public abstract class NoticeMetadataProvider
   /// <param name="serializedContentType">The content type of the serialized representation of the notice.</param>
   /// <typeparam name="TEventType">The event type.</typeparam>
   /// <returns>Returns the metadata for the provided notice.</returns>
-  public abstract IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(
+  public abstract IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
     TEventType notice,
     string serializedNotice,
     string? serializedContentType

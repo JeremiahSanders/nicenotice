@@ -31,7 +31,7 @@ public static class NoticeIoJsonExtensions
     this INoticeIo dispatcher,
     EventStreamId stream,
     TNotification notice,
-    IReadOnlyDictionary<string, string>? metadata = null,
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = null,
     CancellationToken cancellationToken = default
   )
     where TNotification : notnull
@@ -65,7 +65,7 @@ public static class NoticeIoJsonExtensions
     EventStreamId stream,
     TNotification notice,
     JsonSerializerOptions? options,
-    IReadOnlyDictionary<string, string>? metadata,
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata,
     CancellationToken cancellationToken = default
   )
     where TNotification : notnull

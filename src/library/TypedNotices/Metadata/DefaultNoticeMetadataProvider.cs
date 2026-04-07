@@ -10,7 +10,7 @@ internal class
   DefaultNoticeMetadataProvider<TEnterpriseEventBaseType> : NoticeMetadataProvider<TEnterpriseEventBaseType>
   where TEnterpriseEventBaseType : notnull
 {
-  public override IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(
+  public override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
     TEventType notice,
     string serializedNotice,
     string? serializedContentType
@@ -32,7 +32,7 @@ internal class
 /// </summary>
 internal class DefaultNoticeMetadataProvider : NoticeMetadataProvider
 {
-  public override IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(
+  public override IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
     TEventType notice,
     string serializedNotice,
     string? serializedContentType

@@ -4,7 +4,8 @@ A routed notice that is part of a batch I/O response.
 
 ```csharp
 public IoBatchNoticeDispatchResultItem(string batchNoticeId, EventStreamId stream, string notice, 
-    IReadOnlyDictionary<string, string>? metadata, string? contentType, Exception? exception)
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata, string? contentType, 
+    Exception? exception)
 ```
 
 | parameter | description |
@@ -19,6 +20,7 @@ public IoBatchNoticeDispatchResultItem(string batchNoticeId, EventStreamId strea
 ## See Also
 
 * struct [EventStreamId](../../Jds.NiceNotice/EventStreamId.md)
+* record [NoticeMetadataValue](../../Jds.NiceNotice/NoticeMetadataValue.md)
 * class [IoBatchNoticeDispatchResultItem](../IoBatchNoticeDispatchResultItem.md)
 * namespace [Jds.NiceNotice.Dispatching](../../NiceNotice.md)
 

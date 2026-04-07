@@ -4,7 +4,8 @@ A result of dispatching a notice to I/O.
 
 ```csharp
 public IoNoticeDispatchResult(EventStreamId stream, string notice, 
-    IReadOnlyDictionary<string, string>? metadata, string? contentType, Exception? exception)
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata, string? contentType, 
+    Exception? exception)
 ```
 
 | parameter | description |
@@ -18,6 +19,7 @@ public IoNoticeDispatchResult(EventStreamId stream, string notice,
 ## See Also
 
 * struct [EventStreamId](../EventStreamId.md)
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [IoNoticeDispatchResult](../IoNoticeDispatchResult.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

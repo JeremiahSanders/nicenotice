@@ -16,6 +16,7 @@
 | interface [ITypedNoticeDispatcher](./Jds.NiceNotice/ITypedNoticeDispatcher.md) | Defines an interface for dispatching enterprise events to logical event streams. The default implementation applies (in order): (1) serialization, (2) validation, and (3) dispatch to I/O using an [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md). |
 | static class [JsonDefaults](./Jds.NiceNotice/JsonDefaults.md) | Provides default JSON serialization settings for the library. |
 | static class [NoticeIoJsonExtensions](./Jds.NiceNotice/NoticeIoJsonExtensions.md) | Provides extension methods for the [`INoticeIo`](./Jds.NiceNotice/INoticeIo.md) interface to dispatch notifications serialized as JSON. |
+| record [NoticeMetadataValue](./Jds.NiceNotice/NoticeMetadataValue.md) | A notice metadata value. |
 | static class [ServiceCollectionExtensions](./Jds.NiceNotice/ServiceCollectionExtensions.md) | Methods extending IServiceCollection to add cross-app notifications services. |
 | static class [TypedNoticeDispatcherBatchExtensions](./Jds.NiceNotice/TypedNoticeDispatcherBatchExtensions.md) | Extensions to typed notice dispatchers supporting batch notice dispatch. |
 | static class [TypedNoticeDispatcherFaultToleranceExtensions](./Jds.NiceNotice/TypedNoticeDispatcherFaultToleranceExtensions.md) | Methods extending [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher.md) and [`ITypedNoticeDispatcher`](./Jds.NiceNotice/ITypedNoticeDispatcher-1.md) supporting fault tolerance. |

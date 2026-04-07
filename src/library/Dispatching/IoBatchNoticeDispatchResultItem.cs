@@ -16,7 +16,7 @@ public class IoBatchNoticeDispatchResultItem(
   string batchNoticeId,
   EventStreamId stream,
   string notice,
-  IReadOnlyDictionary<string, string>? metadata,
+  IReadOnlyDictionary<string, NoticeMetadataValue>? metadata,
   string? contentType,
   Exception? exception
 )

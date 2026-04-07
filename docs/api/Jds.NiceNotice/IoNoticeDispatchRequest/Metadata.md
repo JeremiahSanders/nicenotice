@@ -3,7 +3,7 @@
 Gets the metadata associated with the notice.
 
 ```csharp
-public IReadOnlyDictionary<string, string>? Metadata { get; set; }
+public IReadOnlyDictionary<string, NoticeMetadataValue>? Metadata { get; set; }
 ```
 
 ## Remarks
@@ -12,6 +12,7 @@ Some I/O implementations use this data to provide additional metadata about the 
 
 ## See Also
 
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * class [IoNoticeDispatchRequest](../IoNoticeDispatchRequest.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 

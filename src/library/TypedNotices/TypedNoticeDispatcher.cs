@@ -56,7 +56,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
 
     string validated = possibleValidated.IfLeftThrow();
 
-    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
+    Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
     if (possibleMetadata.IsLeft)
     {
       return new TypedNoticeDispatchResult<TEventType>
@@ -67,7 +67,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       };
     }
 
-    IReadOnlyDictionary<string, string>? metadata = possibleMetadata.IfLeftThrow();
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = possibleMetadata.IfLeftThrow();
 
     IoNoticeDispatchRequest ioRequest = new(streamId, validated, metadata, serializedContentType);
     IoNoticeDispatchResult response = await Dispatch(ioRequest);
@@ -196,7 +196,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
   /// <param name="notice"></param>
   /// <typeparam name="TEventType"></typeparam>
   /// <returns></returns>
-  protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(TEventType notice)
+  protected virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(TEventType notice)
     where TEventType : notnull
   {
     return null;
@@ -283,7 +283,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
 
     string validated = possiblyValidated.IfLeftThrow();
 
-    Either<Exception, IReadOnlyDictionary<string, string>?> possiblyMetadata =
+    Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> possiblyMetadata =
       Eithers.Try(() => GetMetadata(batchRoutedTypedNoticeRequest.Notice));
     if (possiblyMetadata.IsLeft)
     {
@@ -298,7 +298,7 @@ public abstract class TypedNoticeDispatcher(Func<INoticeIo> ioDispatcherProvider
       );
     }
 
-    IReadOnlyDictionary<string, string>? metadata = possiblyMetadata.IfLeftThrow();
+    IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = possiblyMetadata.IfLeftThrow();
 
     BatchRoutedTypedNoticeResponse response = new(
       batchedNoticeId,
@@ -431,7 +431,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
 
     string validated = possibleValidated.IfLeftThrow();
 
-    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = TryGetMetadata(notice);
+    Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> possibleMetadata = TryGetMetadata(notice);
     if (possibleMetadata.IsLeft)
     {
       return new TypedNoticeDispatchResult<TEventType>
@@ -559,7 +559,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
 
       string validated = possiblyValidated.IfLeftThrow();
 
-      Either<Exception, IReadOnlyDictionary<string, string>?> possiblyMetadata =
+      Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> possiblyMetadata =
         TryGetMetadata((TEnterpriseEventBaseType)notice.Notice);
       if (possiblyMetadata.IsLeft)
       {
@@ -574,7 +574,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
         );
       }
 
-      IReadOnlyDictionary<string, string>? metadata = possiblyMetadata.IfLeftThrow();
+      IReadOnlyDictionary<string, NoticeMetadataValue>? metadata = possiblyMetadata.IfLeftThrow();
 
       return new BatchRoutedTypedNoticeResponse(
         id,
@@ -650,7 +650,7 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
   /// </summary>
   /// <param name="notice">The enterprise event notice which is being dispatched.</param>
   /// <returns>Returns the metadata dictionary.</returns>
-  protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEnterpriseEvent>(TEnterpriseEvent notice)
+  protected virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEnterpriseEvent>(TEnterpriseEvent notice)
     where TEnterpriseEvent : TEnterpriseEventBaseType
   {
     return null;
@@ -702,12 +702,12 @@ public abstract class TypedNoticeDispatcher<TEnterpriseEventBaseType>(Func<INoti
     return null;
   }
 
-  private Either<Exception, IReadOnlyDictionary<string, string>?> TryGetMetadata<TEventType>(TEventType notice)
+  private Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> TryGetMetadata<TEventType>(TEventType notice)
     where TEventType : TEnterpriseEventBaseType
   {
-    Either<Exception, IReadOnlyDictionary<string, string>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
+    Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> possibleMetadata = Eithers.Try(() => GetMetadata(notice));
 
-    Either<Exception, IReadOnlyDictionary<string, string>?> mappedLeft =
+    Either<Exception, IReadOnlyDictionary<string, NoticeMetadataValue>?> mappedLeft =
       possibleMetadata.MapLeft(Exception (exception) =>
         new IOException(message: "Failed to get notice metadata.", exception)
       );

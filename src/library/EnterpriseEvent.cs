@@ -140,7 +140,7 @@ public record EnterpriseEvent : INoticeMetadata
   /// <remarks>
   ///   <para>Override this method to provide metadata for the event when it is dispatched to I/O.</para>
   /// </remarks>
-  public virtual IReadOnlyDictionary<string, string>? GetMetadata()
+  public virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata()
   {
     return null;
   }

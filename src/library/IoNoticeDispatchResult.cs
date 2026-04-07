@@ -14,7 +14,7 @@ namespace Jds.NiceNotice;
 public class IoNoticeDispatchResult(
   EventStreamId stream,
   string notice,
-  IReadOnlyDictionary<string, string>? metadata,
+  IReadOnlyDictionary<string, NoticeMetadataValue>? metadata,
   string? contentType,
   Exception? exception
 )

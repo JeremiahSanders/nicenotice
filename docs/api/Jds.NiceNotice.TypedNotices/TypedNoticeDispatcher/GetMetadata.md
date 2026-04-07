@@ -3,7 +3,8 @@
 Gets the content type to which [`SerializeNotice`](./SerializeNotice.md) will serialize the notice, e.g., `application/json`.
 
 ```csharp
-protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(TEventType notice)
+protected virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata<TEventType>(
+    TEventType notice)
 ```
 
 | parameter | description |
@@ -13,6 +14,7 @@ protected virtual IReadOnlyDictionary<string, string>? GetMetadata<TEventType>(T
 
 ## See Also
 
+* record [NoticeMetadataValue](../../Jds.NiceNotice/NoticeMetadataValue.md)
 * class [TypedNoticeDispatcher](../TypedNoticeDispatcher.md)
 * namespace [Jds.NiceNotice.TypedNotices](../../NiceNotice.md)
 

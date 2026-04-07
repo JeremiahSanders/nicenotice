@@ -1,7 +1,7 @@
 # EnterpriseEvent.GetMetadata method
 
 ```csharp
-public virtual IReadOnlyDictionary<string, string>? GetMetadata()
+public virtual IReadOnlyDictionary<string, NoticeMetadataValue>? GetMetadata()
 ```
 
 ## Remarks
@@ -10,6 +10,7 @@ Override this method to provide metadata for the event when it is dispatched to 
 
 ## See Also
 
+* record [NoticeMetadataValue](../NoticeMetadataValue.md)
 * record [EnterpriseEvent](../EnterpriseEvent.md)
 * namespace [Jds.NiceNotice](../../NiceNotice.md)
 
