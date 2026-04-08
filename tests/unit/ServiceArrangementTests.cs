@@ -1,0 +1,336 @@
+using Jds.NiceNotice.Dispatching.Implementations;
+using Jds.NiceNotice.Tests.Unit.ExampleApplication;
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Standard;
+using Jds.NiceNotice.Tests.Unit.ServiceArrangementExamples;
+using Jds.NiceNotice.TypedNotices;
+using Jds.TestingUtils.Randomization;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Shouldly;
+
+using Xunit.Abstractions;
+
+namespace Jds.NiceNotice.Tests.Unit;
+
+public class ServiceArrangementTests(ITestOutputHelper testOutputHelper)
+{
+  public ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
+
+  [Fact]
+  public void WithCustomBaseEvent_CanRegisterAndResolveServices()
+  {
+    IServiceCollection services = new ServiceCollection();
+
+    // Act
+    services.AddNiceNotice(builder => builder
+      .UseTypedNotices<ExampleCustomBaseEnterpriseEvent>(
+        static eeBuilder => { },
+        ServiceLifetime.Singleton
+      )
+    );
+
+    ServiceProvider provider = services.BuildServiceProvider();
+
+    // Assert
+    ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent> fromExplicitType =
+      provider.GetRequiredService<ITypedNoticeDispatcher<ExampleCustomBaseEnterpriseEvent>>();
+    fromExplicitType.ShouldNotBeNull();
+
+    ITypedNoticeDispatcher nonGenericExplicitType =
+      provider.GetRequiredService<ITypedNoticeDispatcher>();
+    nonGenericExplicitType.ShouldNotBeNull();
+
+    INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
+    baseDispatcher.ShouldNotBeNull();
+  }
+
+  [Fact]
+  public void WithDefaultBaseEvent_CanRegisterAndResolveServices()
+  {
+    IServiceCollection services = new ServiceCollection();
+
+    // Act
+    services.AddNiceNotice(builder => builder
+      .UseTypedNotices(
+        eeBuilder => { },
+        ServiceLifetime.Singleton
+      )
+    );
+
+    ServiceProvider provider = services.BuildServiceProvider();
+
+    // Assert
+    ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+      provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+    fromExplicitType.ShouldNotBeNull();
+
+    ITypedNoticeDispatcher nonGenericExplicitType =
+      provider.GetRequiredService<ITypedNoticeDispatcher>();
+    nonGenericExplicitType.ShouldNotBeNull();
+
+    INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
+    baseDispatcher.ShouldNotBeNull();
+  }
+
+  public abstract class BaseServiceArrangementTests(ITestOutputHelper testOutputHelper)
+  {
+    public ITestOutputHelper TestOutputHelper { get; } = testOutputHelper;
+
+    [Fact]
+    public void CanRegisterAndResolve_INoticeIo()
+    {
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
+      baseDispatcher.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void CanRegisterAndResolve_ITypedNoticeDispatcher()
+    {
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher nonGenericExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher>();
+      nonGenericExplicitType.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void CanRegisterAndResolve_ITypedNoticeDispatcherEnterpriseEvent()
+    {
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      fromExplicitType.ShouldNotBeNull();
+    }
+
+    /// <summary>
+    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
+    ///   that it can still be used to dispatch batches of events.
+    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
+    /// </summary>
+    [Fact]
+    public async Task DispatchingBatchEventsSucceeds_ITypedNoticeDispatcher()
+    {
+      EnterpriseEvent notice = new();
+
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher nonGenericExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher>();
+      BatchTypedNoticeDispatchResult nonGenericExplicitTypeResult =
+        await nonGenericExplicitType.DispatchBatchToInferredRoutesAsync([notice]);
+
+      BatchRoutedTypedNoticeResponse result = nonGenericExplicitTypeResult.Successes.ShouldHaveSingleItem();
+      ((string)result.Stream).ShouldBe(nameof(EnterpriseEvent));
+      result.TypedNotice.ShouldBe(notice);
+      result.Notice.ShouldNotBeNullOrWhiteSpace();
+      result.BatchNoticeId.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    /// <summary>
+    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
+    ///   that it can still be used to dispatch batches of events.
+    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
+    /// </summary>
+    [Fact]
+    public async Task DispatchingBatchEventsSucceeds_ITypedNoticeDispatcherEnterpriseEvent()
+    {
+      EnterpriseEvent notice = new();
+
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      BatchTypedNoticeDispatchResult genericExplicitTypeResult =
+        await fromExplicitType.DispatchBatchAsync([notice]);
+
+      BatchRoutedTypedNoticeResponse result = genericExplicitTypeResult.Successes.ShouldHaveSingleItem();
+      ((string)result.Stream).ShouldBe(nameof(EnterpriseEvent));
+      result.TypedNotice.ShouldBe(notice);
+      result.Notice.ShouldNotBeNullOrWhiteSpace();
+      result.BatchNoticeId.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    /// <summary>
+    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
+    ///   that it can still be used to dispatch events.
+    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
+    /// </summary>
+    [Fact]
+    public async Task DispatchingEventsSucceeds_INoticeIo()
+    {
+      EventStreamId testStreamId = EventStreamId.From(value: "things");
+      EnterpriseEvent notice = new();
+
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+
+      INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
+      IoNoticeDispatchResult baseDispatcherResult =
+        await baseDispatcher.DispatchAsync(IoNoticeDispatchRequest.Create(testStreamId, notice.ToString()));
+      baseDispatcherResult.Notice.ShouldBe(notice.ToString());
+    }
+
+    /// <summary>
+    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
+    ///   that it can still be used to dispatch events.
+    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
+    /// </summary>
+    [Fact]
+    public async Task DispatchingEventsSucceeds_ITypedNoticeDispatcher()
+    {
+      EventStreamId testStreamId = EventStreamId.From(value: "things");
+      EnterpriseEvent notice = new();
+
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher nonGenericExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher>();
+      TypedNoticeDispatchResult<EnterpriseEvent> nonGenericExplicitTypeResult =
+        await nonGenericExplicitType.DispatchAsync(notice, testStreamId);
+      nonGenericExplicitTypeResult.IoRequest.Notice.ShouldNotBeNullOrWhiteSpace();
+      nonGenericExplicitTypeResult.IsSuccessful.ShouldBeTrue();
+    }
+
+    /// <summary>
+    ///   These tests verify that when NiceNotice is added using the builder action overload and not configured
+    ///   that it can still be used to dispatch events.
+    ///   The expectation is that it uses the <see cref="NullNoticeIo" /> implementation.
+    /// </summary>
+    [Fact]
+    public async Task DispatchingEventsSucceeds_ITypedNoticeDispatcherEnterpriseEvent()
+    {
+      EventStreamId testStreamId = EventStreamId.From(value: "things");
+      EnterpriseEvent notice = new();
+
+      // Act
+      IServiceProvider provider = ArrangeServices(new ServiceCollection());
+
+      // Assert
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      TypedNoticeDispatchResult<EnterpriseEvent> fromExplicitTypeResult =
+        await fromExplicitType.DispatchAsync(notice);
+      fromExplicitTypeResult.IoRequest.Notice.ShouldNotBeNullOrWhiteSpace();
+      fromExplicitTypeResult.IsSuccessful.ShouldBeTrue();
+    }
+
+    protected abstract IServiceProvider ArrangeServices(IServiceCollection services);
+  }
+
+  public class DefaultFuncWithoutConfiguration(ITestOutputHelper testOutputHelper)
+    : BaseServiceArrangementTests(testOutputHelper)
+  {
+    protected override IServiceProvider ArrangeServices(IServiceCollection services)
+    {
+      return services
+        .ApplyMinimumConfiguration()
+        .BuildServiceProvider();
+    }
+  }
+
+  public class ComprehensiveConfiguration(ITestOutputHelper testOutputHelper)
+    : BaseServiceArrangementTests(testOutputHelper)
+  {
+    private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
+
+    protected override IServiceProvider ArrangeServices(IServiceCollection services)
+    {
+      return new ServiceCollection()
+        .ApplyComprehensiveCustomConfiguration(_testOutputHelper)
+        .BuildServiceProvider();
+    }
+  }
+
+  public class ConfigurationObject(ITestOutputHelper testOutputHelper) : BaseServiceArrangementTests(testOutputHelper)
+  {
+    protected override IServiceProvider ArrangeServices(IServiceCollection services)
+    {
+      return new ServiceCollection()
+        .ApplyConfigurationObjectConfiguration(serviceProvider => new CapturingNoticeIo())
+        .BuildServiceProvider();
+    }
+  }
+
+  public class HelperConfiguration(ITestOutputHelper testOutputHelper)
+  {
+    [Fact]
+    public async Task WithHelperBasedConfiguration_CanDispatchEvents()
+    {
+      // Arrange
+      ExampleLoginEnterpriseEvent customLoginEvent = new()
+      {
+        Username = $"{Randomizer.Shared.DemographicsSurnameUsa()}.{Randomizer.Shared.DemographicsForenameUsa()}"
+      };
+      ServiceProvider provider = new ServiceCollection()
+        .ApplyHelperBasedConfiguration(serviceProvider => new CapturingNoticeIo(), useFullTypeName: true)
+        .BuildServiceProvider();
+      ITypedNoticeDispatcher<EnterpriseEvent> dispatcher =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      CapturingNoticeIo destination = provider.GetRequiredService<INoticeIo>() as CapturingNoticeIo ??
+                                      throw new NullReferenceException();
+
+      // Act
+      TypedNoticeDispatchResult<ExampleLoginEnterpriseEvent> response = await dispatcher.DispatchAsync(
+        customLoginEvent
+      );
+
+      // Assert
+      // Check the body of the response
+      response.ShouldNotBeNull();
+      ((string)response.IoRequest.Stream).ShouldBe(
+        typeof(ExampleLoginEnterpriseEvent).FullName,
+        customMessage: "This arrangement should be using type name streams."
+      );
+      response.IsSuccessful.ShouldBeTrue();
+      ExampleLoginEnterpriseEvent deserialized = response.DeserializeIoResponseAsJson();
+      deserialized.ShouldBeEquivalentTo(customLoginEvent);
+      // Now check our I/O captures
+      destination.CapturedNotices.ShouldContain(tuple =>
+        tuple.Stream == response.IoRequest.Stream && tuple.Notice == response.IoRequest.Notice
+      );
+    }
+
+    [Fact]
+    public void WithHelperBasedConfiguration_CanRegisterAndResolveServices()
+    {
+      // Act
+      ServiceProvider provider = new ServiceCollection()
+        .ApplyHelperBasedConfiguration(
+          serviceProvider => new ExampleCustomDispatcher(testOutputHelper),
+          useFullTypeName: false
+        )
+        .BuildServiceProvider();
+
+      // Assert
+      ITypedNoticeDispatcher<EnterpriseEvent> fromExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher<EnterpriseEvent>>();
+      fromExplicitType.ShouldNotBeNull();
+
+      ITypedNoticeDispatcher nonGenericExplicitType =
+        provider.GetRequiredService<ITypedNoticeDispatcher>();
+      nonGenericExplicitType.ShouldNotBeNull();
+
+      INoticeIo baseDispatcher = provider.GetRequiredService<INoticeIo>();
+      baseDispatcher.ShouldNotBeNull();
+    }
+  }
+}

@@ -1,0 +1,20 @@
+using Jds.NiceNotice.Tests.Unit.ExampleEventSchemas.Custom;
+using Jds.NiceNotice.TypedNotices.Routing;
+
+namespace Jds.NiceNotice.Tests.Unit.ExampleApplication;
+
+public class ExampleCustomRouter : NoticeRouter<ExampleCustomBaseEnterpriseEvent>
+{
+  public EventStreamId DefaultStream { get; init; } = EventStreamId.From(value: "default");
+  public EventStreamId UserSessionStream { get; init; } = EventStreamId.From(value: "user-session");
+
+  public override EventStreamId GetStreamId<TEventType>(TEventType notice)
+  {
+    return notice switch
+    {
+      ExampleCustomLoginEvent login => UserSessionStream,
+      ExampleCustomLogoutEvent logout => UserSessionStream,
+      _ => DefaultStream
+    };
+  }
+}
