@@ -19,7 +19,12 @@ public static class DataAnnotationsValidation
     try
     {
       List<ValidationResult> failures = [];
-      bool isValid = Validator.TryValidateObject(notification, new ValidationContext(notification), failures);
+      bool isValid = Validator.TryValidateObject(
+        notification,
+        new ValidationContext(notification),
+        failures,
+        validateAllProperties: true
+      );
 
       return isValid
         ? null
