@@ -30,6 +30,34 @@ public class EnterpriseEventTests(ITestOutputHelper outputHelper)
       .ShouldBeEquivalentTo(customEvent);
   }
 
+  [Fact]
+  public void SerializedEventsDoNotEscapeCommonCharacters()
+  {
+    JsonSerializerOptions options = JsonDefaults.DefaultJsonSerializerOptions;
+
+    const string commonCharacters = "+++";
+    GoalScoredEvent customEvent = GenerateGoalScoredEvent() with
+    {
+      PlayerName = commonCharacters
+    };
+
+    // Act
+    string serialized = JsonSerializer.Serialize(customEvent, options);
+    outputHelper.WriteLine($"Serialized:{Environment.NewLine}{serialized}");
+    GoalScoredEvent? deserialized = JsonSerializer.Deserialize<GoalScoredEvent>(serialized, options);
+
+    // Assert
+    serialized.ShouldNotBeNullOrWhiteSpace();
+    deserialized
+      .ShouldNotBeNull()
+      .ShouldBeEquivalentTo(customEvent);
+    deserialized.PlayerName.ShouldBe(
+      commonCharacters,
+      customMessage: "Because the serializer decodes escaped characters"
+    );
+    serialized.ShouldContain(commonCharacters, customMessage: "because we are using relaxed encoding");
+  }
+
   private static GoalScoredEvent GenerateGoalScoredEvent()
   {
     return new GoalScoredEvent
